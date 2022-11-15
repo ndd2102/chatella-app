@@ -125,7 +125,6 @@ export default function Login() {
   }
 
   async function handleSubmit(ev: React.FormEvent) {
-    console.log(account.email, account.password);
     ev.preventDefault();
     login(account.email, account.password).catch((error) => {
       setError(true);

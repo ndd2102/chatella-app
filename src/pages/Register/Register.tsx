@@ -57,6 +57,7 @@ export default function Register() {
                 <TextInput
                   id="email"
                   type="email"
+                  name="email"
                   placeholder="name@company.com"
                   required={true}
                   onChange={handleChange}
