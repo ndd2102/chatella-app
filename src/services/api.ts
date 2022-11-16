@@ -1,3 +1,4 @@
+import { rejects } from "assert";
 import axios from "axios";
 // import { guard, object } from "decoders";
 import { useDispatch } from "react-redux";
@@ -42,6 +43,15 @@ export async function register(email: string, password: string) {
     });
 }
 
+export async function getProfile() {
+   await axios
+  .get("account/profile/current-profile", {
+        headers: {
+          Authorization : `Bearer ${localStorage.getItem("token")}`
+        }
+      }
+    )
+} 
 // export async function getAccount(): Promise<Account> {
 //   const { data } = await axios.get("account");
 //   return guard(object({ account: accountDecoder }))(data).account;

@@ -5,6 +5,7 @@ import Login from "../../pages/Login/Login";
 import Register from "../../pages/Register/Register";
 import { useStore } from "../../state/storeHooks";
 import { Account } from "../../types/account";
+import { UserInfo } from "../../pages/UserInfo/UserInfo";
 
 export default function Header() {
   const { account } = useStore(({ app }) => app);
@@ -61,7 +62,7 @@ function UserLinks({ account: { email } }: { account: Account }) {
           <span className="block text-sm">Bonnie Green</span>
           <span className="block truncate text-sm font-medium">{email}</span>
         </Dropdown.Header>
-        <Dropdown.Item>Profile</Dropdown.Item>
+        <Dropdown.Item><UserInfo/></Dropdown.Item>
         <Dropdown.Divider />
         <Dropdown.Item>Log out</Dropdown.Item>
       </Dropdown>
