@@ -1,5 +1,6 @@
 import { None, Option, Some } from "@hqoss/monads";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 import { Account } from "../../types/account";
 
 export interface AppState {
@@ -17,12 +18,14 @@ const slice = createSlice({
   initialState,
   reducers: {
     initializeApp: () => initialState,
-    loadUser: (state, { payload: account }: PayloadAction<Account>) => {
+    loadAccount: (state, { payload: account }: PayloadAction<Account>) => {
       state.account = Some(account);
       state.loading = false;
     },
     logout: (state) => {
       state.account = None;
+      delete axios.defaults.headers.Authorization;
+      localStorage.removeItem("token");
     },
     endLoad: (state) => {
       state.loading = false;
@@ -30,6 +33,6 @@ const slice = createSlice({
   },
 });
 
-export const { loadUser, logout, endLoad, initializeApp } = slice.actions;
+export const { loadAccount, logout, endLoad, initializeApp } = slice.actions;
 
 export default slice.reducer;

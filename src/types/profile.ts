@@ -1,30 +1,24 @@
 import { Decoder, nullable, object, string } from "decoders";
-
 export interface Profile {
+  userId: string;
+  email: string;
   name: string;
-  bio: string | null;
-  image: string | null;
+  avatar: string;
   sex: string | null;
-  email: string | null;
   dateOfBirth: string | null;
-  address: string | null;
   phoneNumber: string | null;
-  idCard: string | null;
-  nation: string | null;
+  country: string | null;
   createdDate: string;
 }
 
 export const userDecoder: Decoder<Profile> = object({
+  userId: string,
   email: string,
-  token: string,
   name: string,
-  bio: nullable(string),
-  image: nullable(string),
+  avatar: string,
   sex: nullable(string),
   dateOfBirth: nullable(string),
-  address: nullable(string),
   phoneNumber: nullable(string),
-  idCard: nullable(string),
-  nation: nullable(string),
+  country: nullable(string),
   createdDate: string,
 });

@@ -31,12 +31,7 @@ export default function Register() {
   return (
     <div>
       <React.Fragment>
-        <Button
-          className="text-blue-800 bg-transparent hover:bg-slate-50 "
-          onClick={() => setShow(true)}
-        >
-          Sign up
-        </Button>
+        <Button onClick={() => setShow(true)}>Sign up</Button>
         <Modal
           show={show}
           size="md"

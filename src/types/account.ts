@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Decoder, object, string } from "decoders";
-import { loadUser } from "../components/App/App.slice";
+import { loadAccount } from "../components/App/App.slice";
 import { store } from "../state/store";
 
 export interface Account {
@@ -27,5 +27,5 @@ export interface AccountForRegistration {
 export function loadAccountIntoApp(account: Account) {
   localStorage.setItem("token", account.token);
   axios.defaults.headers.Authorization = `Token ${account.token}`;
-  store.dispatch(loadUser(account));
+  store.dispatch(loadAccount(account));
 }

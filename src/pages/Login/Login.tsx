@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { store, dispatchOnCall } from "../../state/store";
 import { useStoreWithInitializer } from "../../state/storeHooks";
 import { initializeLogin, loginErrors, LoginState } from "./Login.slice";
-import { login } from "../../services/api";
+import { getProfile, login } from "../../services/api";
 import { updateField } from "./Login.slice";
 import {
   Button,
@@ -29,7 +29,7 @@ export default function Login() {
     <div>
       <React.Fragment>
         <Button
-          className="bg-slate-50 text-blue-600 hover:bg-slate-100"
+          className="bg-sky-50 text-sky-800 hover:bg-sky-100"
           onClick={() => setShow(true)}
         >
           Sign in
@@ -125,6 +125,7 @@ export default function Login() {
   }
 
   async function handleSubmit(ev: React.FormEvent) {
+    console.log(getProfile());
     ev.preventDefault();
     login(account.email, account.password).catch((error) => {
       setError(true);

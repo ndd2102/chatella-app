@@ -1,16 +1,13 @@
-import {
-  HashRouter,
-  Navigate,
-  Route,
-  RouteProps,
-  Routes,
-  BrowserRouter as Router,
-} from "react-router-dom";
+import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
 import { useStoreWithInitializer } from "../../state/storeHooks";
 import { store } from "../../state/store";
-import { endLoad, loadUser } from "./App.slice";
-import axios from "axios";
+import { endLoad, loadAccount } from "./App.slice";
 import Home from "../../pages/Home/Home";
+import { Account } from "../../types/account";
+import { getProfile } from "../../services/api";
+import { Profile } from "../../types/profile";
+import axios from "axios";
+import { Spinner } from "flowbite-react";
 // import { getAccount } from "../../services/api";
 
 export default function App() {
@@ -19,10 +16,16 @@ export default function App() {
 
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        {/* <Route path="/profiles/:id" element = {<Profile />}/> */}
-      </Routes>
+      {!loading ? (
+        <Routes>
+          <Route path="/" element={<Home />} />
+          {/* <Route path="/profiles/:id" element = {<Profile />}/> */}
+        </Routes>
+      ) : (
+        <div className="mt-32	justify-center text-center my-auto">
+          <Spinner aria-label="Center-aligned spinner example" size="xl" />
+        </div>
+      )}
     </Router>
   );
 }
@@ -32,45 +35,21 @@ async function load() {
   if (!store.getState().app.loading || !token) {
     store.dispatch(endLoad());
     return;
+  } else {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    const user: any = await getProfile();
+    if (user !== undefined) {
+      const account: Account = {
+        email: user.email,
+        token: token,
+      };
+      store.dispatch(loadAccount(account));
+    }
   }
-  axios.defaults.headers.Authorization = `${token}`;
-
+  // store.dispatch(loadAccount(account))
   // try {
   //   store.dispatch(loadUser(await getAccount()));
   // } catch {
   //   store.dispatch(endLoad());
   // }
-}
-
-function GuestOnlyRoute({
-  children,
-  userIsLogged,
-  ...rest
-}: {
-  children: JSX.Element | JSX.Element[];
-  userIsLogged: boolean;
-} & RouteProps) {
-  return (
-    <Route {...rest}>
-      {children}
-      {userIsLogged && <Navigate to="/" />}
-    </Route>
-  );
-}
-
-/* istanbul ignore next */
-function UserOnlyRoute({
-  children,
-  userIsLogged,
-  ...rest
-}: {
-  children: JSX.Element | JSX.Element[];
-  userIsLogged: boolean;
-} & RouteProps) {
-  return (
-    <Route {...rest}>
-      {children}
-      {!userIsLogged && <Navigate to="/" />}
-    </Route>
-  );
 }

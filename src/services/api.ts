@@ -1,15 +1,11 @@
-import { rejects } from "assert";
 import axios from "axios";
-// import { guard, object } from "decoders";
-import { useDispatch } from "react-redux";
+import { endLoad } from "../components/App/App.slice";
 import settings from "../config/settings";
-import { loginErrors, startLoginIn } from "../pages/Login/Login.slice";
-import {
-  registerErrors,
-  startSigningUp,
-} from "../pages/Register/Register.slice";
+import { startLoginIn } from "../pages/Login/Login.slice";
+import { startSigningUp } from "../pages/Register/Register.slice";
 import { store } from "../state/store";
-import { Account, accountDecoder, loadAccountIntoApp } from "../types/account";
+import { Account, loadAccountIntoApp } from "../types/account";
+import { Profile } from "../types/profile";
 
 axios.defaults.baseURL = settings.baseApiUrl;
 
@@ -37,21 +33,33 @@ export async function register(email: string, password: string) {
       email: email,
       password: password,
     })
-    .then((response) => {
-      console.log(response.data.message);
+    .then(() => {
       store.dispatch(startSigningUp());
     });
 }
 
-export async function getProfile() {
-   await axios
-  .get("account/profile/current-profile", {
-        headers: {
-          Authorization : `Bearer ${localStorage.getItem("token")}`
-        }
-      }
-    )
-} 
+export async function getProfile(): Promise<Profile> {
+  let profile: any;
+  await axios
+    .get("account/profile/current-profile")
+    .then((response) => {
+      profile = {
+        userId: response.data.data.id,
+        email: response.data.data.email,
+        name: response.data.data.name,
+        avatar: response.data.data.avatar,
+        sex: response.data.data.sex,
+        dateOfBirth: response.data.data.dob,
+        phoneNumber: response.data.data.phone,
+        country: response.data.data.national,
+        createdDate: response.data.data.createdDate,
+      };
+    })
+    .catch(() => {
+      store.dispatch(endLoad);
+    });
+  return profile;
+}
 // export async function getAccount(): Promise<Account> {
 //   const { data } = await axios.get("account");
 //   return guard(object({ account: accountDecoder }))(data).account;
