@@ -16,6 +16,7 @@ export async function login(email: string, password: string) {
       password: password,
     })
     .then((response) => {
+      console.log(response);
       if (response.data.status) {
         store.dispatch(startLoginIn());
         const account: Account = {
@@ -35,6 +36,25 @@ export async function register(email: string, password: string) {
     })
     .then(() => {
       store.dispatch(startSigningUp());
+    });
+}
+export async function changePassword(email: string, password: string, newPassword: string) {
+  await axios
+    .patch("account/change-password", {
+      email: email,
+      password: password,
+      newPassword: newPassword,
+    })
+    .then((response) => {
+      /*if (response.data.status) {
+        store.dispatch(startLoginIn());
+        const account: Account = {
+          email: email,
+          token: response.data.data.token,
+        };
+        loadAccountIntoApp(account);
+      }*/
+      console.log(response);
     });
 }
 

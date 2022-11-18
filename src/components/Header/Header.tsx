@@ -1,6 +1,11 @@
 import { Avatar, Button, Dropdown, Navbar } from "flowbite-react";
 import { NavbarCollapse } from "flowbite-react/lib/esm/components/Navbar/NavbarCollapse";
+
 import { useNavigate } from "react-router-dom";
+
+import { HashRouter, NavLink } from "react-router-dom";
+import ChangePassword from "../../pages/ChangePassword/ChangePassword";
+
 import Login from "../../pages/Login/Login";
 import Register from "../../pages/Register/Register";
 import { store } from "../../state/store";
@@ -39,6 +44,7 @@ function GuestLinks() {
       <div className="flex ml-auto space-x-14 mx-4">
         <Login />
         <Register />
+        <ChangePassword />
       </div>
     </NavbarCollapse>
   );
