@@ -1,7 +1,7 @@
 import { Action, configureStore } from "@reduxjs/toolkit";
-import login from "../pages/Login/Login.slice";
+import login from "../components/Modal/Login/Login.slice";
 import app from "../components/App/App.slice";
-import register from "../pages/Register/Register.slice";
+import register from "../components/Modal/Register/Register.slice";
 
 const middlewareConfiguration = { serializableCheck: false };
 

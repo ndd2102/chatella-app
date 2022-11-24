@@ -4,19 +4,12 @@ import { loadAccount } from "../components/App/App.slice";
 import { store } from "../state/store";
 
 export interface Account {
-  email: string;
   token: string;
 }
 
 export const accountDecoder: Decoder<Account> = object({
-  email: string,
   token: string,
 });
-
-// export interface UserSettings extends PublicUser {
-//   email: string;
-//   password: string | null;
-// }
 
 export interface AccountForRegistration {
   email: string;
@@ -26,6 +19,6 @@ export interface AccountForRegistration {
 
 export function loadAccountIntoApp(account: Account) {
   localStorage.setItem("token", account.token);
-  axios.defaults.headers.Authorization = `Token ${account.token}`;
+  axios.defaults.headers.common["Authorization"] = `Bearer ${account.token}`;
   store.dispatch(loadAccount(account));
 }

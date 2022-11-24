@@ -1,24 +1,21 @@
-import { Decoder, nullable, object, string } from "decoders";
+import { Decoder, number, object, string } from "decoders";
+
 export interface Profile {
-  userId: string;
+  userId: number;
   email: string;
   name: string;
   avatar: string;
-  sex: string | null;
-  dateOfBirth: string | null;
-  phoneNumber: string | null;
-  country: string | null;
-  createdDate: string;
+  sex: string | undefined;
+  dateOfBirth: string | undefined;
+  country: string | undefined;
 }
 
-export const userDecoder: Decoder<Profile> = object({
-  userId: string,
+export const profileDecoder: Decoder<Profile> = object({
+  userId: number,
   email: string,
   name: string,
   avatar: string,
-  sex: nullable(string),
-  dateOfBirth: nullable(string),
-  phoneNumber: nullable(string),
-  country: nullable(string),
-  createdDate: string,
+  sex: string,
+  dateOfBirth: string,
+  country: string,
 });

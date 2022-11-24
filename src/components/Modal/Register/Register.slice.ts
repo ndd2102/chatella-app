@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AccountForRegistration } from "../../types/account";
+import { AccountForRegistration } from "../../../types/account";
 
 export interface RegisterState {
   account: AccountForRegistration;

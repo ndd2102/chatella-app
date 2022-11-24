@@ -1,14 +1,19 @@
-import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  BrowserRouter as Router,
+  Navigate,
+} from "react-router-dom";
 import { useStoreWithInitializer } from "../../state/storeHooks";
 import { store } from "../../state/store";
-import { endLoad, loadAccount } from "./App.slice";
+import { endLoad, loadAccount, loadProfile, logout } from "./App.slice";
 import Home from "../../pages/Home/Home";
 import { Account } from "../../types/account";
 import { getProfile } from "../../services/api";
-import { Profile } from "../../types/profile";
 import axios from "axios";
 import { Spinner } from "flowbite-react";
-// import { getAccount } from "../../services/api";
+import Chat from "../../pages/Channel/Chat/Chat";
+import { profileDecoder } from "../../types/profile";
 
 export default function App() {
   const { loading, account } = useStoreWithInitializer(({ app }) => app, load);
@@ -19,6 +24,10 @@ export default function App() {
       {!loading ? (
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route
+            path="/chat"
+            element={accountIsLogged ? <Chat /> : <Navigate to="/" />}
+          />
           {/* <Route path="/profiles/:id" element = {<Profile />}/> */}
         </Routes>
       ) : (
@@ -35,21 +44,22 @@ async function load() {
   if (!store.getState().app.loading || !token) {
     store.dispatch(endLoad());
     return;
-  } else {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    const user: any = await getProfile();
-    if (user !== undefined) {
-      const account: Account = {
-        email: user.email,
-        token: token,
-      };
-      store.dispatch(loadAccount(account));
-    }
   }
-  // store.dispatch(loadAccount(account))
-  // try {
-  //   store.dispatch(loadUser(await getAccount()));
-  // } catch {
-  //   store.dispatch(endLoad());
-  // }
+  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  const user: any = await getProfile().catch(() => {
+    console.log("Cannot get profile");
+    store.dispatch(logout());
+    store.dispatch(endLoad());
+    return;
+  });
+  // const a = profileDecoder.verify(user);
+  // console.log(a);
+  if (user !== undefined) {
+    const account: Account = {
+      token: token,
+    };
+    store.dispatch(loadProfile(user));
+    store.dispatch(loadAccount(account));
+  }
+  store.dispatch(endLoad());
 }

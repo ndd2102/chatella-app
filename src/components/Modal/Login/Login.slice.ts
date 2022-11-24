@@ -5,7 +5,6 @@ export interface LoginState {
     email: string;
     password: string;
   };
-  error: string;
   loginIn: boolean;
 }
 
@@ -14,7 +13,6 @@ const initialState: LoginState = {
     email: "",
     password: "",
   },
-  error: "",
   loginIn: false,
 };
 
@@ -23,14 +21,8 @@ const slice = createSlice({
   initialState,
   reducers: {
     initializeLogin: () => initialState,
-    loginErrors: (
-      state,
-      { payload: { errorMessage } }: PayloadAction<{ errorMessage: string }>
-    ) => {
+    loginErrors: (state) => {
       state.loginIn = false;
-      state.error = errorMessage;
-      console.log("loginError called");
-      console.log("slice error " + errorMessage);
     },
     updateField: (
       state,

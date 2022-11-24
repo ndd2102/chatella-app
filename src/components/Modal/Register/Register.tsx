@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { store, dispatchOnCall } from "../../state/store";
-import { useStoreWithInitializer } from "../../state/storeHooks";
-import { initializeLogin, loginErrors, LoginState } from "./Login.slice";
-import { getProfile, login } from "../../services/api";
-import { updateField } from "./Login.slice";
+import {
+  initializeRegister,
+  registerErrors,
+  RegisterState,
+  updateField,
+} from "./Register.slice";
 import {
   Button,
   Checkbox,
@@ -14,13 +14,16 @@ import {
   Toast,
 } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
+import { useStoreWithInitializer } from "../../../state/storeHooks";
+import { dispatchOnCall, store } from "../../../state/store";
+import { register } from "../../../services/api";
 
-export default function Login() {
+export default function Register() {
   const { account } = useStoreWithInitializer(
-    ({ login }) => login,
-    dispatchOnCall(initializeLogin())
+    ({ register }) => register,
+    dispatchOnCall(initializeRegister())
   );
-  const navigate = useNavigate();
+
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
@@ -28,12 +31,7 @@ export default function Login() {
   return (
     <div>
       <React.Fragment>
-        <Button
-          className="bg-sky-50 text-sky-800 hover:bg-sky-100"
-          onClick={() => setShow(true)}
-        >
-          Sign in
-        </Button>
+        <Button onClick={() => setShow(true)}>Sign up</Button>
         <Modal
           show={show}
           size="md"
@@ -45,7 +43,7 @@ export default function Login() {
           <Modal.Body>
             <form className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                Sign in to our platform
+                Sign up to our platform
               </h3>
               <div>
                 <div className="mb-2 block">
@@ -53,6 +51,7 @@ export default function Login() {
                 </div>
                 <TextInput
                   id="email"
+                  type="email"
                   name="email"
                   placeholder="name@company.com"
                   required={true}
@@ -72,17 +71,24 @@ export default function Login() {
                   onChange={handleChange}
                 />
               </div>
+              <div>
+                <div className="mb-2 block">
+                  <Label htmlFor="password" value="Confirm your password" />
+                </div>
+                <TextInput
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  required={true}
+                  onChange={handleChange}
+                />
+              </div>
               <div className="flex justify-between">
                 <div className="flex items-center gap-2">
                   <Checkbox id="remember" />
                   <Label htmlFor="remember">Remember me</Label>
                 </div>
-                <a
-                  href="/modal"
-                  className="text-sm text-blue-700 hover:underline dark:text-blue-500"
-                >
-                  Lost Password?
-                </a>
               </div>
               {error && (
                 <Toast>
@@ -95,17 +101,8 @@ export default function Login() {
               )}
               <div className="w-full">
                 <Button className="w-full" onClick={handleSubmit}>
-                  Log in to your account
+                  Sign up to your account
                 </Button>
-              </div>
-              <div className="text-center text-sm font-medium text-gray-500 dark:text-gray-300">
-                Not registered?{" "}
-                <a
-                  href="/modal"
-                  className="text-blue-700 hover:underline dark:text-blue-500"
-                >
-                  Create account
-                </a>
               </div>
             </form>
           </Modal.Body>
@@ -118,24 +115,23 @@ export default function Login() {
     setError(false);
     store.dispatch(
       updateField({
-        name: event.target.name as keyof LoginState["account"],
+        name: event.target.name as keyof RegisterState["account"],
         value: event.target.value,
       })
     );
   }
 
-  async function handleSubmit(ev: React.FormEvent) {
-    console.log(getProfile());
-    ev.preventDefault();
-    login(account.email, account.password).catch((error) => {
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    if (account.password !== account.confirmPassword) {
       setError(true);
-      store.dispatch(loginErrors);
-      setErrorMessage(error.response.data.error);
-      return;
-    });
-    if (store.getState().login.loginIn) {
-      setShow(false);
-      navigate("/");
+      setErrorMessage("Password not match!");
+    } else {
+      await register(account.email, account.password).catch((err) => {
+        setError(true);
+        setErrorMessage(err.response.data.error);
+        store.dispatch(registerErrors());
+      });
     }
   }
 }

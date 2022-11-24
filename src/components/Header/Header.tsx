@@ -1,21 +1,18 @@
 import { Avatar, Button, Dropdown, Navbar } from "flowbite-react";
 import { NavbarCollapse } from "flowbite-react/lib/esm/components/Navbar/NavbarCollapse";
-
 import { useNavigate } from "react-router-dom";
-
-import { HashRouter, NavLink } from "react-router-dom";
-import ChangePassword from "../../pages/ChangePassword/ChangePassword";
-
-import Login from "../../pages/Login/Login";
-import Register from "../../pages/Register/Register";
+import Login from "../Modal/Login/Login";
 import { store } from "../../state/store";
 import { useStore } from "../../state/storeHooks";
 import { Account } from "../../types/account";
-import { UserInfo } from "../../pages/UserInfo/UserInfo";
 import { logout } from "../App/App.slice";
+import Register from "../Modal/Register/Register";
+import { UserInfo } from "../Modal/UserInfo/UserInfo";
+import { Profile } from "../../types/profile";
+import CreateChannel from "../Modal/CreateChannel/CreateChannel";
 
 export default function Header() {
-  const { account } = useStore(({ app }) => app);
+  const { profile } = useStore(({ app }) => app);
 
   return (
     <>
@@ -29,9 +26,9 @@ export default function Header() {
             Chatella
           </span>
         </Navbar.Brand>
-        {account.match({
+        {profile.match({
           none: () => <GuestLinks />,
-          some: (account) => <UserLinks account={account} />,
+          some: (profile) => <UserLinks profile={profile} />,
         })}
       </Navbar>
     </>
@@ -44,13 +41,16 @@ function GuestLinks() {
       <div className="flex ml-auto space-x-14 mx-4">
         <Login />
         <Register />
-        <ChangePassword />
       </div>
     </NavbarCollapse>
   );
 }
 
-function UserLinks({ account: { email } }: { account: Account }) {
+function UserLinks({
+  profile: { email, name, dateOfBirth, country, avatar },
+}: {
+  profile: Profile;
+}) {
   const navigate = useNavigate();
   const logOutButton = () => {
     store.dispatch(logout());
@@ -65,28 +65,28 @@ function UserLinks({ account: { email } }: { account: Account }) {
         <Navbar.Link href="/chat">Chat</Navbar.Link>
       </NavbarCollapse>
 
-      <Button className="bg-blue-700">Create</Button>
+      <CreateChannel />
       <div className="grow justify-items-end">
         <div className="float-right">
           <Dropdown
-            label={
-              <Avatar
-                alt="User settings"
-                img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                rounded={true}
-              />
-            }
+            label={<Avatar alt="User settings" img={avatar} rounded={true} />}
             arrowIcon={false}
             inline={true}
           >
             <Dropdown.Header>
-              <span className="block text-sm">Bonnie Green</span>
+              <span className="block text-sm">{name}</span>
               <span className="block truncate text-sm font-medium">
                 {email}
               </span>
             </Dropdown.Header>
             <Dropdown.Item>
-              <UserInfo />
+              <UserInfo
+                avatar={avatar}
+                name={name}
+                dateOfBirth={dateOfBirth}
+                email={email}
+                country={country}
+              />
             </Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item onClick={logOutButton}>Log out</Dropdown.Item>

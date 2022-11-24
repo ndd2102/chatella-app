@@ -1,6 +1,6 @@
 export interface Channel {
   id: number;
-  title: string;
+  name: string;
   memberId: number;
   memberName: string;
   role: number;

@@ -1,11 +1,9 @@
 import axios from "axios";
-import { endLoad } from "../components/App/App.slice";
 import settings from "../config/settings";
-import { startLoginIn } from "../pages/Login/Login.slice";
-import { startSigningUp } from "../pages/Register/Register.slice";
 import { store } from "../state/store";
 import { Account, loadAccountIntoApp } from "../types/account";
 import { Profile } from "../types/profile";
+import { startSigningUp } from "../components/Modal/Register/Register.slice";
 
 axios.defaults.baseURL = settings.baseApiUrl;
 
@@ -18,14 +16,13 @@ export async function login(email: string, password: string) {
     .then((response) => {
       console.log(response);
       if (response.data.status) {
-        store.dispatch(startLoginIn());
         const account: Account = {
-          email: email,
           token: response.data.data.token,
         };
         loadAccountIntoApp(account);
       }
     });
+  return "";
 }
 
 export async function register(email: string, password: string) {
@@ -38,7 +35,12 @@ export async function register(email: string, password: string) {
       store.dispatch(startSigningUp());
     });
 }
-export async function changePassword(email: string, password: string, newPassword: string) {
+
+export async function changePassword(
+  email: string,
+  password: string,
+  newPassword: string
+) {
   await axios
     .patch("account/change-password", {
       email: email,
@@ -46,41 +48,32 @@ export async function changePassword(email: string, password: string, newPasswor
       newPassword: newPassword,
     })
     .then((response) => {
-      /*if (response.data.status) {
-        store.dispatch(startLoginIn());
-        const account: Account = {
-          email: email,
-          token: response.data.data.token,
-        };
-        loadAccountIntoApp(account);
-      }*/
       console.log(response);
     });
 }
 
 export async function getProfile(): Promise<Profile> {
   let profile: any;
-  await axios
-    .get("account/profile/current-profile")
-    .then((response) => {
-      profile = {
-        userId: response.data.data.id,
-        email: response.data.data.email,
-        name: response.data.data.name,
-        avatar: response.data.data.avatar,
-        sex: response.data.data.sex,
-        dateOfBirth: response.data.data.dob,
-        phoneNumber: response.data.data.phone,
-        country: response.data.data.national,
-        createdDate: response.data.data.createdDate,
-      };
-    })
-    .catch(() => {
-      store.dispatch(endLoad);
-    });
+  await axios.get("account/profile/current-profile").then((response) => {
+    profile = {
+      userId: response.data.data.id,
+      email: response.data.data.email,
+      name: response.data.data.name,
+      avatar: response.data.data.avatar,
+      sex: response.data.data.sex,
+      dateOfBirth: response.data.data.dob,
+      country: response.data.data.national,
+    };
+  });
   return profile;
 }
-// export async function getAccount(): Promise<Account> {
-//   const { data } = await axios.get("account");
-//   return guard(object({ account: accountDecoder }))(data).account;
-// }
+
+export async function resendEmail() {
+  await axios.post("mail/validate-email");
+}
+
+export async function createChannel(channelName: string) {
+  await axios.post("channel/create-channel").then(() => {
+    console.log(`Create channel ${channelName} successfully`);
+  });
+}

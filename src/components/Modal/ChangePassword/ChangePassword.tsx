@@ -1,37 +1,26 @@
-import React, { useState } from "react";
-import { register } from "../../services/api";
-import {
-  initializeRegister,
-  registerErrors,
-  RegisterState,
-  updateField,
-} from "./Register.slice";
-import { useStoreWithInitializer } from "../../state/storeHooks";
-import { store, dispatchOnCall } from "../../state/store";
-import {
-  Button,
-  Checkbox,
-  Label,
-  Modal,
-  TextInput,
-  Toast,
-} from "flowbite-react";
 import { Exclamation } from "heroicons-react";
+import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
+import React, { useState } from "react";
+import { changePassword } from "../../../services/api";
 
-export default function Register() {
-  const { account } = useStoreWithInitializer(
-    ({ register }) => register,
-    dispatchOnCall(initializeRegister())
-  );
+export default function ChangePassword() {
+  const account = {
+    email: "",
+    password: "",
+    newPassword: "",
+    confirmNewPassword: "",
+  };
 
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
 
   return (
-    <div>
+    <div className="float-right">
       <React.Fragment>
-        <Button onClick={() => setShow(true)}>Sign up</Button>
+        <Button color="gray" onClick={() => setShow(true)}>
+          Change Password
+        </Button>
         <Modal
           show={show}
           size="md"
@@ -43,7 +32,7 @@ export default function Register() {
           <Modal.Body>
             <form className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                Sign up to our platform
+                Change your password
               </h3>
               <div>
                 <div className="mb-2 block">
@@ -55,7 +44,9 @@ export default function Register() {
                   name="email"
                   placeholder="name@company.com"
                   required={true}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
                 />
               </div>
               <div>
@@ -68,12 +59,29 @@ export default function Register() {
                   name="password"
                   placeholder="••••••••"
                   required={true}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
                 />
               </div>
               <div>
                 <div className="mb-2 block">
-                  <Label htmlFor="password" value="Confirm your password" />
+                  <Label htmlFor="password" value="New password" />
+                </div>
+                <TextInput
+                  id="password"
+                  type="password"
+                  name="newPassword"
+                  placeholder="••••••••"
+                  required={true}
+                  onChange={(e) => {
+                    setNewPassword(e.target.value);
+                  }}
+                />
+              </div>
+              <div>
+                <div className="mb-2 block">
+                  <Label htmlFor="password" value="Confirm your new password" />
                 </div>
                 <TextInput
                   id="confirmPassword"
@@ -81,14 +89,10 @@ export default function Register() {
                   type="password"
                   placeholder="••••••••"
                   required={true}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                  }}
                 />
-              </div>
-              <div className="flex justify-between">
-                <div className="flex items-center gap-2">
-                  <Checkbox id="remember" />
-                  <Label htmlFor="remember">Remember me</Label>
-                </div>
               </div>
               {error && (
                 <Toast>
@@ -101,7 +105,7 @@ export default function Register() {
               )}
               <div className="w-full">
                 <Button className="w-full" onClick={handleSubmit}>
-                  Sign up to your account
+                  Change Password
                 </Button>
               </div>
             </form>
@@ -111,26 +115,35 @@ export default function Register() {
     </div>
   );
 
-  function handleChange(event: { target: { name: any; value: any } }) {
+  function setEmail(value: string) {
+    account.email = value;
+  }
+  function setPassword(value: string) {
+    account.password = value;
+  }
+  function setNewPassword(value: string) {
+    account.newPassword = value;
+  }
+
+  function setConfirmPassword(value: string) {
     setError(false);
-    store.dispatch(
-      updateField({
-        name: event.target.name as keyof RegisterState["account"],
-        value: event.target.value,
-      })
-    );
+    account.confirmNewPassword = value;
   }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (account.password !== account.confirmPassword) {
+    if (account.newPassword !== account.confirmNewPassword) {
       setError(true);
       setErrorMessage("Password not match!");
     } else {
-      await register(account.email, account.password).catch((err) => {
+      await changePassword(
+        account.email,
+        account.password,
+        account.newPassword
+      ).catch((err) => {
         setError(true);
         setErrorMessage(err.response.data.error);
-        store.dispatch(registerErrors());
+        //store.dispatch();
       });
     }
   }
