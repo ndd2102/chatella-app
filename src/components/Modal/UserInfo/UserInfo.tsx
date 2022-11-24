@@ -7,14 +7,12 @@ import {
   Select,
   TextInput,
 } from "flowbite-react";
-import { getProfile } from "../../../services/api";
 import { Profile } from "../../../types/profile";
-import { useStore } from "../../../state/storeHooks";
 import ChangePassword from "../ChangePassword/ChangePassword";
 
 export function UserInfo(props: {
-  avatar: string | undefined;
-  name: string | undefined;
+  avatar: string;
+  name: string;
   email: string;
   country: string | undefined;
   dateOfBirth: string | undefined;
