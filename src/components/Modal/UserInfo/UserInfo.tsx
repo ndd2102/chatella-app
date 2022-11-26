@@ -8,18 +8,27 @@ import {
   TextInput,
 } from "flowbite-react";
 import { Profile } from "../../../types/profile";
+import { store, dispatchOnCall } from "../../../state/store";
 import ChangePassword from "../ChangePassword/ChangePassword";
+import { updateProfile } from "../../../services/api";
+
 
 export function UserInfo(props: {
   avatar: string;
   name: string;
   email: string;
+  sex : string | undefined
   country: string | undefined;
   dateOfBirth: string | undefined;
 }) {
   // const { profile } = useStore(({ app }) => app);
-
-  const [profileInput] = useState<Profile>();
+  const initialState = {
+    name : "",
+    sex : "",
+    dateOfBirth : "",
+    country : ""
+  }
+  const [profileInput, setProfileInput] = useState(initialState);
   const [show, setShow] = useState(false);
 
   // useEffect(() => {
@@ -78,12 +87,13 @@ export function UserInfo(props: {
                   <Label value="Sex" />
                   <Select
                     onChange={handleChange}
+                    
                     id="sex"
                     name="sex"
                     required={true}
-                    defaultValue="Male"
+                    defaultValue={props.sex || "Male"}
                   >
-                    <option>Female</option>
+                   <option>Female</option>
                     <option>Male</option>
                     <option>Other</option>
                   </Select>
@@ -93,7 +103,7 @@ export function UserInfo(props: {
                   <TextInput
                     id="country"
                     name="country"
-                    defaultValue={props.country ? props.country : "Việt Nam"}
+                    defaultValue={props.country || "Việt Nam"}
                     onChange={handleChange}
                   />
                 </div>
@@ -126,11 +136,12 @@ export function UserInfo(props: {
   );
 
   function handleChange(event: { target: { name: any; value: any } }) {
-    if (profileInput !== undefined) {
-      // profileInput[event.target.name as keyof Profile] = event.target.value;
-    }
-    console.log(profileInput);
-  }
+   
+      setProfileInput({...profileInput, [event.target.name]:event.target.value})
+}
 
-  function onSubmit() {}
+  async function onSubmit() {
+    await updateProfile(profileInput.name, profileInput.dateOfBirth, profileInput.sex, profileInput.country)
+    console.log(profileInput);}
+  
 }

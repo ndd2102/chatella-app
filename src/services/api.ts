@@ -53,7 +53,7 @@ export async function changePassword(
 }
 
 export async function getProfile(): Promise<Profile> {
-  let profile: any;
+  let profile: any
   await axios.get("account/profile/current-profile").then((response) => {
     profile = {
       userId: response.data.data.id,
@@ -66,6 +66,21 @@ export async function getProfile(): Promise<Profile> {
     };
   });
   return profile;
+}
+
+export async function updateProfile(
+  name : String,
+  dob : String,
+  sex : String,
+  national : String
+
+) {
+  await axios.patch("account/profile/current-profile", {
+      name: name,
+      dob: dob,
+      sex: sex,
+      national: national
+    });
 }
 
 export async function resendEmail() {
