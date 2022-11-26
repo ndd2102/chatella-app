@@ -134,13 +134,17 @@ export default function Login() {
 
   async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
+    store.dispatch(startLoginIn());
     await login(account.email, account.password).catch((error) => {
       setError(true);
       setErrorMessage(error.response.data.error);
+      store.dispatch(loginErrors);
       return;
     });
 
-    store.dispatch(startLoginIn());
+    if (store.getState().login.loginIn) {
+      return;
+    }
 
     const user: any = await getProfile().catch((error) => {
       store.dispatch(loginErrors());
