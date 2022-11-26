@@ -47,7 +47,7 @@ function GuestLinks() {
 }
 
 function UserLinks({
-  profile: { email, name, dateOfBirth, country, avatar },
+  profile: { email, name, dateOfBirth, country, avatar,sex},
 }: {
   profile: Profile;
 }) {
@@ -86,6 +86,8 @@ function UserLinks({
                 dateOfBirth={dateOfBirth}
                 email={email}
                 country={country}
+                sex={sex}
+                
               />
             </Dropdown.Item>
             <Dropdown.Divider />
