@@ -121,9 +121,23 @@ export default function Register() {
     );
   }
 
+  function checkPassword(pass: string) {
+    const validPassword = new RegExp(
+      "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{6,14}$"
+    );
+    if (!validPassword.test(pass)) {
+      return false;
+    } else return true;
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (account.password !== account.confirmPassword) {
+    if (!checkPassword(account.password)) {
+      setError(true);
+      setErrorMessage(
+        "Password must be 6-14 characters long, contain at least 1 uppercase letter and at least 1 special character!"
+      );
+    } else if (account.password !== account.confirmPassword) {
       setError(true);
       setErrorMessage("Password not match!");
     } else {
