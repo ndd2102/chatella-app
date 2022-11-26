@@ -138,11 +138,11 @@ export default function Login() {
     await login(account.email, account.password).catch((error) => {
       setError(true);
       setErrorMessage(error.response.data.error);
-      store.dispatch(loginErrors);
+      store.dispatch(loginErrors());
       return;
     });
 
-    if (store.getState().login.loginIn) {
+    if (!store.getState().login.loginIn) {
       return;
     }
 
