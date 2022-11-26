@@ -73,7 +73,6 @@ export async function updateProfile(
   dob : String,
   sex : String,
   national : String
-
 ) {
   await axios.patch("account/profile/current-profile", {
       name: name,
