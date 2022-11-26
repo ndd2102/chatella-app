@@ -25,8 +25,6 @@ export default function Register() {
   );
 
   const [errorMessage, setErrorMessage] = useState("");
-  const [errorPasswordMessage, setErrorPasswordMessage] = useState("");
-  const [errorpass, setErrorpass] = useState(false);
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
 
@@ -73,17 +71,6 @@ export default function Register() {
                   onChange={handleChange}
                 />
               </div>
-
-              {error && (
-                <Toast>
-                  <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
-                    <Exclamation className="h-5 w-5" />
-                  </div>
-                  <div className="ml-3 text-sm font-normal">{errorPasswordMessage}</div>
-                  <Toast.Toggle />
-                </Toast>
-              )}
-
               <div>
                 <div className="mb-2 block">
                   <Label htmlFor="password" value="Confirm your password" />
@@ -134,24 +121,25 @@ export default function Register() {
     );
   }
 
-  function checkPassword( pass:string ) {
-    const validPassword = new RegExp('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{6,14}$');
-    if(!validPassword.test(pass)){
-      return false
-    }
-    else return true;
+  function checkPassword(pass: string) {
+    const validPassword = new RegExp(
+      "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{6,14}$"
+    );
+    if (!validPassword.test(pass)) {
+      return false;
+    } else return true;
   }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if(!checkPassword(account.password))
-    {
-      setErrorpass(true);
-      setErrorPasswordMessage("Password must have!");
-    }
-    if (account.password !== account.confirmPassword) {
+    if (!checkPassword(account.password)) {
       setError(true);
-      setErrorMessage("Password must be 6-14 characters long, contain at least 1 uppercase letter and at least 1 special character!");
+      setErrorMessage(
+        "Password must be 6-14 characters long, contain at least 1 uppercase letter and at least 1 special character!"
+      );
+    } else if (account.password !== account.confirmPassword) {
+      setError(true);
+      setErrorMessage("Password not match!");
     } else {
       await register(account.email, account.password).catch((err) => {
         setError(true);
