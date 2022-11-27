@@ -146,6 +146,10 @@ export default function ChangePassword({ email }: { email: string }) {
         setError(true);
         setErrorMessage(err.response.data.error);
       });
+      if (error) {
+        return;
+      }
+      window.location.reload();
     }
   }
 }
