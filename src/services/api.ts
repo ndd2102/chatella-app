@@ -53,7 +53,7 @@ export async function changePassword(
 }
 
 export async function getProfile(): Promise<Profile> {
-  let profile: any
+  let profile: any;
   await axios.get("account/profile/current-profile").then((response) => {
     profile = {
       userId: response.data.data.id,
@@ -69,22 +69,22 @@ export async function getProfile(): Promise<Profile> {
 }
 
 export async function updateProfile(
-  name : string,
-  dob : string,
-  sex : string,
-  national : string
+  name: string,
+  dob: string,
+  sex: string,
+  national: string
 ) {
   await axios.patch("account/profile/current-profile", {
-      name: name,
-      dob: dob,
-      sex: sex,
-      national: national
-    });
+    name: name,
+    dob: dob,
+    sex: sex,
+    national: national,
+  });
 }
 
-export async function resendEmail(email : string) {
+export async function resendEmail(email: string) {
   await axios.post("mail/validate-email", {
-    email : email
+    email: email,
   });
 }
 
@@ -92,8 +92,4 @@ export async function createChannel(channelName: string) {
   await axios.post("channel/create-channel").then(() => {
     console.log(`Create channel ${channelName} successfully`);
   });
-}
-export interface GenericResponse {
-  status: string;
-  message: string;
 }

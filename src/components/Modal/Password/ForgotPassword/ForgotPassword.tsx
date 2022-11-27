@@ -1,6 +1,6 @@
 import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
 import React, { useState } from "react";
-import { resendEmail } from "../../../../services/api"
+import { resendEmail } from "../../../../services/api";
 import { Exclamation } from "heroicons-react";
 
 function ForgotPassword() {
@@ -76,16 +76,15 @@ function ForgotPassword() {
       </React.Fragment>
     </>
   );
-  function handleChange(event: { target: {value: any } }) {
-    setError(false)
-    setEmail(event.target.value)
+  function handleChange(event: { target: { value: any } }) {
+    setError(false);
+    setEmail(event.target.value);
   }
   async function onSubmit() {
     await resendEmail(email).catch((error) => {
       setError(true);
       setErrorMessage(error.response.data.error);
-    })
-    
+    });
   }
 }
 
