@@ -136,12 +136,28 @@ export function UserInfo(props: {
   );
 
   function handleChange(event: { target: { name: any; value: any } }) {
-   
-      setProfileInput({...profileInput, [event.target.name]:event.target.value})
+   if(props.dateOfBirth !== undefined && props.sex !== undefined && props.country !== undefined){
+    if(profileInput.name == "") {
+      profileInput.name = props.name
+    } 
+    if(profileInput.dateOfBirth == "") {
+      profileInput.dateOfBirth = props.dateOfBirth
+    } 
+    if(profileInput.sex == "") {
+      profileInput.sex = props.sex
+    } 
+    if(profileInput.country == "") {
+      profileInput.country = props.country
+    }
+  }
+
+    setProfileInput({...profileInput, [event.target.name]:event.target.value})
 }
 
   async function onSubmit() {
+    if(profileInput.name !== "" && profileInput.dateOfBirth !== "" && profileInput.sex !== "" && profileInput.country !== "") {
     await updateProfile(profileInput.name, profileInput.dateOfBirth, profileInput.sex, profileInput.country)
-    console.log(profileInput);}
-  
+    window.location.reload()
+    }
+  }
 }
