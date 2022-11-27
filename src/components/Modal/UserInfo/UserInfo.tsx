@@ -11,6 +11,7 @@ import { Profile } from "../../../types/profile";
 import { store, dispatchOnCall } from "../../../state/store";
 import ChangePassword from "../ChangePassword/ChangePassword";
 import { updateProfile } from "../../../services/api";
+import { setMaxListeners } from "events";
 
 
 export function UserInfo(props: {
@@ -23,10 +24,10 @@ export function UserInfo(props: {
 }) {
   // const { profile } = useStore(({ app }) => app);
   const initialState = {
-    name : "",
-    sex : "",
-    dateOfBirth : "",
-    country : ""
+    name : props.name,
+    sex : props.sex,
+    dateOfBirth : props.dateOfBirth,
+    country : props.country
   }
   const [profileInput, setProfileInput] = useState(initialState);
   const [show, setShow] = useState(false);
@@ -114,9 +115,7 @@ export function UserInfo(props: {
                   <TextInput
                     id="dateOfBirth"
                     name="dateOfBirth"
-                    defaultValue={
-                      props.dateOfBirth ? props.dateOfBirth : "1/1/2002"
-                    }
+                    defaultValue={props.dateOfBirth}
                     type="date"
                     onChange={handleChange}
                   />
@@ -136,26 +135,11 @@ export function UserInfo(props: {
   );
 
   function handleChange(event: { target: { name: any; value: any } }) {
-   if(props.dateOfBirth !== undefined && props.sex !== undefined && props.country !== undefined){
-    if(profileInput.name == "") {
-      profileInput.name = props.name
-    } 
-    if(profileInput.dateOfBirth == "") {
-      profileInput.dateOfBirth = props.dateOfBirth
-    } 
-    if(profileInput.sex == "") {
-      profileInput.sex = props.sex
-    } 
-    if(profileInput.country == "") {
-      profileInput.country = props.country
-    }
+    setProfileInput({...profileInput, [event.target.name]:event.target.value})
   }
 
-    setProfileInput({...profileInput, [event.target.name]:event.target.value})
-}
-
   async function onSubmit() {
-    if(profileInput.name !== "" && profileInput.dateOfBirth !== "" && profileInput.sex !== "" && profileInput.country !== "") {
+    if(profileInput.name !== "" && profileInput.dateOfBirth !== undefined && profileInput.sex !== undefined && profileInput.country !== undefined) {
     await updateProfile(profileInput.name, profileInput.dateOfBirth, profileInput.sex, profileInput.country)
     window.location.reload()
     }
