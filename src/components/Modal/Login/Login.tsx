@@ -20,6 +20,7 @@ import {
 } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
 import { loadProfile } from "../../App/App.slice";
+import ForgotPassword from "../Password/ForgotPassword/ForgotPassword";
 
 export default function Login() {
   const { account } = useStoreWithInitializer(
@@ -85,12 +86,7 @@ export default function Login() {
                   <Checkbox id="remember" />
                   <Label htmlFor="remember">Remember me</Label>
                 </div>
-                <a
-                  href="/modal"
-                  className="text-sm text-blue-700 hover:underline dark:text-blue-500"
-                >
-                  Lost Password?
-                </a>
+                <ForgotPassword />
               </div>
               {error && (
                 <Toast>
@@ -105,15 +101,6 @@ export default function Login() {
                 <Button className="w-full" onClick={handleSubmit}>
                   Log in to your account
                 </Button>
-              </div>
-              <div className="text-center text-sm font-medium text-gray-500 dark:text-gray-300">
-                Not registered?{" "}
-                <a
-                  href="/modal"
-                  className="text-blue-700 hover:underline dark:text-blue-500"
-                >
-                  Create account
-                </a>
               </div>
             </form>
           </Modal.Body>

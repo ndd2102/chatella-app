@@ -1,19 +1,19 @@
 import { Button, Label, Modal, TextInput } from "flowbite-react";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { createChannel } from "../../../services/api";
 
-export default function CreateChannel() {
+function ForgotPassword() {
   const [show, setShow] = useState(false);
-  const [channelName, setChannelName] = useState("");
-  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
 
   return (
     <>
       <React.Fragment>
-        <Button gradientMonochrome="info" onClick={() => setShow(true)}>
-          Create
-        </Button>
+        <p
+          className="text-sm font-medium text-blue-800 hover:underline underline-offset-1 hover:cursor-pointer"
+          onClick={() => setShow(true)}
+        >
+          Lost password?
+        </p>
         <Modal
           show={show}
           size="xl"
@@ -25,20 +25,25 @@ export default function CreateChannel() {
           <Modal.Body>
             <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                Create new channel
+                Forgot Password
               </h3>
-              <div>
-                <div className="mb-2 block">
-                  <Label value="Channel Name" />
+
+              <div className="w-full">
+                <p>
+                  Please enter your email and we will send you instructions on
+                  how to reset your password!
+                </p>
+                <div className="mt-4">
+                  <Label>Email</Label>
+                  <TextInput
+                    type="email"
+                    id="email"
+                    name="email"
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </div>
-                <TextInput
-                  id="channelName"
-                  onChange={(e) => {
-                    setChannelName(e.target.value);
-                  }}
-                  required={true}
-                />
               </div>
+
               <div className="flex flex-wrap gap-6 my-auto">
                 <div className="ml-auto flex flex-wrap gap-6">
                   <Button
@@ -58,9 +63,7 @@ export default function CreateChannel() {
       </React.Fragment>
     </>
   );
-
-  async function onSubmit() {
-    await createChannel(channelName);
-    // navigate("/channel");
-  }
+  function onSubmit() {}
 }
+
+export default ForgotPassword;

@@ -1,7 +1,7 @@
 import { Exclamation } from "heroicons-react";
 import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
 import React, { useState } from "react";
-import { changePassword } from "../../../services/api";
+import { changePassword } from "../../../../services/api";
 
 export default function ChangePassword({ email }: { email: string }) {
   const initialState = {

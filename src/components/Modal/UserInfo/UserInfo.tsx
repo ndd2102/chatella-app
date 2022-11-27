@@ -8,7 +8,7 @@ import {
   TextInput,
 } from "flowbite-react";
 
-import ChangePassword from "../ChangePassword/ChangePassword";
+import ChangePassword from "../Password/ChangePassword/ChangePassword";
 import { updateProfile } from "../../../services/api";
 
 export function UserInfo(props: {

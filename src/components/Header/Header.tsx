@@ -1,15 +1,14 @@
-import { Avatar, Button, Dropdown, Navbar } from "flowbite-react";
+import { Avatar, Dropdown, Navbar } from "flowbite-react";
 import { NavbarCollapse } from "flowbite-react/lib/esm/components/Navbar/NavbarCollapse";
 import { useNavigate } from "react-router-dom";
 import Login from "../Modal/Login/Login";
 import { store } from "../../state/store";
 import { useStore } from "../../state/storeHooks";
-import { Account } from "../../types/account";
 import { logout } from "../App/App.slice";
 import Register from "../Modal/Register/Register";
 import { UserInfo } from "../Modal/UserInfo/UserInfo";
 import { Profile } from "../../types/profile";
-import CreateChannel from "../Modal/CreateChannel/CreateChannel";
+import CreateChannel from "../Modal/Channel/CreateChannel/CreateChannel";
 
 export default function Header() {
   const { profile } = useStore(({ app }) => app);
