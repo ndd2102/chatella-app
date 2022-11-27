@@ -1,9 +1,13 @@
-import { Button, Label, Modal, TextInput } from "flowbite-react";
+import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
 import React, { useState } from "react";
+import { resendEmail } from "../../../../services/api"
+import { Exclamation } from "heroicons-react";
 
 function ForgotPassword() {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState(false);
 
   return (
     <>
@@ -39,10 +43,19 @@ function ForgotPassword() {
                     type="email"
                     id="email"
                     name="email"
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
+              {error && (
+                <Toast>
+                  <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
+                    <Exclamation className="h-5 w-5" />
+                  </div>
+                  <div className="ml-3 text-sm font-normal">{errorMessage}</div>
+                  <Toast.Toggle />
+                </Toast>
+              )}
 
               <div className="flex flex-wrap gap-6 my-auto">
                 <div className="ml-auto flex flex-wrap gap-6">
@@ -63,7 +76,17 @@ function ForgotPassword() {
       </React.Fragment>
     </>
   );
-  function onSubmit() {}
+  function handleChange(event: { target: {value: any } }) {
+    setError(false)
+    setEmail(event.target.value)
+  }
+  async function onSubmit() {
+    await resendEmail(email).catch((error) => {
+      setError(true);
+      setErrorMessage(error.response.data.error);
+    })
+    
+  }
 }
 
 export default ForgotPassword;

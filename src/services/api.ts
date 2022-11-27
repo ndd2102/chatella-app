@@ -69,10 +69,10 @@ export async function getProfile(): Promise<Profile> {
 }
 
 export async function updateProfile(
-  name : String,
-  dob : String,
-  sex : String,
-  national : String
+  name : string,
+  dob : string,
+  sex : string,
+  national : string
 ) {
   await axios.patch("account/profile/current-profile", {
       name: name,
@@ -82,8 +82,10 @@ export async function updateProfile(
     });
 }
 
-export async function resendEmail() {
-  await axios.post("mail/validate-email");
+export async function resendEmail(email : string) {
+  await axios.post("mail/validate-email", {
+    email : email
+  });
 }
 
 export async function createChannel(channelName: string) {
