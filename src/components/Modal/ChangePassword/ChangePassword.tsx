@@ -3,22 +3,23 @@ import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
 import React, { useState } from "react";
 import { changePassword } from "../../../services/api";
 
-export default function ChangePassword() {
-  const account = {
-    email: "",
+export default function ChangePassword({ email }: { email: string }) {
+  const initialState = {
+    email: email,
     password: "",
     newPassword: "",
     confirmNewPassword: "",
   };
+  const [changePasswordInput, setChangePasswordInput] = useState(initialState);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
 
   return (
-    <div className="float-right">
+    <div className="w-full">
       <React.Fragment>
-        <Button color="gray" onClick={() => setShow(true)}>
+        <Button className="w-full" color="gray" onClick={() => setShow(true)}>
           Change Password
         </Button>
         <Modal
@@ -39,14 +40,11 @@ export default function ChangePassword() {
                   <Label htmlFor="email" value="Your email" />
                 </div>
                 <TextInput
-                  id="email"
                   type="email"
                   name="email"
-                  placeholder="name@company.com"
-                  required={true}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                  }}
+                  defaultValue={email}
+                  readOnly={true}
+                  disabled={true}
                 />
               </div>
               <div>
@@ -54,14 +52,11 @@ export default function ChangePassword() {
                   <Label htmlFor="password" value="Your password" />
                 </div>
                 <TextInput
-                  id="password"
                   type="password"
                   name="password"
                   placeholder="••••••••"
                   required={true}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                  }}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -69,14 +64,11 @@ export default function ChangePassword() {
                   <Label htmlFor="password" value="New password" />
                 </div>
                 <TextInput
-                  id="password"
                   type="password"
                   name="newPassword"
                   placeholder="••••••••"
                   required={true}
-                  onChange={(e) => {
-                    setNewPassword(e.target.value);
-                  }}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -84,14 +76,11 @@ export default function ChangePassword() {
                   <Label htmlFor="password" value="Confirm your new password" />
                 </div>
                 <TextInput
-                  id="confirmPassword"
-                  name="confirmPassword"
+                  name="confirmNewPassword"
                   type="password"
                   placeholder="••••••••"
                   required={true}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                  }}
+                  onChange={handleChange}
                 />
               </div>
               {error && (
@@ -115,35 +104,47 @@ export default function ChangePassword() {
     </div>
   );
 
-  function setEmail(value: string) {
-    account.email = value;
-  }
-  function setPassword(value: string) {
-    account.password = value;
-  }
-  function setNewPassword(value: string) {
-    account.newPassword = value;
+  function handleChange(event: { target: { name: any; value: any } }) {
+    setError(false);
+    setChangePasswordInput({
+      ...changePasswordInput,
+      [event.target.name]: event.target.value,
+    });
   }
 
-  function setConfirmPassword(value: string) {
-    setError(false);
-    account.confirmNewPassword = value;
+  function checkPassword(password: string) {
+    const validPassword = new RegExp(
+      "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{6,14}$"
+    );
+    if (!validPassword.test(password)) {
+      return false;
+    } else return true;
   }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (account.newPassword !== account.confirmNewPassword) {
+    console.log(
+      changePasswordInput.newPassword,
+      changePasswordInput.confirmNewPassword
+    );
+    if (
+      changePasswordInput.newPassword !== changePasswordInput.confirmNewPassword
+    ) {
       setError(true);
       setErrorMessage("Password not match!");
+    } else if (!checkPassword(changePasswordInput.newPassword)) {
+      setError(true);
+      setErrorMessage(
+        "Password must be 6-14 characters long, contain at least 1 uppercase letter and at least 1 special character!"
+      );
     } else {
       await changePassword(
-        account.email,
-        account.password,
-        account.newPassword
+        changePasswordInput.email,
+        changePasswordInput.password,
+        changePasswordInput.newPassword
       ).catch((err) => {
         setError(true);
         setErrorMessage(err.response.data.error);
-        //store.dispatch();
       });
     }
   }
