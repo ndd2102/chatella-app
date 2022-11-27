@@ -93,3 +93,7 @@ export async function createChannel(channelName: string) {
     console.log(`Create channel ${channelName} successfully`);
   });
 }
+export interface GenericResponse {
+  status: string;
+  message: string;
+}
