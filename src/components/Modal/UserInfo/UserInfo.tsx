@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import {
   Avatar,
   Button,
@@ -11,23 +11,21 @@ import {
 import ChangePassword from "../ChangePassword/ChangePassword";
 import { updateProfile } from "../../../services/api";
 
-
-
 export function UserInfo(props: {
   avatar: string;
   name: string;
   email: string;
-  sex : string | undefined
+  sex: string | undefined;
   country: string | undefined;
   dateOfBirth: string | undefined;
 }) {
   // const { profile } = useStore(({ app }) => app);
   const initialState = {
-    name : props.name,
-    sex : props.sex,
-    dateOfBirth : props.dateOfBirth,
-    country : props.country
-  }
+    name: props.name,
+    sex: props.sex,
+    dateOfBirth: props.dateOfBirth,
+    country: props.country,
+  };
   const [profileInput, setProfileInput] = useState(initialState);
   const [show, setShow] = useState(false);
 
@@ -87,13 +85,12 @@ export function UserInfo(props: {
                   <Label value="Sex" />
                   <Select
                     onChange={handleChange}
-                    
                     id="sex"
                     name="sex"
                     required={true}
                     defaultValue={props.sex || "Male"}
                   >
-                   <option>Female</option>
+                    <option>Female</option>
                     <option>Male</option>
                     <option>Other</option>
                   </Select>
@@ -121,7 +118,7 @@ export function UserInfo(props: {
                 </div>
                 <div className="grid grid-cols-3 pt-6 gap-4">
                   <div className="col-span-2 justify-center">
-                    <ChangePassword />
+                    <ChangePassword email={props.email} />
                   </div>
                   <Button onClick={onSubmit}>Confirm</Button>
                 </div>
@@ -134,13 +131,26 @@ export function UserInfo(props: {
   );
 
   function handleChange(event: { target: { name: any; value: any } }) {
-    setProfileInput({...profileInput, [event.target.name]:event.target.value})
+    setProfileInput({
+      ...profileInput,
+      [event.target.name]: event.target.value,
+    });
   }
 
   async function onSubmit() {
-    if(profileInput.name !== "" && profileInput.dateOfBirth !== undefined && profileInput.sex !== undefined && profileInput.country !== undefined) {
-    await updateProfile(profileInput.name, profileInput.dateOfBirth, profileInput.sex, profileInput.country)
-    window.location.reload()
+    if (
+      profileInput.name !== "" &&
+      profileInput.dateOfBirth !== undefined &&
+      profileInput.sex !== undefined &&
+      profileInput.country !== undefined
+    ) {
+      await updateProfile(
+        profileInput.name,
+        profileInput.dateOfBirth,
+        profileInput.sex,
+        profileInput.country
+      );
+      window.location.reload();
     }
   }
 }
