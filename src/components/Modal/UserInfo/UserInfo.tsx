@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import {
   Avatar,
   Button,
@@ -7,11 +7,10 @@ import {
   Select,
   TextInput,
 } from "flowbite-react";
-import { Profile } from "../../../types/profile";
-import { store, dispatchOnCall } from "../../../state/store";
+
 import ChangePassword from "../ChangePassword/ChangePassword";
 import { updateProfile } from "../../../services/api";
-import { setMaxListeners } from "events";
+
 
 
 export function UserInfo(props: {
