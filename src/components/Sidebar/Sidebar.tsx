@@ -2,19 +2,27 @@ import { Avatar } from "flowbite-react";
 import { HiOutlineHome, HiOutlineLogout } from "react-icons/hi";
 import { GrGroup } from "react-icons/gr";
 import { CgProfile } from "react-icons/cg";
+import { Profile } from "../../types/profile";
+import { UserInfo } from "../Modal/UserInfo/UserInfo";
+import { store } from "../../state/store";
+import { logout } from "../App/App.slice";
 
-export const SidebarComponent = () => {
+export const SidebarComponent = ({
+  profile: { email, name, dateOfBirth, country, avatar, sex },
+}: {
+  profile: Profile;
+}) => {
   return (
     <div className="fixed flex-col top-0 left-0 w-64 bg-white h-full border-r">
-      <div className="items-center justify-center h-24 border-b">
-        <div className="font-sacramento text-center pt-2 text-blue-800 whitespace-nowrap text-lg font-semibold dark:text-white">
+      <div className="h-72 border-b text-gray-800">
+        <h1 className="font-sacramento mt-4 my-auto text-center text-blue-800 whitespace-nowrap text-6xl font-semibold dark:text-white">
           Chatella
-        </div>
-        <div className="p-2 flex justify-center gap-4">
-          <Avatar rounded={true} size="md"></Avatar>
-          <div className="align-center">
-            <div className=" text-sm font-medium">Linh nè</div>
-            <div className=" truncate text-sm">khanhlinh@gmail.com</div>
+        </h1>
+        <div className="p-2 justify-center">
+          <Avatar rounded={true} img={avatar} size="xl"></Avatar>
+          <div className="text-center mt-4 text-md">
+            <div className="font-medium">{name}</div>
+            <div className="truncate w-60">{email}</div>
           </div>
         </div>
       </div>
@@ -38,31 +46,35 @@ export const SidebarComponent = () => {
               <span className="ml-2 text-sm tracking-wide truncate">Home</span>
             </a>
           </li>
-          <li>
-            <a
-              href="/"
-              className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-blue-600 pr-6"
-            >
+          <li className="hover:cursor-pointer">
+            <div className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-blue-600 pr-6">
               <span className="inline-flex justify-center items-center ml-4 text-lg">
                 <CgProfile></CgProfile>
               </span>
-              <span className="ml-2 text-sm tracking-wide truncate">
-                Profile
+              <span className="ml-2 text-sm tracking-wide truncate w-full">
+                <UserInfo
+                  avatar={avatar}
+                  name={name}
+                  dateOfBirth={dateOfBirth}
+                  email={email}
+                  country={country}
+                  sex={sex}
+                />
               </span>
-            </a>
+            </div>
           </li>
-          <li>
-            <a
-              href="/"
-              className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-blue-600 pr-6"
-            >
+          <li
+            className="hover:cursor-pointer"
+            onClick={() => store.dispatch(logout())}
+          >
+            <div className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-blue-600 pr-6">
               <span className="inline-flex justify-center items-center ml-4 text-lg">
                 <HiOutlineLogout></HiOutlineLogout>
               </span>
               <span className="ml-2 text-sm tracking-wide truncate">
                 Log Out
               </span>
-            </a>
+            </div>
           </li>
           <li className="px-5">
             <div className="flex flex-row items-center h-8">

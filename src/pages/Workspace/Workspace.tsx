@@ -1,21 +1,19 @@
-import { DarkThemeToggle, Flowbite, Tabs } from "flowbite-react";
 import { useParams } from "react-router-dom";
-import Header from "../../components/Header/Header";
+import { useStore } from "../../state/storeHooks";
 import { SidebarComponent } from "../../components/Sidebar/Sidebar";
+import { Profile } from "../../types/profile";
 
 function Workspace() {
   const id = useParams();
-  console.log(id);
+  const { profile } = useStore(({ app }) => app);
+  const profileInfo: Profile = profile.unwrap();
 
   return (
     <div className="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-gray-50 text-black">
-      <SidebarComponent />
+      <SidebarComponent profile={profileInfo} />
       <div className="ml-64 h-screen">
         <h1>Channel Name</h1>
       </div>
-      {/* <Flowbite>
-        <DarkThemeToggle />
-      </Flowbite> */}
     </div>
   );
 }

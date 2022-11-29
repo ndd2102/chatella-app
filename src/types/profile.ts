@@ -5,9 +5,9 @@ export interface Profile {
   email: string;
   name: string;
   avatar: string;
-  sex: string | undefined;
-  dateOfBirth: string | undefined;
-  country: string | undefined;
+  sex: string;
+  dateOfBirth: string;
+  country: string;
 }
 
 export const profileDecoder: Decoder<Profile> = object({
