@@ -4,6 +4,7 @@ import { store } from "../state/store";
 import { Account, loadAccountIntoApp } from "../types/account";
 import { Profile } from "../types/profile";
 import { startSigningUp } from "../components/Modal/Register/Register.slice";
+import { Avatar } from "flowbite-react";
 
 axios.defaults.baseURL = settings.baseApiUrl;
 
@@ -72,13 +73,15 @@ export async function updateProfile(
   name: string,
   dob: string,
   sex: string,
-  national: string
+  national: string,
+  avatar: string
 ) {
   await axios.patch("account/profile/current-profile", {
     name: name,
     dob: dob,
     sex: sex,
     national: national,
+    avatar: avatar,
   });
 }
 
