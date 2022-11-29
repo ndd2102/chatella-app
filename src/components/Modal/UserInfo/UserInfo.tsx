@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import {
   Avatar,
   Button,
@@ -10,34 +10,27 @@ import {
 
 import ChangePassword from "../Password/ChangePassword/ChangePassword";
 import { updateProfile } from "../../../services/api";
-
-
-
+import { MdCameraAlt } from "react-icons/md";
+import { UploadClient } from "@uploadcare/upload-client";
 export function UserInfo(props: {
   avatar: string;
   name: string;
   email: string;
-  sex : string | undefined
+  sex: string | undefined;
   country: string | undefined;
   dateOfBirth: string | undefined;
 }) {
-  // const { profile } = useStore(({ app }) => app);
   const initialState = {
-    name : props.name,
-    sex : props.sex,
-    dateOfBirth : props.dateOfBirth,
-    country : props.country
-  }
+    name: props.name,
+    sex: props.sex,
+    dateOfBirth: props.dateOfBirth,
+    country: props.country,
+  };
   const [profileInput, setProfileInput] = useState(initialState);
   const [show, setShow] = useState(false);
-
-  // useEffect(() => {
-  //   async function loadUser() {
-  //     setProfileInput(await getProfile());
-  //   }
-  //   loadUser();
-  // }, []);
-
+  const [upDateAva, setUpDateAva] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File>();
+  const [avatar, setAvatar] = useState<string>(props.avatar);
   return (
     <>
       <React.Fragment>
@@ -54,8 +47,16 @@ export function UserInfo(props: {
           <Modal.Header />
           <Modal.Body>
             <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
-              <div className="">
-                <Avatar size="xl" img={props.avatar} rounded={true} />
+              <div>
+                <div className="flex justify-center ml-28 -mb-5">
+                  <MdCameraAlt />
+                </div>
+                <Avatar
+                  onClick={() => setUpDateAva(true)}
+                  size="xl"
+                  img={avatar || props.avatar}
+                  rounded={true}
+                />
               </div>
 
               <div className="grid md:grid-cols-2 md:gap-6">
@@ -87,13 +88,12 @@ export function UserInfo(props: {
                   <Label value="Sex" />
                   <Select
                     onChange={handleChange}
-                    
                     id="sex"
                     name="sex"
                     required={true}
                     defaultValue={props.sex || "Male"}
                   >
-                   <option>Female</option>
+                    <option>Female</option>
                     <option>Male</option>
                     <option>Other</option>
                   </Select>
@@ -121,7 +121,7 @@ export function UserInfo(props: {
                 </div>
                 <div className="grid grid-cols-3 pt-6 gap-4">
                   <div className="col-span-2 justify-center">
-                  <ChangePassword email={props.email} />
+                    <ChangePassword email={props.email} />
                   </div>
                   <Button onClick={onSubmit}>Confirm</Button>
                 </div>
@@ -129,18 +129,57 @@ export function UserInfo(props: {
             </div>
           </Modal.Body>
         </Modal>
+        <Modal
+          show={upDateAva}
+          size="3xl"
+          popup={true}
+          id="UserInModal"
+          onClose={() => setUpDateAva(false)}
+        >
+          <Modal.Header>Choose a imgage</Modal.Header>
+          <Modal.Body>
+            <TextInput type="file" onChange={changeAvatar} />
+            <Button onClick={upFile}>Update</Button>
+          </Modal.Body>
+        </Modal>
       </React.Fragment>
     </>
   );
-
+  function changeAvatar(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files;
+    if (!file) return;
+    setSelectedImage(file[0]);
+  }
+  async function upFile() {
+    const client = new UploadClient({ publicKey: "9186d5e8d09fb1cd12e1" });
+    if (selectedImage !== undefined && setAvatar !== undefined) {
+      client.uploadFile(selectedImage).then((file) => {
+        setAvatar("https://ucarecdn.com/" + file.uuid + "/");
+      });
+    }
+    setUpDateAva(false);
+  }
   function handleChange(event: { target: { name: any; value: any } }) {
-    setProfileInput({...profileInput, [event.target.name]:event.target.value})
+    setProfileInput({
+      ...profileInput,
+      [event.target.name]: event.target.value,
+    });
   }
 
   async function onSubmit() {
-    if(profileInput.dateOfBirth !== undefined && profileInput.sex !== undefined && profileInput.country !== undefined) {
-    await updateProfile(profileInput.name, profileInput.dateOfBirth, profileInput.sex, profileInput.country)
-    window.location.reload()
+    if (
+      profileInput.dateOfBirth !== undefined &&
+      profileInput.sex !== undefined &&
+      profileInput.country !== undefined
+    ) {
+      await updateProfile(
+        profileInput.name,
+        profileInput.dateOfBirth,
+        profileInput.sex,
+        profileInput.country,
+        avatar
+      );
+      window.location.reload();
     }
   }
 }
