@@ -70,6 +70,15 @@ function ForgotPassword() {
                   <Button onClick={onSubmit}>Confirm</Button>
                 </div>
               </div>
+              {error && (
+                <Toast>
+                  <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
+                    <Exclamation className="h-5 w-5" />
+                  </div>
+                  <div className="ml-3 text-sm font-normal">{errorMessage}</div>
+                  <Toast.Toggle />
+                </Toast>
+              )}
             </div>
           </Modal.Body>
         </Modal>
@@ -85,6 +94,9 @@ function ForgotPassword() {
       setError(true);
       setErrorMessage(error.response.data.error);
     });
+    if (!error) {
+      setShow(false);
+    }
   }
 }
 

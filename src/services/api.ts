@@ -89,7 +89,13 @@ export async function resendEmail(email: string) {
 }
 
 export async function createChannel(channelName: string) {
-  await axios.post("channel/create-channel").then(() => {
-    console.log(`Create channel ${channelName} successfully`);
-  });
+  let id: number = await axios
+    .post("channel/create-channel", {
+      name: channelName,
+    })
+    .then((response) => {
+      console.log(`Create channel ${channelName} successfully`);
+      return response.data.data.id;
+    });
+  return id;
 }

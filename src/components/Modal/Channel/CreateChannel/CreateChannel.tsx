@@ -62,6 +62,8 @@ export default function CreateChannel() {
 
   async function onSubmit() {
     const channelId = await createChannel(channelName);
-    navigate(`/channel`);
+    setShow(false);
+    console.log("Id channel: " + channelId);
+    navigate(`/channel/${channelId}`);
   }
 }

@@ -21,7 +21,7 @@ export default function Header() {
         rounded={true}
       >
         <Navbar.Brand>
-          <span className="font-sacramento pt-2 text-blue-800 self-center whitespace-nowrap text-4xl	font-semibold dark:text-white">
+          <span className="font-sacramento pt-2 text-blue-800 self-center whitespace-nowrap text-4xl font-semibold dark:text-white">
             Chatella
           </span>
         </Navbar.Brand>
@@ -61,7 +61,7 @@ function UserLinks({
         <Navbar.Link className="mr-8" href="/">
           Home
         </Navbar.Link>
-        <Navbar.Link href="/chat">Chat</Navbar.Link>
+        <Navbar.Link href="/channel/1">Workspace</Navbar.Link>
       </NavbarCollapse>
 
       <CreateChannel />
