@@ -134,7 +134,7 @@ export function UserInfo(props: {
         </Modal>
         <Modal
           show={upDateAva}
-          size="3xl"
+          size="2xl"
           popup={true}
           id="UserInModal"
           onClose={() => setUpDateAva(false)}
