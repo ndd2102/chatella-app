@@ -4,7 +4,6 @@ import { store } from "../state/store";
 import { Account, loadAccountIntoApp } from "../types/account";
 import { Profile } from "../types/profile";
 import { startSigningUp } from "../components/Modal/Register/Register.slice";
-import { Channel } from "../types/channel";
 
 axios.defaults.baseURL = settings.baseApiUrl;
 
