@@ -29,13 +29,6 @@ const Chat = () => {
   }[readyState];
   return (
     <div>
-      <div className="p-6">Chat</div>
-      <span>The WebSocket is currently {connectionStatus}</span>
-      <ul>
-        {messageHistory.map((message: any, idx) => (
-          <div key={idx}>{JSON.parse(message.data).content}</div>
-        ))}
-      </ul>
       <TextInput onChange={handleChange}></TextInput>
       <Button
         onClick={handleClickSendMessage}
@@ -43,6 +36,12 @@ const Chat = () => {
       >
         Click Me to send
       </Button>
+      <span>The WebSocket is currently {connectionStatus}</span>
+      <ul>
+        {messageHistory.map((message: any, idx) => (
+          <div key={idx}>{JSON.parse(message.data).content}</div>
+        ))}
+      </ul>
     </div>
   );
   function handleChange(event: { target: { value: any } }) {
