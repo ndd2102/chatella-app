@@ -4,7 +4,6 @@ import { store } from "../state/store";
 import { Account, loadAccountIntoApp } from "../types/account";
 import { Profile } from "../types/profile";
 import { startSigningUp } from "../components/Modal/Register/Register.slice";
-import { Avatar } from "flowbite-react";
 
 axios.defaults.baseURL = settings.baseApiUrl;
 

@@ -145,7 +145,12 @@ export function UserInfo(props: {
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
                 Choose an image
               </h3>
-              <TextInput className="" type="file" onChange={changeAvatar} />
+              <TextInput
+                className=""
+                type="file"
+                accept="image/*"
+                onChange={changeAvatar}
+              />
               <div className="block ml-auto pb-6">
                 <Button className="block float-right" onClick={upFile}>
                   Update
@@ -162,7 +167,7 @@ export function UserInfo(props: {
     if (!file) return;
     setSelectedImage(file[0]);
   }
-  async function upFile() {
+  function upFile() {
     const client = new UploadClient({ publicKey: "9186d5e8d09fb1cd12e1" });
     if (selectedImage !== undefined && setAvatar !== undefined) {
       client.uploadFile(selectedImage).then((file) => {
