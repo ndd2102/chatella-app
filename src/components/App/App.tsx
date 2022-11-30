@@ -12,8 +12,6 @@ import { Account } from "../../types/account";
 import { getProfile } from "../../services/api";
 import axios from "axios";
 import { Spinner } from "flowbite-react";
-import Chat from "../../pages/Channel/Chat/Chat";
-import { profileDecoder } from "../../types/profile";
 import Workspace from "../../pages/Workspace/Workspace";
 
 export default function App() {

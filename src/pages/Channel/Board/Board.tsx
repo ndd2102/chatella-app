@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-no-undef */
 
 //import { useState } from "react";
-import { IBoard } from "../../types/board";
-import { ICard } from "../../types/card";
+import { IBoard } from "../../../types/iboard";
+import { ICard } from "../../../types/icard";
 import Card from "../Card/Card";
-import CustomInput from "../CustomInput/CustomInput";
+import CustomInput from "../../../components/CustomInput/CustomInput";
 
 interface BoardProps {
   board: IBoard;

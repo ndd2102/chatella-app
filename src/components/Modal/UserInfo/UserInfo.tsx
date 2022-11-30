@@ -27,7 +27,6 @@ export function UserInfo(props: {
     dateOfBirth: props.dateOfBirth,
     country: props.country,
   };
-
   const [profileInput, setProfileInput] = useState(initialState);
   const [show, setShow] = useState(false);
   const [upDateAva, setUpDateAva] = useState(false);
@@ -157,11 +156,13 @@ export function UserInfo(props: {
       </React.Fragment>
     </>
   );
+
   function changeAvatar(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files;
     if (!file) return;
     setSelectedImage(file[0]);
   }
+
   async function upFile() {
     const client = new UploadClient({ publicKey: "9186d5e8d09fb1cd12e1" });
     if (selectedImage !== undefined && setAvatar !== undefined) {
@@ -171,6 +172,7 @@ export function UserInfo(props: {
     }
     setUpDateAva(false);
   }
+
   function handleChange(event: { target: { name: any; value: any } }) {
     setProfileInput({
       ...profileInput,

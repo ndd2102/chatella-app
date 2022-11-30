@@ -2,19 +2,28 @@ import { Button, Label, Modal, TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createChannel } from "../../../../services/api";
+import { FiPlusSquare } from "react-icons/fi";
 
 export default function CreateChannel() {
   const [show, setShow] = useState(false);
   const [channelName, setChannelName] = useState("");
-  const params = useParams();
   const navigate = useNavigate();
 
   return (
-    <>
+    <div className="w-full">
       <React.Fragment>
-        <Button gradientMonochrome="info" onClick={() => setShow(true)}>
-          Create
-        </Button>
+        <div className="w-full flex justify-center">
+          <Button
+            className="px-8"
+            gradientMonochrome="info"
+            onClick={() => setShow(true)}
+          >
+            <div className="flex gap-2 place-items-center">
+              <FiPlusSquare></FiPlusSquare>
+              Create channel
+            </div>
+          </Button>
+        </div>
         <Modal
           show={show}
           size="xl"
@@ -57,7 +66,7 @@ export default function CreateChannel() {
           </Modal.Body>
         </Modal>
       </React.Fragment>
-    </>
+    </div>
   );
 
   async function onSubmit() {

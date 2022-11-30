@@ -1,4 +1,4 @@
-import { IBoard } from "../../types/board";
+import { IBoard } from "../../types/iboard";
 
 export const ApiMockResponse: IBoard[] = [
   {

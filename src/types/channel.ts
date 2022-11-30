@@ -1,9 +1,11 @@
 export interface Channel {
   id: number;
-  members: ChannelMembers[];
+  members: ChannelMember[];
+  avatar: string;
+  name: string;
 }
 
-export interface ChannelMembers {
+export interface ChannelMember {
   userId: number;
   role: string;
 }

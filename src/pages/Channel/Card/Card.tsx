@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ICard } from "../../types/card";
+import { ICard } from "../../../types/icard";
 import { Clock } from "react-feather";
-import { formatDate } from "../../services/Helper/Util";
+import { formatDate } from "../../../services/Helper/Util";
 import CardInfo from "./CardInfor/CardInfor";
 
 interface CardProps {

@@ -8,7 +8,6 @@ import { logout } from "../App/App.slice";
 import Register from "../Modal/Register/Register";
 import { UserInfo } from "../Modal/UserInfo/UserInfo";
 import { Profile } from "../../types/profile";
-import CreateChannel from "../Modal/Channel/CreateChannel/CreateChannel";
 
 export default function Header() {
   const { profile } = useStore(({ app }) => app);
@@ -63,8 +62,6 @@ function UserLinks({
         </Navbar.Link>
         <Navbar.Link href="/channel/1">Workspace</Navbar.Link>
       </NavbarCollapse>
-
-      <CreateChannel />
       <div className="grow justify-items-end">
         <div className="float-right">
           <Dropdown

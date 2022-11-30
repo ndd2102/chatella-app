@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { ICard } from "../../../types/card";
-import { IBoard } from "../../../types/board";
-import Board from "../../../components/Board/Board";
+import { ICard } from "../../../types/icard";
+import { IBoard } from "../../../types/iboard";
+import Board from "../Board/Board";
 import "./Dashboard.css";
 //import CustomInput from "../Components/CustomInput/CustomInput";
 //import { ICard, IBoard } from "../Interfaces/Kanban";

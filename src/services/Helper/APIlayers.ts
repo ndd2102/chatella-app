@@ -1,4 +1,4 @@
-import { IBoard } from "../../types/board";
+import { IBoard } from "../../types/iboard";
 import { ApiMockResponse } from "../ApiMockData/dummyData";
 
 const LocalStorageKeyName = "ok";

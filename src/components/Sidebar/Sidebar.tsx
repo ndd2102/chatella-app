@@ -6,6 +6,7 @@ import { Profile } from "../../types/profile";
 import { UserInfo } from "../Modal/UserInfo/UserInfo";
 import { store } from "../../state/store";
 import { logout } from "../App/App.slice";
+import CreateChannel from "../Modal/Channel/CreateChannel/CreateChannel";
 
 export const SidebarComponent = ({
   profile: { email, name, dateOfBirth, country, avatar, sex },
@@ -15,7 +16,7 @@ export const SidebarComponent = ({
   return (
     <div className="fixed flex-col top-0 left-0 w-64 bg-white h-full border-r">
       <div className="h-72 border-b text-gray-800">
-        <h1 className="font-sacramento mt-4 my-auto text-center text-blue-800 whitespace-nowrap text-6xl font-semibold dark:text-white">
+        <h1 className="font-sacramento mt-6 my-auto text-center text-blue-700 whitespace-nowrap text-5xl font-semibold dark:text-white">
           Chatella
         </h1>
         <div className="p-2 justify-center">
@@ -64,7 +65,7 @@ export const SidebarComponent = ({
             </div>
           </li>
           <li
-            className="hover:cursor-pointer"
+            className="hover:cursor-pointer border-b pb-4"
             onClick={() => store.dispatch(logout())}
           >
             <div className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-blue-600 pr-6">
@@ -76,6 +77,10 @@ export const SidebarComponent = ({
               </span>
             </div>
           </li>
+        </ul>
+      </div>
+      <div className="block">
+        <ul className="h-1/2">
           <li className="px-5">
             <div className="flex flex-row items-center h-8">
               <div className="text-sm font-light tracking-wide text-gray-500">
@@ -97,6 +102,9 @@ export const SidebarComponent = ({
             </a>
           </li>
         </ul>
+        <div className="fixed bottom-4 border-t pt-4 w-64">
+          <CreateChannel />
+        </div>
       </div>
     </div>
   );

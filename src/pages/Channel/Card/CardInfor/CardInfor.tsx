@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Calendar, CheckSquare, List, Trash, Type } from "react-feather";
-import Modal from "../../Modal/Modal";
-import CustomInput from "../../CustomInput/CustomInput";
+import Modal from "../../../../components/Modal/Modal";
+import CustomInput from "../../../../components/CustomInput/CustomInput";
 
 import "./CardInfor.css";
-import { ICard } from "../../../types/card";
+import { ICard } from "../../../../types/icard";
 
 interface CardInfoProps {
   onClose: () => void;

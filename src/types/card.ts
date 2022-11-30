@@ -1,8 +1,7 @@
-export interface ICard {
+export interface Card {
   id: number;
   title: string;
-  desc: string;
+  description: string;
   level: string;
-  date: string;
-  tasks: string;
+  dueDate: string;
 }

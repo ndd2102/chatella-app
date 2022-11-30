@@ -4,7 +4,7 @@ import { store } from "../state/store";
 import { Account, loadAccountIntoApp } from "../types/account";
 import { Profile } from "../types/profile";
 import { startSigningUp } from "../components/Modal/Register/Register.slice";
-import { Avatar } from "flowbite-react";
+import { Channel } from "../types/channel";
 
 axios.defaults.baseURL = settings.baseApiUrl;
 
@@ -102,3 +102,27 @@ export async function createChannel(channelName: string) {
     });
   return id;
 }
+
+export async function getChannel() {
+  let profile: any;
+  await axios.get("account/profile/current-profile").then((response) => {
+    profile = {
+      userId: response.data.data.id,
+      email: response.data.data.email,
+      name: response.data.data.name,
+      avatar: response.data.data.avatar,
+      sex: response.data.data.sex,
+      dateOfBirth: response.data.data.dob,
+      country: response.data.data.national,
+    };
+  });
+  return profile;
+}
+
+// export async function getChannel(channelId: number):Promise<Channel> {
+//   let channel:Channel;
+//   await axios.get(`channel/channelId=${channelId}`).then((response) => {
+//     response.data.members
+//   })
+//   return channel;
+// }
