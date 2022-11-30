@@ -2,7 +2,6 @@ import { useParams } from "react-router-dom";
 import { useStore } from "../../state/storeHooks";
 import { SidebarComponent } from "../../components/Sidebar/Sidebar";
 import { Profile } from "../../types/profile";
-import Chat from "../Channel/Chat/Chat";
 
 function Workspace() {
   const id = useParams();
@@ -14,7 +13,6 @@ function Workspace() {
       <SidebarComponent profile={profileInfo} />
       <div className="ml-64 h-screen">
         <h1>Channel Name</h1>
-        <Chat />
       </div>
     </div>
   );
