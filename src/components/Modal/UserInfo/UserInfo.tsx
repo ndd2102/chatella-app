@@ -12,6 +12,7 @@ import ChangePassword from "../Password/ChangePassword/ChangePassword";
 import { updateProfile } from "../../../services/api";
 import { MdCameraAlt } from "react-icons/md";
 import { UploadClient } from "@uploadcare/upload-client";
+
 export function UserInfo(props: {
   avatar: string;
   name: string;
@@ -26,11 +27,13 @@ export function UserInfo(props: {
     dateOfBirth: props.dateOfBirth,
     country: props.country,
   };
+
   const [profileInput, setProfileInput] = useState(initialState);
   const [show, setShow] = useState(false);
   const [upDateAva, setUpDateAva] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File>();
   const [avatar, setAvatar] = useState<string>(props.avatar);
+
   return (
     <>
       <React.Fragment>
@@ -136,10 +139,19 @@ export function UserInfo(props: {
           id="UserInModal"
           onClose={() => setUpDateAva(false)}
         >
-          <Modal.Header>Choose a imgage</Modal.Header>
+          <Modal.Header></Modal.Header>
           <Modal.Body>
-            <TextInput type="file" onChange={changeAvatar} />
-            <Button onClick={upFile}>Update</Button>
+            <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                Choose an image
+              </h3>
+              <TextInput className="" type="file" onChange={changeAvatar} />
+              <div className="block ml-auto pb-6">
+                <Button className="block float-right" onClick={upFile}>
+                  Update
+                </Button>
+              </div>
+            </div>
           </Modal.Body>
         </Modal>
       </React.Fragment>
