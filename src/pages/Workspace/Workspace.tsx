@@ -15,7 +15,7 @@ function Workspace() {
           <Task />
         </div>
         <div className="col-span-1">
-          <Chat avatar={profileInfo.avatar} userId={profileInfo.userId} />
+          <Chat avatar={profile.avatar} userId={profile.userId} />
         </div>
       </div>
     </div>
