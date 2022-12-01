@@ -1,18 +1,33 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { Button, TextInput } from "flowbite-react";
-const Chat = () => {
-  const socketUrl =
-    "ws://www.vinhtc27.social/channel/chat?channelId=1&token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoie1widXNlcklkXCI6NCxcImFjY291bnRJZFwiOjQsXCJ1dWlkXCI6XCJcIixcImVtYWlsXCI6XCJcIn0iLCJleHAiOjE2Njk5MDM5NTR9.LmLnqFiBVndkXouRsVl3SU8S_Far3bWdaPF3A1uyxHurw4ZyrVb3K301YjPvo8KSnTKTNo_hC-KUf9ji_0Aq97I-DT0bV-tfp_aoRxjmcCdi43lrOo6OQieicOCJKyLEHa1ZRk0bfzFQweaUmBetbSuoeunt0AWylYcYirZ-ROE9G-lCMHbhyT6XJFY9L5XCbSdx48snWxpTCEucsgfls0yBfRx4ZJr9PjIIEBwH8FWkZRm165OAUFA9hdaBUjaqvQNu1aFmD45aLP95b1kFimK-f_-dO1d4x1cv2p8upPLZ9g0t9YY1CbkDNoWh9DfqKcMdyOxo__98QVVu4PjQAi1vsl161_uBYQxWHLvzfQUP8znSz8KykFLVPLQmAKjstq3pRU6YzKKxHk5Vaac4DAY2SrHDv6za_HPlN1G5CEWzyNjjKqSH0k6bPkgksBgSFbr-zKsENWaI_SbT9xw5Sieci3UlFWoV7mVnEAPjX8FO6UvV964cNMaRsAkgRf90j-Fqqf5D_wCc4ozJe7MX6pd2bvQH0vZwDYglvJffnPceJMyQqGH5SF7GFRJMdI2Zt_OEOMjlP_ZQTIkExbkkdfvoEhZxbFPVOQO1hwf38XsR_p4HAddjGiBlhfYdrAyvbSx8_yt9XhjKGQtv9xZ9OdOrEZF2NUenCOwamRUWFLU";
+import { getUserProfile } from "../../services/api";
+const Chat = (props: { avatar: string; userId: number }) => {
+  const socketUrl = `ws://www.vinhtc27.social/channel/chat?channelId=2&token=${localStorage.getItem(
+    "token"
+  )}`;
   const ws = new WebSocket(socketUrl);
   const [messageHistory, setMessageHistory] = useState([]);
-
   const [mess, setMess] = useState();
-
-  const { sendJsonMessage, readyState } = useWebSocket(socketUrl);
+  const didUnmount = useRef(false);
+  const [otherAva, setOtherAva] = useState();
+  const { sendJsonMessage, readyState } = useWebSocket(socketUrl, {
+    shouldReconnect: (closeEvent) => {
+      /*
+      useWebSocket will handle unmounting for you, but this is an example of a 
+      case in which you would not want it to automatically reconnect
+    */
+      return didUnmount.current === false;
+    },
+    reconnectAttempts: 10,
+    reconnectInterval: 0,
+  });
   useEffect(() => {
     ws.onmessage = (e: any) => {
       setMessageHistory((prev) => prev.concat(e));
+    };
+    return () => {
+      didUnmount.current = true;
     };
   }, []);
   const handleClickSendMessage = useCallback(
@@ -27,24 +42,69 @@ const Chat = () => {
     [ReadyState.CLOSED]: "Closed",
     [ReadyState.UNINSTANTIATED]: "Uninstantiated",
   }[readyState];
+
   return (
     <div>
       <div className="p-6">Chat</div>
       <span>The WebSocket is currently {connectionStatus}</span>
-      <ul>
-        {messageHistory.map((message: any, idx) => (
-          <div key={idx}>{JSON.parse(message.data).content}</div>
-        ))}
-      </ul>
+      <div className="h-[600px] flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+        {messageHistory.map(ms)}
+      </div>
       <TextInput onChange={handleChange}></TextInput>
       <Button
         onClick={handleClickSendMessage}
-        disabled={readyState !== ReadyState.OPEN}
+        // disabled={readyState !== ReadyState.OPEN}
       >
         Click Me to send
       </Button>
+      <Button onClick={() => getAvatar(2)}></Button>
     </div>
   );
+  function ms(value: any, idx: any) {
+    if (JSON.parse(value.data).senderId !== props.userId)
+      //getAvatar(JSON.parse(value.data).senderId);
+      return (
+        <div key={idx} className="chat-message">
+          <div className="flex items-end">
+            <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
+              <div className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
+                {[JSON.parse(value.data).content]}
+              </div>
+              <img
+                src={`${otherAva}`}
+                alt="ava"
+                className="w-6 h-6 rounded-full order-1"
+              ></img>
+            </div>
+          </div>
+        </div>
+      );
+    else
+      return (
+        <div key={idx} className="chat-message">
+          <div className="flex items-end justify-end">
+            <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
+              <div className="px-4 py-2 rounded-lg inline-block bg-blue-600 text-white">
+                {[JSON.parse(value.data).content]}
+              </div>
+              <img
+                src={props.avatar}
+                alt="ava"
+                className="w-6 h-6 rounded-full order-2"
+              ></img>
+            </div>
+          </div>
+        </div>
+      );
+  }
+  async function getAvatar(userID: number) {
+    let ava: any = await getUserProfile(userID);
+    setOtherAva(ava.avatar);
+  }
+
+  function c() {
+    console.log(otherAva);
+  }
   function handleChange(event: { target: { value: any } }) {
     setMess(event.target.value);
   }
