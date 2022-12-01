@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export interface AppState {
+export interface LoginState {
   isLogin: boolean;
 }
 
-const initialState: AppState = {
+const initialState: LoginState = {
   isLogin: false,
 };
 
@@ -12,7 +12,7 @@ const slice = createSlice({
   name: "login",
   initialState,
   reducers: {
-    initializeApp: () => initialState,
+    initializeLogin: () => initialState,
     loginSuccess: (state) => {
       state.isLogin = true;
     },
@@ -22,6 +22,6 @@ const slice = createSlice({
   },
 });
 
-export const { initializeApp, loginSuccess, loginError } = slice.actions;
+export const { initializeLogin, loginSuccess, loginError } = slice.actions;
 
 export default slice.reducer;

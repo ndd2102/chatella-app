@@ -137,6 +137,7 @@ export default function Login() {
 
     if (store.getState().login.isLogin) {
       store.dispatch(loadProfile(user));
+      store.dispatch(loginSuccess());
       setShow(false);
       navigate("/");
     }

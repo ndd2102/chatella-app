@@ -4,7 +4,7 @@ import {
   BrowserRouter as Router,
   Navigate,
 } from "react-router-dom";
-import { useStoreWithInitializer } from "../../state/storeHooks";
+import { useStore, useStoreWithInitializer } from "../../state/storeHooks";
 import { store } from "../../state/store";
 import { endLoad, loadProfile, logout } from "./App.slice";
 import Home from "../../pages/Home/Home";
@@ -12,9 +12,11 @@ import { getProfile } from "../../services/api";
 import axios from "axios";
 import { Spinner } from "flowbite-react";
 import Workspace from "../../pages/Workspace/Workspace";
+import { loginSuccess } from "../Modal/Login/Login.slice";
 
 export default function App() {
   const { loading, profile } = useStoreWithInitializer(({ app }) => app, load);
+  const { isLogin } = useStore(({ login }) => login);
   const accountIsLogged = profile.isSome();
 
   return (
@@ -37,7 +39,7 @@ export default function App() {
   );
 
   async function load() {
-    if (!store.getState().login.isLogin) {
+    if (!isLogin) {
       const token = localStorage.getItem("token");
       if (!store.getState().app.loading || !token) {
         store.dispatch(endLoad());
@@ -53,6 +55,7 @@ export default function App() {
 
       if (user !== undefined) {
         store.dispatch(loadProfile(user));
+        store.dispatch(loginSuccess());
       }
     }
     store.dispatch(endLoad());
