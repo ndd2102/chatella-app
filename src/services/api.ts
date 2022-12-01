@@ -57,6 +57,7 @@ export async function getProfile(): Promise<Profile> {
         (channel: { id: number }) => channel.id
       ),
     };
+    localStorage.setItem("user", JSON.stringify(profile));
   });
   return profile;
 }

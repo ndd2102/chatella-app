@@ -4,7 +4,7 @@ import {
   BrowserRouter as Router,
   Navigate,
 } from "react-router-dom";
-import { useStore, useStoreWithInitializer } from "../../state/storeHooks";
+import { useStoreWithInitializer } from "../../state/storeHooks";
 import { store } from "../../state/store";
 import { endLoad, loadProfile, logout } from "./App.slice";
 import Home from "../../pages/Home/Home";
@@ -16,8 +16,7 @@ import { loginSuccess } from "../Modal/Login/Login.slice";
 
 export default function App() {
   const { loading, profile } = useStoreWithInitializer(({ app }) => app, load);
-  const { isLogin } = useStore(({ login }) => login);
-  const accountIsLogged = profile.isSome();
+  const accountIsLogged = !(Object.keys(profile).length === 0);
 
   return (
     <Router>
@@ -39,7 +38,7 @@ export default function App() {
   );
 
   async function load() {
-    if (!isLogin) {
+    if (!accountIsLogged) {
       const token = localStorage.getItem("token");
       if (!store.getState().app.loading || !token) {
         store.dispatch(endLoad());
