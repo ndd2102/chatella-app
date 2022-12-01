@@ -1,6 +1,5 @@
 import axios from "axios";
 import settings from "../config/settings";
-import { store } from "../state/store";
 import { Channel } from "../types/channel";
 import { Profile } from "../types/profile";
 
@@ -58,6 +57,7 @@ export async function getProfile(): Promise<Profile> {
         (channel: { id: number }) => channel.id
       ),
     };
+    localStorage.setItem("user", JSON.stringify(profile));
   });
   return profile;
 }

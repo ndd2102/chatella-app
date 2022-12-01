@@ -1,6 +1,5 @@
 import { Avatar, Dropdown, Navbar } from "flowbite-react";
 import { NavbarCollapse } from "flowbite-react/lib/esm/components/Navbar/NavbarCollapse";
-import { useNavigate } from "react-router-dom";
 import Login from "../Modal/Login/Login";
 import { store } from "../../state/store";
 import { useStore } from "../../state/storeHooks";
@@ -11,6 +10,8 @@ import { Profile } from "../../types/profile";
 
 export default function Header() {
   const { profile } = useStore(({ app }) => app);
+  const accountIsLogged = !(Object.keys(profile).length === 0);
+  console.log(accountIsLogged);
 
   return (
     <>
@@ -24,10 +25,7 @@ export default function Header() {
             Chatella
           </span>
         </Navbar.Brand>
-        {profile.match({
-          none: () => <GuestLinks />,
-          some: (profile) => <UserLinks profile={profile} />,
-        })}
+        {accountIsLogged ? <UserLinks profile={profile} /> : <GuestLinks />}
       </Navbar>
     </>
   );
@@ -49,10 +47,9 @@ function UserLinks({
 }: {
   profile: Profile;
 }) {
-  const navigate = useNavigate();
   const logOutButton = () => {
     store.dispatch(logout());
-    navigate("/");
+    window.location.reload();
   };
   return (
     <div className="flex grow w-9/10 ml-24 mr-8 items-center">
