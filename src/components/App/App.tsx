@@ -6,17 +6,16 @@ import {
 } from "react-router-dom";
 import { useStoreWithInitializer } from "../../state/storeHooks";
 import { store } from "../../state/store";
-import { endLoad, loadAccount, loadProfile, logout } from "./App.slice";
+import { endLoad, loadProfile, logout } from "./App.slice";
 import Home from "../../pages/Home/Home";
-import { Account } from "../../types/account";
 import { getProfile } from "../../services/api";
 import axios from "axios";
 import { Spinner } from "flowbite-react";
 import Workspace from "../../pages/Workspace/Workspace";
 
 export default function App() {
-  const { loading, account } = useStoreWithInitializer(({ app }) => app, load);
-  const accountIsLogged = account.isSome();
+  const { loading, profile } = useStoreWithInitializer(({ app }) => app, load);
+  const accountIsLogged = profile.isSome();
 
   return (
     <Router>
@@ -36,29 +35,26 @@ export default function App() {
       )}
     </Router>
   );
-}
 
-async function load() {
-  const token = localStorage.getItem("token");
-  if (!store.getState().app.loading || !token) {
+  async function load() {
+    if (!store.getState().login.isLogin) {
+      const token = localStorage.getItem("token");
+      if (!store.getState().app.loading || !token) {
+        store.dispatch(endLoad());
+        return;
+      }
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      const user: any = await getProfile().catch(() => {
+        console.log("Cannot get profile");
+        store.dispatch(logout());
+        store.dispatch(endLoad());
+        return;
+      });
+
+      if (user !== undefined) {
+        store.dispatch(loadProfile(user));
+      }
+    }
     store.dispatch(endLoad());
-    return;
   }
-  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  const user: any = await getProfile().catch(() => {
-    console.log("Cannot get profile");
-    store.dispatch(logout());
-    store.dispatch(endLoad());
-    return;
-  });
-  // const a = profileDecoder.verify(user);
-  // console.log(a);
-  if (user !== undefined) {
-    const account: Account = {
-      token: token,
-    };
-    store.dispatch(loadProfile(user));
-    store.dispatch(loadAccount(account));
-  }
-  store.dispatch(endLoad());
 }

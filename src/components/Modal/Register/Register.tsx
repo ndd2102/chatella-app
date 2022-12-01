@@ -1,11 +1,5 @@
 import React, { useState } from "react";
 import {
-  initializeRegister,
-  registerErrors,
-  RegisterState,
-  updateField,
-} from "./Register.slice";
-import {
   Button,
   Checkbox,
   Label,
@@ -14,16 +8,15 @@ import {
   Toast,
 } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
-import { useStoreWithInitializer } from "../../../state/storeHooks";
-import { dispatchOnCall, store } from "../../../state/store";
 import { register } from "../../../services/api";
 
 export default function Register() {
-  const { account } = useStoreWithInitializer(
-    ({ register }) => register,
-    dispatchOnCall(initializeRegister())
-  );
-
+  const initialState = {
+    email: "",
+    password: "",
+    confirmPassword: "",
+  };
+  const [accountSignUp, setAccountSignUp] = useState(initialState);
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
@@ -113,39 +106,38 @@ export default function Register() {
 
   function handleChange(event: { target: { name: any; value: any } }) {
     setError(false);
-    store.dispatch(
-      updateField({
-        name: event.target.name as keyof RegisterState["account"],
-        value: event.target.value,
-      })
-    );
+    setAccountSignUp({
+      ...accountSignUp,
+      [event.target.name]: event.target.value,
+    });
   }
 
-  function checkPassword(pass: string) {
+  function checkPassword(password: string) {
     const validPassword = new RegExp(
       "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{6,14}$"
     );
-    if (!validPassword.test(pass)) {
+    if (!validPassword.test(password)) {
       return false;
     } else return true;
   }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (!checkPassword(account.password)) {
+    if (!checkPassword(accountSignUp.password)) {
       setError(true);
       setErrorMessage(
         "Password must be 6-14 characters long, contain at least 1 uppercase letter and at least 1 special character!"
       );
-    } else if (account.password !== account.confirmPassword) {
+    } else if (accountSignUp.password !== accountSignUp.confirmPassword) {
       setError(true);
       setErrorMessage("Password not match!");
     } else {
-      await register(account.email, account.password).catch((err) => {
-        setError(true);
-        setErrorMessage(err.response.data.error);
-        store.dispatch(registerErrors());
-      });
+      await register(accountSignUp.email, accountSignUp.password).catch(
+        (err) => {
+          setError(true);
+          setErrorMessage(err.response.data.error);
+        }
+      );
     }
   }
 }

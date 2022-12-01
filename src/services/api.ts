@@ -1,9 +1,8 @@
 import axios from "axios";
 import settings from "../config/settings";
 import { store } from "../state/store";
-import { Account, loadAccountIntoApp } from "../types/account";
+import { Channel } from "../types/channel";
 import { Profile } from "../types/profile";
-import { startSigningUp } from "../components/Modal/Register/Register.slice";
 
 axios.defaults.baseURL = settings.baseApiUrl;
 
@@ -14,26 +13,18 @@ export async function login(email: string, password: string) {
       password: password,
     })
     .then((response) => {
-      console.log(response);
-      if (response.data.status) {
-        const account: Account = {
-          token: response.data.data.token,
-        };
-        loadAccountIntoApp(account);
-      }
+      localStorage.setItem("token", response.data.data.token);
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${localStorage.getItem("token")}`;
     });
-  return "";
 }
 
 export async function register(email: string, password: string) {
-  await axios
-    .post("account/signup", {
-      email: email,
-      password: password,
-    })
-    .then(() => {
-      store.dispatch(startSigningUp());
-    });
+  await axios.post("account/signup", {
+    email: email,
+    password: password,
+  });
 }
 
 export async function changePassword(
@@ -63,6 +54,9 @@ export async function getProfile(): Promise<Profile> {
       sex: response.data.data.sex,
       dateOfBirth: response.data.data.dob,
       country: response.data.data.national,
+      channelID: response.data.data.channels.map(
+        (channel: { id: number }) => channel.id
+      ),
     };
   });
   return profile;
@@ -102,26 +96,20 @@ export async function createChannel(channelName: string) {
   return id;
 }
 
-export async function getChannel() {
-  let profile: any;
-  await axios.get("account/profile/current-profile").then((response) => {
-    profile = {
-      userId: response.data.data.id,
-      email: response.data.data.email,
-      name: response.data.data.name,
-      avatar: response.data.data.avatar,
-      sex: response.data.data.sex,
-      dateOfBirth: response.data.data.dob,
-      country: response.data.data.national,
-    };
-  });
-  return profile;
+export async function getChannel(channelId: number): Promise<Channel> {
+  let channel: any;
+  await axios
+    .get(`channel/channelId=${channelId}`)
+    .then((response) => {
+      channel = {
+        id: response.data.data.number,
+        members: response.data.data.members,
+        avatar: response.data.data.avatar,
+        name: response.data.data.name,
+      };
+    })
+    .catch((error) => {
+      console.log(error.response.data.error);
+    });
+  return channel;
 }
-
-// export async function getChannel(channelId: number):Promise<Channel> {
-//   let channel:Channel;
-//   await axios.get(`channel/channelId=${channelId}`).then((response) => {
-//     response.data.members
-//   })
-//   return channel;
-// }

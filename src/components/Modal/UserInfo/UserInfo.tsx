@@ -9,9 +9,11 @@ import {
 } from "flowbite-react";
 
 import ChangePassword from "../Password/ChangePassword/ChangePassword";
-import { updateProfile } from "../../../services/api";
+import { getProfile, updateProfile } from "../../../services/api";
 import { MdCameraAlt } from "react-icons/md";
 import { UploadClient } from "@uploadcare/upload-client";
+import { store } from "../../../state/store";
+import { loadProfile } from "../../App/App.slice";
 
 export function UserInfo(props: {
   avatar: string;
@@ -105,7 +107,7 @@ export function UserInfo(props: {
                   <TextInput
                     id="country"
                     name="country"
-                    defaultValue={props.country || "Việt Nam"}
+                    defaultValue={props.country}
                     onChange={handleChange}
                   />
                 </div>
@@ -193,6 +195,8 @@ export function UserInfo(props: {
         profileInput.country,
         avatar
       );
+      const newProfile: any = await getProfile();
+      store.dispatch(loadProfile(newProfile));
       window.location.reload();
     }
   }

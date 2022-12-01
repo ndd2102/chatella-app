@@ -1,5 +1,3 @@
-import { Decoder, number, object, string } from "decoders";
-
 export interface Profile {
   userId: number;
   email: string;
@@ -8,14 +6,5 @@ export interface Profile {
   sex: string;
   dateOfBirth: string;
   country: string;
+  channelID: number[];
 }
-
-export const profileDecoder: Decoder<Profile> = object({
-  userId: number,
-  email: string,
-  name: string,
-  avatar: string,
-  sex: string,
-  dateOfBirth: string,
-  country: string,
-});
