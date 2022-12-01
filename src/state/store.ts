@@ -1,12 +1,11 @@
 import { Action, configureStore } from "@reduxjs/toolkit";
-import login from "../components/Modal/Login/Login.slice";
 import app from "../components/App/App.slice";
-import register from "../components/Modal/Register/Register.slice";
+import login from "../components/Modal/Login/Login.slice";
 
 const middlewareConfiguration = { serializableCheck: false };
 
 export const store = configureStore({
-  reducer: { app, login, register },
+  reducer: { app, login },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware(middlewareConfiguration),
 });

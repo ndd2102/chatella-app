@@ -1,44 +1,27 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-export interface LoginState {
-  account: {
-    email: string;
-    password: string;
-  };
-  loginIn: boolean;
+export interface AppState {
+  isLogin: boolean;
 }
 
-const initialState: LoginState = {
-  account: {
-    email: "",
-    password: "",
-  },
-  loginIn: false,
+const initialState: AppState = {
+  isLogin: false,
 };
 
 const slice = createSlice({
   name: "login",
   initialState,
   reducers: {
-    initializeLogin: () => initialState,
-    loginErrors: (state) => {
-      state.loginIn = false;
+    initializeApp: () => initialState,
+    loginSuccess: (state) => {
+      state.isLogin = true;
     },
-    updateField: (
-      state,
-      {
-        payload: { name, value },
-      }: PayloadAction<{ name: keyof LoginState["account"]; value: string }>
-    ) => {
-      state.account[name] = value;
-    },
-    startLoginIn: (state) => {
-      state.loginIn = true;
+    loginError: (state) => {
+      state.isLogin = false;
     },
   },
 });
 
-export const { initializeLogin, updateField, loginErrors, startLoginIn } =
-  slice.actions;
+export const { initializeApp, loginSuccess, loginError } = slice.actions;
 
 export default slice.reducer;

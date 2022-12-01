@@ -1,14 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { store, dispatchOnCall } from "../../../state/store";
-import { useStoreWithInitializer } from "../../../state/storeHooks";
-import {
-  initializeLogin,
-  loginErrors,
-  LoginState,
-  startLoginIn,
-  updateField,
-} from "./Login.slice";
+import { store } from "../../../state/store";
 import { getProfile, login } from "../../../services/api";
 import {
   Button,
@@ -21,12 +13,14 @@ import {
 import { Exclamation } from "heroicons-react";
 import { loadProfile } from "../../App/App.slice";
 import ForgotPassword from "../Password/ForgotPassword/ForgotPassword";
+import { loginError, loginSuccess } from "./Login.slice";
 
 export default function Login() {
-  const { account } = useStoreWithInitializer(
-    ({ login }) => login,
-    dispatchOnCall(initializeLogin())
-  );
+  const initialState = {
+    email: "",
+    password: "",
+  };
+  const [accountSignIn, setAccountSignIn] = useState(initialState);
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
@@ -111,41 +105,40 @@ export default function Login() {
 
   function handleChange(event: { target: { name: any; value: any } }) {
     setError(false);
-    store.dispatch(
-      updateField({
-        name: event.target.name as keyof LoginState["account"],
-        value: event.target.value,
-      })
-    );
+    setAccountSignIn({
+      ...accountSignIn,
+      [event.target.name]: event.target.value,
+    });
   }
 
   async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
-    store.dispatch(startLoginIn());
-    await login(account.email, account.password).catch((error) => {
+    store.dispatch(loginSuccess());
+
+    await login(accountSignIn.email, accountSignIn.password).catch((error) => {
       setError(true);
       setErrorMessage(error.response.data.error);
-      store.dispatch(loginErrors());
+      store.dispatch(loginError());
       return;
     });
 
-    if (!store.getState().login.loginIn) {
+    if (!store.getState().login.isLogin) {
       return;
     }
 
     const user: any = await getProfile().catch((error) => {
-      store.dispatch(loginErrors());
+      store.dispatch(loginError);
       setErrorMessage(error.response.data.message);
       setError(true);
+      store.dispatch(loginError());
       console.log("signin error");
       return;
     });
 
-    if (store.getState().login.loginIn) {
+    if (store.getState().login.isLogin) {
       store.dispatch(loadProfile(user));
       setShow(false);
       navigate("/");
-      console.log("signin");
     }
   }
 }
