@@ -9,7 +9,6 @@ import { store } from "../../state/store";
 import { endLoad, loadProfile, logout } from "./App.slice";
 import Home from "../../pages/Home/Home";
 import { getProfile } from "../../services/api";
-import axios from "axios";
 import { Spinner } from "flowbite-react";
 import Workspace from "../../pages/Workspace/Workspace";
 import { loginSuccess } from "../Modal/Login/Login.slice";
@@ -25,6 +24,10 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route
             path="/channel/:id"
+            element={accountIsLogged ? <Workspace /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/channel"
             element={accountIsLogged ? <Workspace /> : <Navigate to="/" />}
           />
           {/* <Route path="/profiles/:id" element = {<Profile />}/> */}
@@ -44,7 +47,6 @@ export default function App() {
         store.dispatch(endLoad());
         return;
       }
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const user: any = await getProfile().catch(() => {
         console.log("Cannot get profile");
         store.dispatch(logout());

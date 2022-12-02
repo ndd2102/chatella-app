@@ -3,7 +3,7 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import { Button, TextInput } from "flowbite-react";
 import { getUserProfile } from "../../services/api";
 const Chat = (props: { avatar: string; userId: number }) => {
-  const socketUrl = `ws://www.vinhtc27.social/channel/chat?channelId=2&token=${localStorage.getItem(
+  const socketUrl = `ws://w42g11.int3306.freeddns.org//channel/chat?channelId=2&token=${localStorage.getItem(
     "token"
   )}`;
   const ws = new WebSocket(socketUrl);
@@ -53,7 +53,7 @@ const Chat = (props: { avatar: string; userId: number }) => {
       <TextInput onChange={handleChange}></TextInput>
       <Button
         onClick={handleClickSendMessage}
-        // disabled={readyState !== ReadyState.OPEN}
+      // disabled={readyState !== ReadyState.OPEN}
       >
         Click Me to send
       </Button>
