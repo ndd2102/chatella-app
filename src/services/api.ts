@@ -1,6 +1,5 @@
 import axios from "axios";
 import settings from "../config/settings";
-import { store } from "../state/store";
 import { Channel } from "../types/channel";
 import { Profile } from "../types/profile";
 
@@ -58,6 +57,7 @@ export async function getProfile(): Promise<Profile> {
         (channel: { id: number }) => channel.id
       ),
     };
+    localStorage.setItem("user", JSON.stringify(profile));
   });
   return profile;
 }
@@ -112,4 +112,16 @@ export async function getChannel(channelId: number): Promise<Channel> {
       console.log(error.response.data.error);
     });
   return channel;
+}
+
+export async function getUserProfile(userId: any): Promise<Profile> {
+  let userProfile: any;
+  await axios.get(`account/profile/userId=${userId}`).then((response) => {
+    userProfile = {
+      id: response.data.data.id,
+      avatar: response.data.data.avatar,
+      name: response.data.data.name,
+    };
+  });
+  return userProfile;
 }

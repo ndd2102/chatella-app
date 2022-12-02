@@ -1,15 +1,14 @@
-import { None, Option, Some } from "@sniptt/monads/build";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Profile } from "../../types/profile";
 
 export interface AppState {
-  profile: Option<Profile>;
+  profile: Profile;
   loading: boolean;
 }
 
 const initialState: AppState = {
-  profile: None,
+  profile: JSON.parse(localStorage.getItem("user") || "{}"),
   loading: true,
 };
 
@@ -19,14 +18,13 @@ const slice = createSlice({
   reducers: {
     initializeApp: () => initialState,
     loadProfile: (state, { payload: profile }: PayloadAction<Profile>) => {
-      console.log(profile);
-      state.profile = Some(profile);
+      state.profile = profile;
       state.loading = false;
     },
-    logout: (state) => {
-      state.profile = None;
+    logout: () => {
       delete axios.defaults.headers.common["Authorization"];
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
     },
     endLoad: (state) => {
       state.loading = false;

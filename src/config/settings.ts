@@ -1,3 +1,3 @@
 export default {
-  baseApiUrl: "http://www.vinhtc27.social/",
+  baseApiUrl: "http://w42g11.int3306.freeddns.org/",
 };
