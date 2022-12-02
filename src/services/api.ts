@@ -1,26 +1,24 @@
+import { axiosInstance } from "./../config/settings";
 import axios from "axios";
-import settings from "../config/settings";
 import { Channel } from "../types/channel";
 import { Profile } from "../types/profile";
 
-axios.defaults.baseURL = settings.baseApiUrl;
-
 export async function login(email: string, password: string) {
-  await axios
+  await axiosInstance
     .post("account/signin", {
       email: email,
       password: password,
     })
     .then((response) => {
       localStorage.setItem("token", response.data.data.token);
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${localStorage.getItem("token")}`;
+      // axios.defaults.headers.common[
+      //   "Authorization"
+      // ] = `Bearer ${localStorage.getItem("token")}`;
     });
 }
 
 export async function register(email: string, password: string) {
-  await axios.post("account/signup", {
+  await axiosInstance.post("account/signup", {
     email: email,
     password: password,
   });
@@ -31,7 +29,7 @@ export async function changePassword(
   password: string,
   newPassword: string
 ) {
-  await axios
+  await axiosInstance
     .patch("account/change-password", {
       email: email,
       password: password,
@@ -44,21 +42,23 @@ export async function changePassword(
 
 export async function getProfile(): Promise<Profile> {
   let profile: any;
-  await axios.get("account/profile/current-profile").then((response) => {
-    profile = {
-      userId: response.data.data.id,
-      email: response.data.data.email,
-      name: response.data.data.name,
-      avatar: response.data.data.avatar,
-      sex: response.data.data.sex,
-      dateOfBirth: response.data.data.dob,
-      country: response.data.data.national,
-      channelID: response.data.data.channels.map(
-        (channel: { id: number }) => channel.id
-      ),
-    };
-    localStorage.setItem("user", JSON.stringify(profile));
-  });
+  await axiosInstance
+    .get("account/profile/current-profile")
+    .then((response) => {
+      profile = {
+        userId: response.data.data.id,
+        email: response.data.data.email,
+        name: response.data.data.name,
+        avatar: response.data.data.avatar,
+        sex: response.data.data.sex,
+        dateOfBirth: response.data.data.dob,
+        country: response.data.data.national,
+        channelID: response.data.data.channels.map(
+          (channel: { id: number }) => channel.id
+        ),
+      };
+      localStorage.setItem("user", JSON.stringify(profile));
+    });
   return profile;
 }
 
@@ -69,7 +69,7 @@ export async function updateProfile(
   national: string,
   avatar: string
 ) {
-  await axios.patch("account/profile/current-profile", {
+  await axiosInstance.patch("account/profile/current-profile", {
     name: name,
     dob: dob,
     sex: sex,
@@ -79,26 +79,31 @@ export async function updateProfile(
 }
 
 export async function resendEmail(email: string) {
-  await axios.post("mail/validate-email", {
+  await axiosInstance.post("mail/validate-email", {
     email: email,
   });
 }
 
 export async function createChannel(channelName: string) {
-  let id: number = await axios
+  let id: number = await axiosInstance
     .post("channel/create-channel", {
       name: channelName,
     })
     .then((response) => {
       console.log(`Create channel ${channelName} successfully`);
       return response.data.data.id;
+    })
+    .catch((error) => {
+      console.log(
+        `Create channel ${channelName} failed. Error: ${error.response.data.error}`
+      );
     });
   return id;
 }
 
 export async function getChannel(channelId: number): Promise<Channel> {
   let channel: any;
-  await axios
+  await axiosInstance
     .get(`channel/channelId=${channelId}`)
     .then((response) => {
       channel = {
@@ -116,12 +121,14 @@ export async function getChannel(channelId: number): Promise<Channel> {
 
 export async function getUserProfile(userId: any): Promise<Profile> {
   let userProfile: any;
-  await axios.get(`account/profile/userId=${userId}`).then((response) => {
-    userProfile = {
-      id: response.data.data.id,
-      avatar: response.data.data.avatar,
-      name: response.data.data.name,
-    };
-  });
+  await axiosInstance
+    .get(`account/profile/userId=${userId}`)
+    .then((response) => {
+      userProfile = {
+        id: response.data.data.id,
+        avatar: response.data.data.avatar,
+        name: response.data.data.name,
+      };
+    });
   return userProfile;
 }
