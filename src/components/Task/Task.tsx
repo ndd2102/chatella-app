@@ -4,7 +4,7 @@ import Board from "./Board/Board";
 
 function Task(props: { channel: Channel | undefined }) {
   const channel = props.channel;
-  console.log(channel);
+
   return (
     <>
       {channel && (
@@ -13,9 +13,9 @@ function Task(props: { channel: Channel | undefined }) {
             <h1 className="text-blue-700 self-center whitespace-nowrap text-4xl font-semibold dark:text-white">
               {channel.name}
             </h1>
-            <AddMember channelId={channel.id} />
+            <AddMember channelId={channel.id} memberList={channel.members} />
           </div>
-          <div className="grow">
+          <div className="">
             <Board />
           </div>
         </div>

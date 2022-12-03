@@ -3,8 +3,9 @@ import { Exclamation } from "heroicons-react";
 import React, { useState } from "react";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { addMember } from "../../../../services/api";
+import { ChannelMember } from "../../../../types/channel";
 
-function AddMember(props: { channelId: number }) {
+function AddMember(props: { channelId: number; memberList: ChannelMember[] }) {
   const [show, setShow] = useState(false);
   const [newMember, setNewMember] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
