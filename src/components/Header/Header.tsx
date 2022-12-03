@@ -7,7 +7,7 @@ import { logout } from "../App/App.slice";
 import Register from "../Modal/Register/Register";
 import { UserInfo } from "../Modal/UserInfo/UserInfo";
 import { Profile } from "../../types/profile";
-
+import { HiOutlineMenu } from "react-icons/hi";
 export default function Header() {
   const { profile } = useStore(({ app }) => app);
   const accountIsLogged = !(Object.keys(profile).length === 0);
@@ -51,14 +51,17 @@ function UserLinks({
     store.dispatch(logout());
     window.location.reload();
   };
+  
   return (
     <div className="flex grow w-9/10 ml-24 mr-8 items-center">
       <NavbarCollapse className="mr-16">
-        <Navbar.Link className="mr-8" href="/">
+      <Navbar.Link className="mr-8" href="/">
           Home
-        </Navbar.Link>
-        <Navbar.Link href="/channel/1">Workspace</Navbar.Link>
+      </Navbar.Link>
+      <Navbar.Link href="/channel/1">Workspace</Navbar.Link>
+
       </NavbarCollapse>
+      <HiOutlineMenu className="md:hidden"></HiOutlineMenu>
       <div className="grow justify-items-end">
         <div className="float-right">
           <Dropdown

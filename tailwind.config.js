@@ -10,7 +10,8 @@ module.exports = {
       sacramento: ["Sacramento"],
       serif: ["Merriweather", "serif"],
     },
-    extend: {},
+    extend: {
+    },
   },
   plugins: [require("flowbite/plugin")],
 };
