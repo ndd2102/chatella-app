@@ -16,6 +16,7 @@ import { loginSuccess } from "../Modal/Login/Login.slice";
 export default function App() {
   const { loading, profile } = useStoreWithInitializer(({ app }) => app, load);
   const accountIsLogged = !(Object.keys(profile).length === 0);
+  console.log(accountIsLogged);
 
   return (
     <Router>
@@ -53,7 +54,6 @@ export default function App() {
         store.dispatch(endLoad());
         return;
       });
-
       if (user !== undefined) {
         store.dispatch(loadProfile(user));
         store.dispatch(loginSuccess());

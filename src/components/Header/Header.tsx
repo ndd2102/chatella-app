@@ -11,7 +11,6 @@ import { Profile } from "../../types/profile";
 export default function Header() {
   const { profile } = useStore(({ app }) => app);
   const accountIsLogged = !(Object.keys(profile).length === 0);
-  console.log(accountIsLogged);
 
   return (
     <>
@@ -43,7 +42,7 @@ function GuestLinks() {
 }
 
 function UserLinks({
-  profile: { email, name, dateOfBirth, country, avatar, sex },
+  profile: { email, name, dateOfBirth, country, avatar, sex, channelID },
 }: {
   profile: Profile;
 }) {
@@ -57,7 +56,7 @@ function UserLinks({
         <Navbar.Link className="mr-8" href="/">
           Home
         </Navbar.Link>
-        <Navbar.Link href="/channel/1">Workspace</Navbar.Link>
+        <Navbar.Link href={`/channel`}>Workspace</Navbar.Link>
       </NavbarCollapse>
       <div className="grow justify-items-end">
         <div className="float-right">

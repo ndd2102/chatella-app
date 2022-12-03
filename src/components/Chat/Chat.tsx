@@ -53,7 +53,7 @@ const Chat = (props: { avatar: string; userId: number }) => {
       <TextInput onChange={handleChange}></TextInput>
       <Button
         onClick={handleClickSendMessage}
-      // disabled={readyState !== ReadyState.OPEN}
+        // disabled={readyState !== ReadyState.OPEN}
       >
         Click Me to send
       </Button>
