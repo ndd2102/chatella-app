@@ -7,4 +7,5 @@ export interface Profile {
   dateOfBirth: string;
   country: string;
   channelID: number[];
+  id: number;
 }
