@@ -11,9 +11,6 @@ export async function login(email: string, password: string) {
     })
     .then((response) => {
       localStorage.setItem("token", response.data.data.token);
-      // axios.defaults.headers.common[
-      //   "Authorization"
-      // ] = `Bearer ${localStorage.getItem("token")}`;
     });
 }
 
@@ -102,15 +99,22 @@ export async function createChannel(channelName: string) {
 }
 
 export async function getChannel(channelId: number): Promise<Channel> {
-  let channel: any;
+  let channel: Channel = {
+    id: -1,
+    members: [],
+    avatar: "",
+    name: "",
+    boards: [],
+  };
   await axiosInstance
     .get(`channel/channelId=${channelId}`)
     .then((response) => {
       channel = {
-        id: response.data.data.number,
+        id: response.data.data.id,
         members: response.data.data.members,
         avatar: response.data.data.avatar,
         name: response.data.data.name,
+        boards: response.data.data.taskColumns,
       };
     })
     .catch((error) => {
@@ -131,4 +135,8 @@ export async function getUserProfile(userId: any): Promise<Profile> {
       };
     });
   return userProfile;
+}
+
+export async function addMember(email: string, id: number) {
+  await axiosInstance.patch(`channel/add/channelId=${id}?email=${email}`);
 }

@@ -9,6 +9,7 @@ import {
 } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
 import { register } from "../../../services/api";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const initialState = {
@@ -20,6 +21,7 @@ export default function Register() {
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -138,6 +140,9 @@ export default function Register() {
           setErrorMessage(err.response.data.error);
         }
       );
+    }
+    if (!error) {
+      navigate("/");
     }
   }
 }
