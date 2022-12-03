@@ -1,6 +1,5 @@
 import { Avatar } from "flowbite-react";
 import { HiOutlineHome, HiOutlineLogout } from "react-icons/hi";
-import { GrGroup } from "react-icons/gr";
 import { CgProfile } from "react-icons/cg";
 import { Profile } from "../../types/profile";
 import { UserInfo } from "../Modal/UserInfo/UserInfo";
@@ -99,8 +98,8 @@ export const SidebarComponent = (props: {
           </div>
           <div className="pt-4">
             <ul>
-              {channelList.map((channel) => (
-                <li key={channel.id}>
+              {channelList.map((channel, id) => (
+                <li key={id}>
                   <a
                     href={`/channel/${channel.id}`}
                     className={
