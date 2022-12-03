@@ -43,7 +43,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       setOtherAva(list);
     };
     fetchUserlList();
-  }, [props.channel.members]);
+  }, []);
   const handleClickSendMessage = useCallback(
     () => sendJsonMessage({ content: `${mess}` }),
     [mess, sendJsonMessage]
