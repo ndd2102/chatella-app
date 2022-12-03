@@ -2,15 +2,17 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { Button, TextInput } from "flowbite-react";
 import { getUserProfile } from "../../services/api";
-const Chat = (props: { avatar: string; userId: number }) => {
-  const socketUrl = `ws://w42g11.int3306.freeddns.org//channel/chat?channelId=2&token=${localStorage.getItem(
-    "token"
-  )}`;
+import { Profile } from "../../types/profile";
+import { Channel } from "../../types/channel";
+const Chat = (props: { profile: Profile; channel: Channel }) => {
+  const socketUrl = `ws://w42g11.int3306.freeddns.org//channel/chat?channelId=${
+    props.channel.id
+  }&token=${localStorage.getItem("token")}`;
   const ws = new WebSocket(socketUrl);
   const [messageHistory, setMessageHistory] = useState([]);
   const [mess, setMess] = useState();
   const didUnmount = useRef(false);
-  const [otherAva, setOtherAva] = useState();
+  const [otherAva, setOtherAva] = useState<Profile[]>([]);
   const { sendJsonMessage, readyState } = useWebSocket(socketUrl, {
     shouldReconnect: (closeEvent) => {
       /*
@@ -30,11 +32,22 @@ const Chat = (props: { avatar: string; userId: number }) => {
       didUnmount.current = true;
     };
   }, []);
+
+  useEffect(() => {
+    const fetchUserlList = async () => {
+      const list = await Promise.all(
+        props.channel.members.slice(0).map(async (value) => {
+          return await getUserProfile(value.userId);
+        })
+      );
+      setOtherAva(list);
+    };
+    fetchUserlList();
+  }, []);
   const handleClickSendMessage = useCallback(
     () => sendJsonMessage({ content: `${mess}` }),
     [mess, sendJsonMessage]
   );
-
   const connectionStatus = {
     [ReadyState.CONNECTING]: "Connecting",
     [ReadyState.OPEN]: "Open",
@@ -57,11 +70,15 @@ const Chat = (props: { avatar: string; userId: number }) => {
       >
         Click Me to send
       </Button>
-      <Button onClick={() => getAvatar(2)}></Button>
+      {/* <Button onClick={getAvatar}></Button> */}
     </div>
   );
+
   function ms(value: any, idx: any) {
-    if (JSON.parse(value.data).senderId !== props.userId)
+    if (JSON.parse(value.data).senderId !== props.profile.userId) {
+      const avatar = otherAva.find((obj) => {
+        return obj.id === JSON.parse(value.data).senderId;
+      });
       //getAvatar(JSON.parse(value.data).senderId);
       return (
         <div key={idx} className="chat-message">
@@ -70,16 +87,18 @@ const Chat = (props: { avatar: string; userId: number }) => {
               <div className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
                 {[JSON.parse(value.data).content]}
               </div>
+
               <img
-                src={`${otherAva}`}
+                src={avatar?.avatar}
                 alt="ava"
                 className="w-6 h-6 rounded-full order-1"
+                onClick={() => console.log(avatar?.name)}
               ></img>
             </div>
           </div>
         </div>
       );
-    else
+    } else
       return (
         <div key={idx} className="chat-message">
           <div className="flex items-end justify-end">
@@ -88,7 +107,7 @@ const Chat = (props: { avatar: string; userId: number }) => {
                 {[JSON.parse(value.data).content]}
               </div>
               <img
-                src={props.avatar}
+                src={props.profile.avatar}
                 alt="ava"
                 className="w-6 h-6 rounded-full order-2"
               ></img>
@@ -97,14 +116,7 @@ const Chat = (props: { avatar: string; userId: number }) => {
         </div>
       );
   }
-  async function getAvatar(userID: number) {
-    let ava: any = await getUserProfile(userID);
-    setOtherAva(ava.avatar);
-  }
 
-  function c() {
-    console.log(otherAva);
-  }
   function handleChange(event: { target: { value: any } }) {
     setMess(event.target.value);
   }
