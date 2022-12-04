@@ -37,7 +37,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   useEffect(() => {
     const fetchUserlList = async () => {
       const list = await Promise.all(
-        props.channel.members.slice(0).map(async (value) => {
+        props.channel.members.map(async (value) => {
           return await getUserProfile(value.userId);
         })
       );
@@ -101,9 +101,9 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       </div>
       <div
         id="chatArea"
-        className="h-[600px] flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
+        className=" flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
       >
-        {messageHistory.map(ms)}
+        {messageHistory.slice(1).map(ms)}
       </div>
       <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
         <div className="relative flex">
@@ -142,44 +142,42 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
     const avatar = otherAva.find((obj) => {
       return obj.id === JSON.parse(value.data).senderId;
     });
-    if (JSON.parse(value.data).timestamp !== "-1") {
-      if (JSON.parse(value.data).senderId !== props.profile.userId) {
-        return (
-          <div key={idx} className="chat-message">
-            <div className="flex items-end">
-              <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
-                <div className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
-                  {[JSON.parse(value.data).content]}
-                </div>
+    if (JSON.parse(value.data).senderId !== props.profile.userId) {
+      return (
+        <div key={idx} className="chat-message">
+          <div className="flex items-end">
+            <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
+              <div className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
+                {[JSON.parse(value.data).content]}
+              </div>
 
-                <img
-                  src={avatar?.avatar}
-                  alt="ava"
-                  className="w-6 h-6 rounded-full order-1"
-                  onClick={() => console.log(avatar?.name)}
-                ></img>
-              </div>
+              <img
+                src={avatar?.avatar}
+                alt="ava"
+                className="w-6 h-6 rounded-full order-1"
+                onClick={() => console.log(avatar?.name)}
+              ></img>
             </div>
           </div>
-        );
-      } else
-        return (
-          <div key={idx} className="chat-message">
-            <div className="flex items-end justify-end">
-              <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
-                <div className="px-4 py-2 rounded-lg inline-block bg-blue-600 text-white">
-                  {[JSON.parse(value.data).content]}
-                </div>
-                <img
-                  src={avatar?.avatar}
-                  alt="ava"
-                  className="w-6 h-6 rounded-full order-2"
-                ></img>
+        </div>
+      );
+    } else
+      return (
+        <div key={idx} className="chat-message">
+          <div className="flex items-end justify-end">
+            <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
+              <div className="px-4 py-2 rounded-lg inline-block bg-blue-600 text-white">
+                {[JSON.parse(value.data).content]}
               </div>
+              <img
+                src={avatar?.avatar}
+                alt="ava"
+                className="w-6 h-6 rounded-full order-2"
+              ></img>
             </div>
           </div>
-        );
-    }
+        </div>
+      );
   }
   function handleChange(event: { target: { value: any } }) {
     setMess(event.target.value);

@@ -69,5 +69,6 @@ export default function CreateChannel() {
     setShow(false);
     console.log("Id channel: " + channelId);
     navigate(`/channel/${channelId}`);
+    window.location.reload();
   }
 }

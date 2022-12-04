@@ -1,5 +1,6 @@
 import { Channel } from "../../types/channel";
 import AddMember from "../Modal/Channel/AddMember/AddMember";
+import DelMember from "../Modal/Channel/DelMember/DelMember";
 import Board from "./Board/Board";
 
 function Task(props: { channel: Channel | undefined }) {
@@ -14,6 +15,7 @@ function Task(props: { channel: Channel | undefined }) {
               {channel.name}
             </h1>
             <AddMember channelId={channel.id} memberList={channel.members} />
+            <DelMember channelInfo={channel} />
           </div>
           <div className="">
             <Board />
