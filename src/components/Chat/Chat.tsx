@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import { Button, TextInput } from "flowbite-react";
+import { Avatar, Button, TextInput } from "flowbite-react";
 import { getUserProfile } from "../../services/api";
 import { Profile } from "../../types/profile";
 import { Channel } from "../../types/channel";
@@ -8,11 +8,11 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   const socketUrl = `ws://w42g11.int3306.freeddns.org//channel/chat?channelId=${
     props.channel.id
   }&token=${localStorage.getItem("token")}`;
-  const ws = new WebSocket(socketUrl);
   const [messageHistory, setMessageHistory] = useState([]);
-  const [mess, setMess] = useState();
-  const didUnmount = useRef(false);
+  const [mess, setMess] = useState<string>();
   const [otherAva, setOtherAva] = useState<Profile[]>([]);
+  const didUnmount = useRef(false);
+  const ws = new WebSocket(socketUrl);
   const { sendJsonMessage, readyState } = useWebSocket(socketUrl, {
     shouldReconnect: (closeEvent) => {
       /*
@@ -44,10 +44,17 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
     };
     fetchUserlList();
   }, []);
-  const handleClickSendMessage = useCallback(
-    () => sendJsonMessage({ content: `${mess}` }),
-    [mess, sendJsonMessage]
-  );
+  setTimeout(() => {
+    let objDiv: any = document.getElementById("chatArea");
+
+    objDiv.scrollTop = objDiv.scrollHeight;
+  }, 0);
+  const handleClickSendMessage = useCallback(() => {
+    if (mess !== undefined && mess !== "") {
+      sendJsonMessage({ content: `${mess}` });
+    }
+    setMess("");
+  }, [mess, sendJsonMessage]);
   const connectionStatus = {
     [ReadyState.CONNECTING]: "Connecting",
     [ReadyState.OPEN]: "Open",
@@ -57,29 +64,41 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   }[readyState];
 
   return (
-    <div>
-      <div className="p-6">Chat</div>
-      <span>The WebSocket is currently {connectionStatus}</span>
-      <div className="h-[600px] flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+    <form>
+      <span className="inline-flex justify-center items-center ml-4 text-lg">
+        <Avatar
+          img={props.channel.avatar}
+          rounded={true}
+          status="online"
+          statusPosition="bottom-right"
+        />
+      </span>
+      <span className="p-4 text-lg tracking-wide truncate">
+        {props.channel.name}
+      </span>
+      <div>The WebSocket is currently {connectionStatus}</div>
+      <div
+        id="chatArea"
+        className="h-[600px] flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
+      >
         {messageHistory.map(ms)}
       </div>
-      <TextInput onChange={handleChange}></TextInput>
+      <TextInput id="text" onChange={handleChange}></TextInput>
       <Button
+        type="reset"
         onClick={handleClickSendMessage}
         // disabled={readyState !== ReadyState.OPEN}
       >
         Click Me to send
       </Button>
-      {/* <Button onClick={getAvatar}></Button> */}
-    </div>
+    </form>
   );
 
   function ms(value: any, idx: any) {
+    const avatar = otherAva.find((obj) => {
+      return obj.id === JSON.parse(value.data).senderId;
+    });
     if (JSON.parse(value.data).senderId !== props.profile.userId) {
-      const avatar = otherAva.find((obj) => {
-        return obj.id === JSON.parse(value.data).senderId;
-      });
-      //getAvatar(JSON.parse(value.data).senderId);
       return (
         <div key={idx} className="chat-message">
           <div className="flex items-end">
@@ -107,7 +126,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
                 {[JSON.parse(value.data).content]}
               </div>
               <img
-                src={props.profile.avatar}
+                src={avatar?.avatar}
                 alt="ava"
                 className="w-6 h-6 rounded-full order-2"
               ></img>
@@ -118,7 +137,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   }
 
   function handleChange(event: { target: { value: any } }) {
-    setMess(event.target.value);
+    setMess(event.target.value.trim());
   }
 };
 export default Chat;
