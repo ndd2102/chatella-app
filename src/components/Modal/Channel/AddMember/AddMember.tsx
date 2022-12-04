@@ -73,7 +73,7 @@ function AddMember(props: { channelId: number; memberList: ChannelMember[] }) {
   {
     let emailUser="";
     let memberChannel = (await getChannel(channelId)).members;
-    for( let i= 0; i < 2; i++){
+    for( let i= 0; i < memberChannel.length; i++){
       emailUser = (await getUserProfile(memberChannel[i].userId)).email;
       if(emailAdd === emailUser){
         return true;
