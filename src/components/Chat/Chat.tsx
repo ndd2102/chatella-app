@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { Avatar, Button, TextInput } from "flowbite-react";
 import { getUserProfile } from "../../services/api";
+
 import { Profile } from "../../types/profile";
 import { Channel } from "../../types/channel";
 const Chat = (props: { profile: Profile; channel: Channel }) => {
