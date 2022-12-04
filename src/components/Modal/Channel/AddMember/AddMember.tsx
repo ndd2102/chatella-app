@@ -2,7 +2,7 @@ import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
 import React, { useState } from "react";
 import { AiOutlineUserAdd } from "react-icons/ai";
-import { addMember } from "../../../../services/api";
+import { addMember, getChannel, getUserProfile } from "../../../../services/api";
 import { ChannelMember } from "../../../../types/channel";
 
 function AddMember(props: { channelId: number; memberList: ChannelMember[] }) {
@@ -69,15 +69,35 @@ function AddMember(props: { channelId: number; memberList: ChannelMember[] }) {
     </React.Fragment>
   );
 
+  async function memberInChannel(emailAdd: string, channelId:number )
+  {
+    let emailUser="";
+    let memberChannel = (await getChannel(channelId)).members;
+    for( let i= 0; i < 2; i++){
+      emailUser = (await getUserProfile(memberChannel[i].userId)).email;
+      if(emailAdd === emailUser){
+        return true;
+      }
+    }
+    return false;
+  }
+
   async function onSubmit() {
+    if(await memberInChannel(newMember, props.channelId))
+    {
+      setError(true);
+      setErrorMessage("This member is already in channel!");
+    }
     await addMember(newMember, props.channelId).catch((error) => {
       setError(true);
       setErrorMessage("Email not found!");
     });
+
     if (!error) {
       setShow(false);
     }
   }
 }
+  
 
 export default AddMember;

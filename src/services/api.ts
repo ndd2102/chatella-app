@@ -132,6 +132,7 @@ export async function getUserProfile(userId: any): Promise<Profile> {
         id: response.data.data.id,
         avatar: response.data.data.avatar,
         name: response.data.data.name,
+        email: response.data.data.email,
       };
     });
   return userProfile;

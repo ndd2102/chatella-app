@@ -2,12 +2,14 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { Button, TextInput } from "flowbite-react";
 import { getUserProfile } from "../../services/api";
+
 import { Profile } from "../../types/profile";
 import { Channel } from "../../types/channel";
 const Chat = (props: { profile: Profile; channel: Channel }) => {
   const socketUrl = `ws://w42g11.int3306.freeddns.org//channel/chat?channelId=${
     props.channel.id
   }&token=${localStorage.getItem("token")}`;
+
   const ws = new WebSocket(socketUrl);
   const [messageHistory, setMessageHistory] = useState([]);
   const [mess, setMess] = useState();
