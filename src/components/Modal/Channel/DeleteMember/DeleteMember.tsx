@@ -3,7 +3,7 @@ import { Exclamation } from "heroicons-react";
 import React, { useEffect, useState } from "react";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import {
-  DeleteMember,
+  deleteMember,
   getChannel,
   getUserProfile,
 } from "../../../../services/api";
@@ -11,7 +11,7 @@ import { Channel } from "../../../../types/channel";
 
 import { Profile } from "../../../../types/profile";
 
-function DelMember(props: { channelInfo: Channel }) {
+function DeleteMember(props: { channelInfo: Channel }) {
   const [show, setShow] = useState(false);
   const [member, setMember] = useState<Profile[]>([]);
   const [delMember, setDelMember] = useState<number[]>([]);
@@ -108,7 +108,7 @@ function DelMember(props: { channelInfo: Channel }) {
   }
   async function check() {
     delMember.map(async (value) => {
-      await DeleteMember(value, props.channelInfo.id);
+      await deleteMember(value, props.channelInfo.id);
     });
     const newChannel = await getChannel(channel.id);
     setChannel(newChannel);
@@ -116,4 +116,4 @@ function DelMember(props: { channelInfo: Channel }) {
   }
 }
 
-export default DelMember;
+export default DeleteMember;

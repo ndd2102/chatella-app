@@ -1,6 +1,6 @@
 import { Channel } from "../../types/channel";
 import AddMember from "../Modal/Channel/AddMember/AddMember";
-import DelMember from "../Modal/Channel/DelMember/DelMember";
+import DelMember from "../Modal/Channel/DeleteMember/DeleteMember";
 import Board from "./Board/Board";
 
 function Task(props: { channel: Channel | undefined }) {

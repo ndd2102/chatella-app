@@ -141,6 +141,6 @@ export async function getUserProfile(userId: any): Promise<Profile> {
 export async function addMember(email: string, id: number) {
   await axiosInstance.patch(`channel/add/channelId=${id}?email=${email}`);
 }
-export async function DeleteMember(userId: number, id: number) {
+export async function deleteMember(userId: number, id: number) {
   await axiosInstance.delete(`channel/delete/channelId=${id}?userId=${userId}`);
 }

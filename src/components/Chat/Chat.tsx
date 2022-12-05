@@ -178,21 +178,38 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
     const avatar = otherAva.find((obj) => {
       return obj.id === JSON.parse(value.data).senderId;
     });
+    const today = new Date();
+    const getTimeToday =
+      today.getMonth() +
+      1 +
+      "/" +
+      today.getDate() +
+      "/" +
+      today.getFullYear() +
+      ",";
+    const time = convertTZ(
+      `${[JSON.parse(value.data).timestamp]} +0000`,
+      "Asia/Jakarta"
+    );
+    let getTime = time.split(" ");
+    let time1 = getTime[1] ? time.substring(time.indexOf(" ") + 1) : "";
     if (JSON.parse(value.data).senderId !== props.profile.userId) {
       return (
         <div key={idx} className="chat-message">
-          <div className="flex items-end">
-            <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
+          <div className="flex items-start justify-start">
+            <div className="space-y-2 text-xs max-w-xs mx-2 order-1 items-start">
               <div className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
                 {[JSON.parse(value.data).content]}
               </div>
-
               <img
                 src={avatar?.avatar}
                 alt="ava"
-                className="w-6 h-6 rounded-full order-1"
+                className="w-6 h-6 rounded-full float-left m-2"
                 onClick={() => console.log(avatar?.name)}
               ></img>
+              <span className="block text-[9px]">
+                {getTime[0] === getTimeToday ? time1 : getTime[0]}
+              </span>
             </div>
           </div>
         </div>
@@ -201,15 +218,18 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       return (
         <div key={idx} className="chat-message">
           <div className="flex items-end justify-end">
-            <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
+            <div className=" space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
               <div className="px-4 py-2 rounded-lg inline-block bg-blue-600 text-white">
                 {[JSON.parse(value.data).content]}
               </div>
               <img
                 src={avatar?.avatar}
                 alt="ava"
-                className="w-6 h-6 rounded-full order-2"
+                className="w-6 h-6 rounded-full order-2 float-right m-2"
               ></img>
+              <span className="block text-[9px]">
+                {getTime[0] === getTimeToday ? time1 : getTime[0]}
+              </span>
             </div>
           </div>
         </div>
@@ -217,6 +237,11 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   }
   function handleChange(event: { target: { value: any } }) {
     setMess(event.target.value);
+  }
+  function convertTZ(date: any, tzString: any) {
+    return new Date(
+      typeof date === "string" ? new Date(date) : date
+    ).toLocaleString("en-US", { timeZone: tzString });
   }
 };
 export default Chat;
