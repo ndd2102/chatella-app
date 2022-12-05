@@ -19,10 +19,10 @@ function DelMember(props: { channelInfo: Channel }) {
   const [error, setError] = useState(false);
   const [channel, setChannel] = useState(props.channelInfo);
   useEffect(() => {
-    const ChannelInfo = async () => {
-      setChannel(await getChannel(channel.id));
-    };
-    ChannelInfo();
+    // const ChannelInfo = async () => {
+    //   setChannel(await getChannel(channel.id));
+    // };
+    // ChannelInfo();
     const fetchUserlList = async () => {
       const list = await Promise.all(
         channel.members.slice(1).map(async (value) => {
@@ -48,7 +48,7 @@ function DelMember(props: { channelInfo: Channel }) {
             <h3 className="text-xl font-medium text-gray-900 dark:text-white">
               Delete member
             </h3>
-            <div>
+            <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col max-h-[50vh] overflow-y-auto">
               {member.map((userId, id) => (
                 <div key={id}>
                   <Label className="inline-flex justify-center items-center ml-4 text-lg ">
@@ -112,7 +112,7 @@ function DelMember(props: { channelInfo: Channel }) {
     });
     const newChannel = await getChannel(channel.id);
     setChannel(newChannel);
-    //console.log(props.channelInfo);
+    window.location.reload();
   }
 }
 
