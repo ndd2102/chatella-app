@@ -1,23 +1,14 @@
-import { number } from "decoders";
-import {
-  Avatar,
-  Button,
-  Checkbox,
-  Label,
-  Modal,
-  TextInput,
-  Toast,
-} from "flowbite-react";
+import { Avatar, Button, Checkbox, Label, Modal, Toast } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
 import React, { useEffect, useState } from "react";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import {
-  addMember,
   DeleteMember,
   getChannel,
   getUserProfile,
 } from "../../../../services/api";
-import { Channel, ChannelMember } from "../../../../types/channel";
+import { Channel } from "../../../../types/channel";
+
 import { Profile } from "../../../../types/profile";
 
 function DelMember(props: { channelInfo: Channel }) {
@@ -26,17 +17,22 @@ function DelMember(props: { channelInfo: Channel }) {
   const [delMember, setDelMember] = useState<number[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
+  const [channel, setChannel] = useState(props.channelInfo);
   useEffect(() => {
+    const ChannelInfo = async () => {
+      setChannel(await getChannel(channel.id));
+    };
+    ChannelInfo();
     const fetchUserlList = async () => {
       const list = await Promise.all(
-        props.channelInfo.members.map(async (value) => {
+        channel.members.slice(1).map(async (value) => {
           return await getUserProfile(value.userId);
         })
       );
       setMember(list);
     };
     fetchUserlList();
-  });
+  }, [channel.id, channel.members]);
   return (
     <React.Fragment>
       <span
@@ -97,41 +93,27 @@ function DelMember(props: { channelInfo: Channel }) {
   );
   function handleChange(event: { target: { value: any } }) {
     let isCheck = event.target.value;
-    setDelMember((pre) => [...pre, isCheck]);
+    const first = delMember.find((obj) => {
+      return obj === isCheck;
+    });
+    console.log(first);
+    if (first === undefined) {
+      setDelMember((pre) => [...pre, isCheck]);
+    } else
+      setDelMember((member) =>
+        member.filter((current) => {
+          return current !== isCheck;
+        })
+      );
   }
-  function check() {
-    console.log(delMember);
+  async function check() {
+    delMember.map(async (value) => {
+      await DeleteMember(value, props.channelInfo.id);
+    });
+    const newChannel = await getChannel(channel.id);
+    setChannel(newChannel);
+    //console.log(props.channelInfo);
   }
-  async function getUserInfo(userId: number) {
-    let a = await getUserProfile(userId);
-    return a.name;
-  }
-  //   async function memberInChannel(emailAdd: string, channelId: number) {
-  //     let emailUser = "";
-  //     let memberChannel = (await getChannel(channelId)).members;
-  //     for (let i = 0; i < memberChannel.length; i++) {
-  //       emailUser = (await getUserProfile(memberChannel[i].userId)).email;
-  //       if (emailAdd === emailUser) {
-  //         return true;
-  //       }
-  //     }
-  //     return false;
-  //   }
-
-  //   async function onSubmit() {
-  //     // if (await memberInChannel(newMember, props.channelId)) {
-  //     //   setError(true);
-  //     //   setErrorMessage("This member is already in channel!");
-  //     // }
-  //     await DeleteMember(newMember, props.channelId).catch((error) => {
-  //       setError(true);
-  //       setErrorMessage("Email not found!");
-  //     });
-
-  //     if (!error) {
-  //       setShow(false);
-  //     }
-  //   }
 }
 
 export default DelMember;
