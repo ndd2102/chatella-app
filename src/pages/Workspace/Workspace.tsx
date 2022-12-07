@@ -37,9 +37,9 @@ function Workspace() {
         profile={profile}
         channelInfo={channelInfo}
       />
-      <>
+      
         {id && channel ? (
-          <div className="ml-64 h-screen grid grid-cols-3">
+          <div className="ml-64 h-screen grid grid-cols-1 sm:grid-cols-1 xl:grid-cols-3">
             <div className="col-span-2">
               <Task channel={channel} />
             </div>
@@ -51,7 +51,7 @@ function Workspace() {
         ) : (
           <div className="pl-64 mx-auto my-auto"></div>
         )}
-      </>
+      
     </div>
   );
 }

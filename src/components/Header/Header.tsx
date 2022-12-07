@@ -20,10 +20,11 @@ export default function Header() {
         rounded={true}
       >
         <Navbar.Brand>
-          <span className="font-sacramento pt-2 text-blue-800 self-center whitespace-nowrap text-4xl font-semibold dark:text-white">
+          <span className="font-sacramento pt-2 text-blue-800 self-center whitespace-nowrap text-4xl font-semibold dark:text-white pr-4">
             Chatella
           </span>
         </Navbar.Brand>
+        <Navbar.Toggle />
         {accountIsLogged ? <UserLinks profile={profile} /> : <GuestLinks />}
       </Navbar>
     </>
