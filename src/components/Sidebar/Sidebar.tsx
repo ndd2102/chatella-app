@@ -101,7 +101,7 @@ export const SidebarComponent = (props: {
               {channelList.map((channel, id) => (
                 <li key={id}>
                   <a
-                    href={`/channel/${channel.id}`}
+                    href={`/workspace/${channel.id}`}
                     className={
                       channel.id === props.locationId ? onFocus : notFocus
                     }

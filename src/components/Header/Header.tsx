@@ -56,7 +56,7 @@ function UserLinks({
         <Navbar.Link className="mr-8" href="/">
           Home
         </Navbar.Link>
-        <Navbar.Link href={`/channel`}>Workspace</Navbar.Link>
+        <Navbar.Link href={`/workspace`}>Workspace</Navbar.Link>
       </NavbarCollapse>
       <div className="grow justify-items-end">
         <div className="float-right">

@@ -1,46 +1,36 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  createRef,
+} from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { Avatar, Button, Label, Modal, TextInput } from "flowbite-react";
 import { getChannel, getUserProfile } from "../../services/api";
 
 import { Profile } from "../../types/profile";
 import { Channel } from "../../types/channel";
+import EmojiPicker from "emoji-picker-react";
 const Chat = (props: { profile: Profile; channel: Channel }) => {
   const socketUrl = `ws://w42g11.int3306.freeddns.org//channel/chat?channelId=${
     props.channel.id
   }&token=${localStorage.getItem("token")}`;
-  const [messageHistory, setMessageHistory] = useState([]);
+  const [messageHistory, setMessageHistory] = useState<any>([]);
   const [mess, setMess] = useState<string>("");
   const [show, setShow] = useState(false);
+  const [showEmoji, setShowEmoji] = useState(false);
+  const inputRef = createRef<any>();
   const [channel, setChannel] = useState(props.channel);
   const [otherAva, setOtherAva] = useState<Profile[]>([]);
-  const didUnmount = useRef(false);
-  const ws = new WebSocket(socketUrl);
   const { sendJsonMessage, readyState } = useWebSocket(socketUrl, {
-    shouldReconnect: (closeEvent) => {
-      /*
-      useWebSocket will handle unmounting for you, but this is an example of a 
-      case in which you would not want it to automatically reconnect
-    */
-      return didUnmount.current === false;
+    onMessage: (e) => {
+      setMessageHistory((prev: any) => prev.concat(e));
     },
-    reconnectAttempts: 10,
-    reconnectInterval: 0,
+    shouldReconnect: (CloseEvent) => true,
   });
-  useEffect(() => {
-    ws.onmessage = (e: any) => {
-      setMessageHistory((prev) => prev.concat(e));
-    };
-    return () => {
-      didUnmount.current = true;
-    };
-  }, []);
 
   useEffect(() => {
-    // const ChannelInfo = async () => {
-    //   setChannel(await getChannel(channel.id));
-    // };
-    // ChannelInfo();
     const fetchUserlList = async () => {
       const list = await Promise.all(
         channel.members.map(async (value) => {
@@ -68,7 +58,14 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
     }
     setMess("");
   }, [mess, sendJsonMessage]);
-
+  function handleChange(event: { target: { value: any } }) {
+    setMess(event.target.value);
+  }
+  function convertTZ(date: any, tzString: any) {
+    return new Date(
+      typeof date === "string" ? new Date(date) : date
+    ).toLocaleString("en-US", { timeZone: tzString });
+  }
   const connectionStatus = {
     [ReadyState.CONNECTING]: "Connecting",
     [ReadyState.OPEN]: "Open",
@@ -78,19 +75,21 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   }[readyState];
 
   return (
-    <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-screen">
-      <div className="sm:items-center justify-between py-3 border-b-2 border-gray-200">
-        {/* <div className="relative flex items-center space-x-4"> */}
-        <div className="mb-5">
-          <span className="text-xl font-bold">Member ({otherAva.length})</span>
-          <span
-            className="float-right pr-6 underline text-slate-500"
-            onClick={() => setShow(true)}
-          >
-            Tất cả
-          </span>
-        </div>
-        <React.Fragment>
+    <React.Fragment>
+      <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-screen">
+        <div className="sm:items-center justify-between py-3 border-b-2 border-gray-200">
+          {/* <div className="relative flex items-center space-x-4"> */}
+          <div className="mb-5">
+            <span className="text-xl font-bold">
+              Member ({otherAva.length})
+            </span>
+            <span
+              className="float-right pr-6 underline text-slate-500"
+              onClick={() => setShow(true)}
+            >
+              Tất cả
+            </span>
+          </div>
           <Avatar.Group>
             {otherAva.map((value, id) => (
               <Avatar
@@ -121,57 +120,83 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
               </div>
             </Modal.Body>
           </Modal>
-        </React.Fragment>
 
-        <div className="flex flex-col leading-tight">
-          <div className="text-2xl mt-1 flex items-center">
-            <span className="text-black-700 font-bold mr-3 tracking-wide truncate">
-              Group Chat
+          <div className="flex flex-col leading-tight">
+            <div className="text-2xl mt-1 flex items-center">
+              <span className="text-black-700 font-bold mr-3 tracking-wide truncate">
+                Group Chat
+              </span>
+            </div>
+            <span className="text-lg text-gray-600 tracking-wide truncate">
+              The WebSocket is currently {connectionStatus}
             </span>
           </div>
-          <span className="text-lg text-gray-600 tracking-wide truncate">
-            The WebSocket is currently {connectionStatus}
-          </span>
         </div>
-      </div>
-      {/* </div> */}
-      <div
-        id="chatArea"
-        className=" flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
-      >
-        {messageHistory.slice(1).map(ms)}
-      </div>
-      <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
-        <div className="relative flex">
-          <input
-            id="myInput"
-            type="text"
-            placeholder="Write your message!"
-            className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-3 bg-gray-200 rounded-md py-3"
-            onChange={handleChange}
-            value={mess}
-          ></input>
-          <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
-            <button
-              id="myBtn"
-              type="button"
-              className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
-              onClick={handleClickSendMessage}
-            >
-              <span className="font-bold">Send</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="h-6 w-6 ml-2 transform rotate-90"
+        {/* </div> */}
+        <div
+          id="chatArea"
+          className=" flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
+        >
+          {messageHistory.slice(1).map(ms)}
+        </div>
+        <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
+          <div className="relative flex">
+            <input
+              id="myInput"
+              type="text"
+              placeholder="Write your message!"
+              className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-3 bg-gray-200 rounded-md py-3"
+              onChange={handleChange}
+              value={mess}
+              ref={inputRef}
+            ></input>
+            <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
+              <div className={showEmoji ? "block" : "hidden"}>
+                <div className="flex -mr-20 -mt-[30rem]">
+                  <EmojiPicker />
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handlShowEmoji}
+                className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
               >
-                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
-              </svg>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  className="h-6 w-6 text-gray-600"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+              </button>
+              <button
+                id="myBtn"
+                type="button"
+                className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
+                onClick={handleClickSendMessage}
+              >
+                <span className="font-bold">Send</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="h-6 w-6 ml-2 transform rotate-90"
+                >
+                  <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </React.Fragment>
   );
 
   function ms(value: any, idx: any) {
@@ -235,13 +260,9 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
         </div>
       );
   }
-  function handleChange(event: { target: { value: any } }) {
-    setMess(event.target.value);
-  }
-  function convertTZ(date: any, tzString: any) {
-    return new Date(
-      typeof date === "string" ? new Date(date) : date
-    ).toLocaleString("en-US", { timeZone: tzString });
+  function handlShowEmoji() {
+    inputRef.current.focus();
+    setShowEmoji(!showEmoji);
   }
 };
 export default Chat;
