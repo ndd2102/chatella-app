@@ -1,17 +1,9 @@
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-  createRef,
-} from "react";
+import React, { useState, useCallback, useEffect, createRef } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import { Avatar, Button, Label, Modal, TextInput } from "flowbite-react";
-import { getChannel, getUserProfile } from "../../services/api";
-
+import { Avatar, Label, Modal } from "flowbite-react";
+import { getUserProfile } from "../../services/api";
 import { Profile } from "../../types/profile";
 import { Channel } from "../../types/channel";
-import EmojiPicker from "emoji-picker-react";
 const Chat = (props: { profile: Profile; channel: Channel }) => {
   const socketUrl = `ws://w42g11.int3306.freeddns.org//channel/chat?channelId=${
     props.channel.id
@@ -23,12 +15,14 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   const inputRef = createRef<any>();
   const [channel, setChannel] = useState(props.channel);
   const [otherAva, setOtherAva] = useState<Profile[]>([]);
-  const { sendJsonMessage, readyState } = useWebSocket(socketUrl, {
-    onMessage: (e) => {
-      setMessageHistory((prev: any) => prev.concat(e));
-    },
-    shouldReconnect: (CloseEvent) => true,
+  const { sendJsonMessage, readyState, lastMessage } = useWebSocket(socketUrl, {
+    shouldReconnect: (closeEvent) => true,
   });
+  useEffect(() => {
+    if (lastMessage !== null)
+      JSON.parse(lastMessage.data).type === "chat" &&
+        setMessageHistory((prev: any) => prev.concat(lastMessage));
+  }, [lastMessage]);
 
   useEffect(() => {
     const fetchUserlList = async () => {
@@ -40,7 +34,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       setOtherAva(list);
     };
     fetchUserlList();
-  }, [channel]);
+  }, [channel, socketUrl]);
   setTimeout(() => {
     let objDiv: any = document.getElementById("chatArea");
     objDiv.scrollTop = objDiv.scrollHeight;
@@ -137,7 +131,44 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
           id="chatArea"
           className=" flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
         >
-          {messageHistory.slice(1).map(ms)}
+          {messageHistory
+            .slice(1)
+            .map((value: { data: string }, idx: number) => (
+              <div key={idx} className="chat-message">
+                <div
+                  className={
+                    JSON.parse(value.data).senderId === props.profile.userId
+                      ? "flex items-end justify-end"
+                      : "flex items-start justify-start "
+                  }
+                >
+                  <div className=" space-y-2 text-xs max-w-xs mx-2 order-1 ">
+                    <div
+                      className={
+                        JSON.parse(value.data).senderId === props.profile.userId
+                          ? "px-4 py-2 rounded-lg inline-block bg-blue-600 text-white"
+                          : "px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600"
+                      }
+                    >
+                      {[JSON.parse(value.data).content]}
+                    </div>
+
+                    <img
+                      src={avatar(value)?.avatar}
+                      alt="ava"
+                      className={
+                        JSON.parse(value.data).senderId === props.profile.userId
+                          ? "w-6 h-6 rounded-full order-2 float-right m-2"
+                          : "w-6 h-6 rounded-full order-2 float-left m-2"
+                      }
+                    ></img>
+                    <span className="block text-[9px]">
+                      {convertTime(value)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
         </div>
         <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
           <div className="relative flex">
@@ -151,11 +182,6 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
               ref={inputRef}
             ></input>
             <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
-              <div className={showEmoji ? "block" : "hidden"}>
-                <div className="flex -mr-20 -mt-[30rem]">
-                  <EmojiPicker />
-                </div>
-              </div>
               <button
                 type="button"
                 onClick={handlShowEmoji}
@@ -169,9 +195,9 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
                   className="h-6 w-6 text-gray-600"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   ></path>
                 </svg>
@@ -199,10 +225,11 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
     </React.Fragment>
   );
 
-  function ms(value: any, idx: any) {
-    const avatar = otherAva.find((obj) => {
-      return obj.id === JSON.parse(value.data).senderId;
-    });
+  function handlShowEmoji() {
+    inputRef.current.focus();
+    setShowEmoji(!showEmoji);
+  }
+  function convertTime(value: any) {
     const today = new Date();
     const getTimeToday =
       today.getMonth() +
@@ -218,51 +245,17 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
     );
     let getTime = time.split(" ");
     let time1 = getTime[1] ? time.substring(time.indexOf(" ") + 1) : "";
-    if (JSON.parse(value.data).senderId !== props.profile.userId) {
-      return (
-        <div key={idx} className="chat-message">
-          <div className="flex items-start justify-start">
-            <div className="space-y-2 text-xs max-w-xs mx-2 order-1 items-start">
-              <div className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
-                {[JSON.parse(value.data).content]}
-              </div>
-              <img
-                src={avatar?.avatar}
-                alt="ava"
-                className="w-6 h-6 rounded-full float-left m-2"
-                onClick={() => console.log(avatar?.name)}
-              ></img>
-              <span className="block text-[9px]">
-                {getTime[0] === getTimeToday ? time1 : getTime[0]}
-              </span>
-            </div>
-          </div>
-        </div>
-      );
-    } else
-      return (
-        <div key={idx} className="chat-message">
-          <div className="flex items-end justify-end">
-            <div className=" space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
-              <div className="px-4 py-2 rounded-lg inline-block bg-blue-600 text-white">
-                {[JSON.parse(value.data).content]}
-              </div>
-              <img
-                src={avatar?.avatar}
-                alt="ava"
-                className="w-6 h-6 rounded-full order-2 float-right m-2"
-              ></img>
-              <span className="block text-[9px]">
-                {getTime[0] === getTimeToday ? time1 : getTime[0]}
-              </span>
-            </div>
-          </div>
-        </div>
-      );
+    if (getTime[0] === getTimeToday) {
+      return time1;
+    } else {
+      return getTime[0];
+    }
   }
-  function handlShowEmoji() {
-    inputRef.current.focus();
-    setShowEmoji(!showEmoji);
+  function avatar(value: any) {
+    const avatar = otherAva.find((obj) => {
+      return obj.id === JSON.parse(value.data).senderId;
+    });
+    return avatar;
   }
 };
 export default Chat;
