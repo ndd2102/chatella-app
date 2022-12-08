@@ -24,11 +24,11 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route
-            path="/channel/:id"
+            path="/workspace/:id"
             element={accountIsLogged ? <Workspace /> : <Navigate to="/" />}
           />
           <Route
-            path="/channel"
+            path="/workspace"
             element={accountIsLogged ? <Workspace /> : <Navigate to="/" />}
           />
           {/* <Route path="/profiles/:id" element = {<Profile />}/> */}
