@@ -111,8 +111,10 @@ function DeleteMember(props: { channelInfo: Channel }) {
       await deleteMember(value, props.channelInfo.id);
     });
     const newChannel = await getChannel(channel.id);
-    setChannel(newChannel);
-    window.location.reload();
+    setTimeout(() => {
+      setChannel(newChannel);
+      window.location.reload();
+    }, 1000);
   }
 }
 
