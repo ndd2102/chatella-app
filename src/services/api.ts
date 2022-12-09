@@ -21,6 +21,52 @@ export async function register(email: string, password: string) {
   });
 }
 
+export async function forgotPassword(email: string) {
+  await axiosInstance
+  .post(("/mail/forgot-password"),{
+    email: email,
+  });
+}
+
+export async function confirmForgotPassword(newPassword: string, uuid: string, token:string) {
+  const axios1 = axios.create({
+    baseURL: "http://w42g11.int3306.freeddns.org/",
+    headers: {
+      "Content-type": "application/json",
+      'Authorization': token,
+    },
+  });
+
+  await axios1
+  .patch(`account/forgot-password/uuid=${uuid}`,{
+    newPassword : newPassword,
+  })
+  .catch((error)=>{
+    console.log(error);
+  });
+
+}
+
+export async function confirmEmail(uuid: string, token:string) {
+  const axios2 = axios.create({
+    baseURL: "http://w42g11.int3306.freeddns.org/",
+    headers: {
+      "Content-type": "application/json",
+      'Authorization': token,
+    },
+  });
+
+  console.log(token);
+  console.log(uuid);
+
+  await axios2
+  .get(`account/confirm-email/uuid=${uuid}`)
+  .catch((error)=>{
+    console.log(error);
+  });
+
+}
+
 export async function changePassword(
   email: string,
   password: string,

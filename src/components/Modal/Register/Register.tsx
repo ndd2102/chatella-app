@@ -142,7 +142,8 @@ export default function Register() {
       );
     }
     if (!error) {
-      navigate("/");
+      window.alert("Check your email!");
+      
     }
   }
 }
