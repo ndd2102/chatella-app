@@ -68,7 +68,7 @@ export default function CreateChannel() {
     await getProfile();
     setShow(false);
     console.log("Id channel: " + channelId);
-    navigate(`/channel/${channelId}`);
+    navigate(`/workspace/${channelId}`);
     window.location.reload();
   }
 }
