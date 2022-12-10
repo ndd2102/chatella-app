@@ -1,32 +1,27 @@
 import { number } from "decoders";
-import {
-  Avatar,
-  Button,
-  Checkbox,
-  Label,
-  Modal,
-  TextInput,
-  Toast,
-} from "flowbite-react";
+import { Avatar, Button, Checkbox, Label, Modal, Toast } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
 import React, { useEffect, useState } from "react";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import {
   addMember,
-  DeleteMember,
+  deleteMember,
   getChannel,
   getUserProfile,
 } from "../../../../services/api";
 import { Channel, ChannelMember } from "../../../../types/channel";
 import { Profile } from "../../../../types/profile";
 
-function DelMember(props: { channelInfo: Channel }) {
+function DeleteMember(props: { channelInfo: Channel }) {
   const [show, setShow] = useState(false);
   const [member, setMember] = useState<Profile[]>([]);
   const [delMember, setDelMember] = useState<number[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
+  const [isLoading, setLoad] = useState(true);
+
   useEffect(() => {
+    if (!isLoading) return;
     const fetchUserlList = async () => {
       const list = await Promise.all(
         props.channelInfo.members.map(async (value) => {
@@ -34,9 +29,11 @@ function DelMember(props: { channelInfo: Channel }) {
         })
       );
       setMember(list);
+      setLoad(false);
     };
     fetchUserlList();
-  });
+  }, [isLoading, props.channelInfo.members]);
+
   return (
     <React.Fragment>
       <span
@@ -48,7 +45,7 @@ function DelMember(props: { channelInfo: Channel }) {
       <Modal show={show} size="md" popup={true} onClose={() => setShow(false)}>
         <Modal.Header />
         <Modal.Body>
-          <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
+          <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8 font-lexend">
             <h3 className="text-xl font-medium text-gray-900 dark:text-white">
               Delete member
             </h3>
@@ -134,4 +131,4 @@ function DelMember(props: { channelInfo: Channel }) {
   //   }
 }
 
-export default DelMember;
+export default DeleteMember;

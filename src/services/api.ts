@@ -1,7 +1,7 @@
 import { axiosInstance } from "./../config/settings";
-import axios from "axios";
 import { Channel } from "../types/channel";
 import { Profile } from "../types/profile";
+import { Board } from "../types/board";
 
 export async function login(email: string, password: string) {
   await axiosInstance
@@ -54,7 +54,6 @@ export async function getProfile(): Promise<Profile> {
           (channel: { id: number }) => channel.id
         ),
       };
-      localStorage.setItem("user", JSON.stringify(profile));
     });
   return profile;
 }
@@ -105,6 +104,7 @@ export async function getChannel(channelId: number): Promise<Channel> {
     avatar: "",
     name: "",
     boards: [],
+    createdDate: "",
   };
   await axiosInstance
     .get(`channel/channelId=${channelId}`)
@@ -115,13 +115,16 @@ export async function getChannel(channelId: number): Promise<Channel> {
         avatar: response.data.data.avatar,
         name: response.data.data.name,
         boards: response.data.data.taskColumns,
+        createdDate: response.data.data.createdDate,
       };
     })
     .catch((error) => {
-      console.log(error.response.data.error);
+      console.log(error);
     });
   return channel;
 }
+
+export async function updateChannel(channelId: number, channel: Channel) {}
 
 export async function getUserProfile(userId: any): Promise<Profile> {
   let userProfile: any;
@@ -141,6 +144,18 @@ export async function getUserProfile(userId: any): Promise<Profile> {
 export async function addMember(email: string, id: number) {
   await axiosInstance.patch(`channel/add/channelId=${id}?email=${email}`);
 }
-export async function DeleteMember(userId: number, id: number) {
+
+export async function deleteMember(userId: number, id: number) {
   await axiosInstance.delete(`channel/delete/channelId=${id}?userId=${userId}`);
+}
+
+export async function updateTaskColumn(board: Board, channelId: number) {
+  await axiosInstance
+    .post(`channel/updateTaskColumn/channelId=${channelId}`, {
+      title: board.title,
+      taskColumnDetail: board.taskColumnDetail,
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }

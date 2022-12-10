@@ -6,9 +6,8 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
-      lato: ["Lato", "sans-serif"],
+      lexend: ["Lexend", "sans-serif"],
       sacramento: ["Sacramento"],
-      serif: ["Merriweather", "serif"],
     },
     extend: {},
   },

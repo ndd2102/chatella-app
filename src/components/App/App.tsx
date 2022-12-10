@@ -4,19 +4,20 @@ import {
   BrowserRouter as Router,
   Navigate,
 } from "react-router-dom";
-import { useStoreWithInitializer } from "../../state/storeHooks";
+import { useStore, useStoreWithInitializer } from "../../state/storeHooks";
 import { store } from "../../state/store";
 import { endLoad, loadProfile, logout } from "./App.slice";
 import Home from "../../pages/Home/Home";
-import { getProfile } from "../../services/api";
+import { getChannel, getProfile } from "../../services/api";
 import { Spinner } from "flowbite-react";
 import Workspace from "../../pages/Workspace/Workspace";
 import { loginSuccess } from "../Modal/Login/Login.slice";
+import { loadChannelList } from "../../pages/Workspace/Workspace.slice";
 
 export default function App() {
   const { loading, profile } = useStoreWithInitializer(({ app }) => app, load);
-  const accountIsLogged = !(Object.keys(profile).length === 0);
-  console.log(accountIsLogged);
+
+  const accountIsLogged = profile.id === -1 ? false : true;
 
   return (
     <Router>
@@ -24,11 +25,11 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route
-            path="/channel/:id"
+            path="/workspace/:id"
             element={accountIsLogged ? <Workspace /> : <Navigate to="/" />}
           />
           <Route
-            path="/channel"
+            path="/workspace"
             element={accountIsLogged ? <Workspace /> : <Navigate to="/" />}
           />
           {/* <Route path="/profiles/:id" element = {<Profile />}/> */}
@@ -44,20 +45,30 @@ export default function App() {
   async function load() {
     if (!accountIsLogged) {
       const token = localStorage.getItem("token");
-      if (!store.getState().app.loading || !token) {
+      if (!loading || !token) {
         store.dispatch(endLoad());
         return;
       }
-      const user: any = await getProfile().catch(() => {
+      const user = await getProfile().catch(() => {
         console.log("Cannot get profile");
         store.dispatch(logout());
         store.dispatch(endLoad());
         return;
       });
+
       if (user !== undefined) {
         store.dispatch(loadProfile(user));
         store.dispatch(loginSuccess());
+      } else {
+        store.dispatch(endLoad());
+        return;
       }
+      const list = await Promise.all(
+        user.channelID.slice(1).map(async (channelId) => {
+          return await getChannel(channelId);
+        })
+      );
+      store.dispatch(loadChannelList(list));
     }
     store.dispatch(endLoad());
   }

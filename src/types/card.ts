@@ -1,7 +1,8 @@
+import { ChannelMember } from "./channel";
 export interface Card {
-  id: number;
   title: string;
   description: string;
-  level: string;
+  priority: string;
   dueDate: string;
+  assignedTo: ChannelMember[];
 }

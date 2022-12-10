@@ -7,6 +7,7 @@ import { store } from "../../state/store";
 import { logout } from "../App/App.slice";
 import CreateChannel from "../Modal/Channel/CreateChannel/CreateChannel";
 import { Channel } from "../../types/channel";
+import { useNavigate } from "react-router";
 
 export const SidebarComponent = (props: {
   profile: Profile;
@@ -15,51 +16,41 @@ export const SidebarComponent = (props: {
 }) => {
   const profile = props.profile;
   const channelList = props.channelInfo;
+  const navigate = useNavigate();
   const notFocus: string =
-    "relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-blue-600 pr-6";
+    "relative flex flex-row items-center h-11 hover:bg-sky-50 hover:text-blue-800 rounded-xl text-gray-700 hover:cursor-pointer";
   const onFocus: string =
-    "relative flex flex-row items-center h-11 focus:outline-none bg-gray-50 text-gray-800 border-l-4 border-transparent border-blue-600 pr-6";
+    "relative flex flex-row items-center h-11 bg-sky-50 text-blue-800 rounded-xl hover:cursor-pointer";
 
   return (
-    <div className="flex-col absolute w-64 bg-white h-screen border-r overflow-y-auto overflow-x-hidden">
-      <div className="h-72 border-b text-gray-800">
+    <div className="flex-row absolute w-72 px-4 bg-white h-screen border-r overflow-y-auto overflow-x-hidden">
+      <div className="h-72">
         <h1 className="font-sacramento mt-6 my-auto text-center text-blue-700 whitespace-nowrap text-5xl font-semibold dark:text-white">
           Chatella
         </h1>
         <div className="p-2 justify-center">
           <Avatar rounded={true} img={profile.avatar} size="xl"></Avatar>
           <div className="text-center mt-4 text-md">
-            <div className="font-medium">{profile.name}</div>
-            <div className="truncate w-60">{profile.email}</div>
+            <div className="font-medium text-lg">{profile.name}</div>
+            <div className="truncate w-60 font-light text-gray-500">
+              {profile.email}
+            </div>
           </div>
         </div>
       </div>
-      <div className="overflow-y-auto overflow-x-hidden">
-        <ul className="flex flex-col py-4 space-y-1">
-          <li className="px-5">
-            <div className="flex flex-row items-center h-8">
-              <div className="text-sm font-light tracking-wide text-gray-500">
-                Menu
-              </div>
-            </div>
-          </li>
-          <li>
-            <a
-              href="/"
-              className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-blue-600 pr-6"
-            >
-              <span className="inline-flex justify-center items-center ml-4 text-lg">
-                <HiOutlineHome></HiOutlineHome>
-              </span>
-              <span className="ml-2 text-sm tracking-wide truncate">Home</span>
-            </a>
+      <div className="overflow-y-auto overflow-x-hidden font-medium">
+        <ul className="flex flex-row items-center justify-between px-16 mb-4">
+          <li onClick={() => navigate("/")}>
+            <span className="flex bg-blue-50 p-2 text-lg w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full">
+              <HiOutlineHome></HiOutlineHome>
+            </span>
           </li>
           <li className="hover:cursor-pointer">
-            <div className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-blue-600 pr-6">
-              <span className="inline-flex justify-center items-center ml-4 text-lg">
+            <div className="flex items-center px-4">
+              <span className="bg-blue-50 p-2 text-lg w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full">
                 <CgProfile></CgProfile>
               </span>
-              <span className="ml-2 text-sm tracking-wide truncate w-full">
+              <span className="-ml-12 z-10 transient truncate w-full text-transparent">
                 <UserInfo
                   avatar={profile.avatar}
                   name={profile.name}
@@ -72,36 +63,33 @@ export const SidebarComponent = (props: {
             </div>
           </li>
           <li
-            className="hover:cursor-pointer border-b pb-4"
+            className="hover:cursor-pointer "
             onClick={() => {
               store.dispatch(logout());
               window.location.reload();
             }}
           >
-            <div className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-blue-600 pr-6">
-              <span className="inline-flex justify-center items-center ml-4 text-lg">
+            <div className="flex items-center">
+              <span className="bg-blue-50 p-2 text-lg w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full">
                 <HiOutlineLogout></HiOutlineLogout>
-              </span>
-              <span className="ml-2 text-sm tracking-wide truncate">
-                Log Out
               </span>
             </div>
           </li>
         </ul>
 
         <div className="flex flex-col grow">
-          <div className="flex items-center justify-between text-sm font-light px-5 tracking-wide text-gray-500">
+          <div className="flex items-center justify-between text-xs uppercase pl-5 tracking-widest text-gray-500">
             Channel
             <div>
               <CreateChannel />
             </div>
           </div>
-          <div className="pt-4">
-            <ul>
+          <div className="py-4">
+            <ul className="space-y-1.5">
               {channelList.map((channel, id) => (
                 <li key={id}>
-                  <a
-                    href={`/channel/${channel.id}`}
+                  <div
+                    onClick={() => navigate(`/workspace/${channel.id}`)}
                     className={
                       channel.id === props.locationId ? onFocus : notFocus
                     }
@@ -109,10 +97,10 @@ export const SidebarComponent = (props: {
                     <span className="inline-flex justify-center items-center ml-4 text-lg">
                       <Avatar img={channel.avatar} />
                     </span>
-                    <span className="ml-2 text-sm tracking-wide truncate">
+                    <span className="ml-2 text-sm font-normal tracking-wide truncate">
                       {channel.name}
                     </span>
-                  </a>
+                  </div>
                 </li>
               ))}
             </ul>

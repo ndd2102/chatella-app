@@ -7,10 +7,11 @@ import { logout } from "../App/App.slice";
 import Register from "../Modal/Register/Register";
 import { UserInfo } from "../Modal/UserInfo/UserInfo";
 import { Profile } from "../../types/profile";
+import { useNavigate } from "react-router";
 
 export default function Header() {
   const { profile } = useStore(({ app }) => app);
-  const accountIsLogged = !(Object.keys(profile).length === 0);
+  const accountIsLogged = profile.id === -1 ? false : true;
 
   return (
     <>
@@ -46,6 +47,7 @@ function UserLinks({
 }: {
   profile: Profile;
 }) {
+  const navigate = useNavigate();
   const logOutButton = () => {
     store.dispatch(logout());
     window.location.reload();
@@ -53,10 +55,18 @@ function UserLinks({
   return (
     <div className="flex grow w-9/10 ml-24 mr-8 items-center">
       <NavbarCollapse className="mr-16">
-        <Navbar.Link className="mr-8" href="/">
+        <Navbar.Link
+          className="mr-8 hover:cursor-pointer"
+          onClick={() => navigate("/")}
+        >
           Home
         </Navbar.Link>
-        <Navbar.Link href={`/channel`}>Workspace</Navbar.Link>
+        <Navbar.Link
+          className="hover:cursor-pointer"
+          onClick={() => navigate("/workspace")}
+        >
+          Workspace
+        </Navbar.Link>
       </NavbarCollapse>
       <div className="grow justify-items-end">
         <div className="float-right">

@@ -27,7 +27,7 @@ export default function CreateChannel() {
         >
           <Modal.Header />
           <Modal.Body>
-            <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
+            <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8 font-lexend">
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
                 Create new channel
               </h3>
@@ -68,7 +68,6 @@ export default function CreateChannel() {
     await getProfile();
     setShow(false);
     console.log("Id channel: " + channelId);
-    navigate(`/channel/${channelId}`);
-    window.location.reload();
+    navigate(`/workspace/${channelId}`);
   }
 }

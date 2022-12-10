@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { store } from "../../../state/store";
 import { getProfile, login } from "../../../services/api";
 import {
@@ -7,6 +6,7 @@ import {
   Checkbox,
   Label,
   Modal,
+  Spinner,
   TextInput,
   Toast,
 } from "flowbite-react";
@@ -21,10 +21,10 @@ export default function Login() {
     password: "",
   };
   const [accountSignIn, setAccountSignIn] = useState(initialState);
-  const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
+  const [isLoading, setLoad] = useState(false);
 
   return (
     <div>
@@ -46,7 +46,7 @@ export default function Login() {
         >
           <Modal.Header />
           <Modal.Body>
-            <form className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
+            <form className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8 font-lexend">
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
                 Sign in to our platform
               </h3>
@@ -92,8 +92,18 @@ export default function Login() {
                 </Toast>
               )}
               <div className="w-full">
-                <Button className="w-full" onClick={handleSubmit}>
-                  Log in to your account
+                <Button
+                  disabled={isLoading}
+                  className="w-full"
+                  onClick={handleSubmit}
+                >
+                  {isLoading ? (
+                    <div>
+                      <Spinner /> Logging in...
+                    </div>
+                  ) : (
+                    <>Log in to your account</>
+                  )}
                 </Button>
               </div>
             </form>
@@ -105,6 +115,7 @@ export default function Login() {
 
   function handleChange(event: { target: { name: any; value: any } }) {
     setError(false);
+    setLoad(false);
     setAccountSignIn({
       ...accountSignIn,
       [event.target.name]: event.target.value,
@@ -114,6 +125,7 @@ export default function Login() {
   async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     store.dispatch(loginSuccess());
+    setLoad(true);
 
     await login(accountSignIn.email, accountSignIn.password).catch((error) => {
       setError(true);
@@ -138,8 +150,9 @@ export default function Login() {
     if (store.getState().login.isLogin) {
       store.dispatch(loadProfile(user));
       store.dispatch(loginSuccess());
+      setLoad(false);
       setShow(false);
-      navigate("/");
+      window.location.reload();
     }
   }
 }

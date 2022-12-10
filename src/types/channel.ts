@@ -5,6 +5,7 @@ export interface Channel {
   avatar: string;
   name: string;
   boards: Board[];
+  createdDate: string;
 }
 
 export interface ChannelMember {
