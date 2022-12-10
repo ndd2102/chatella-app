@@ -21,6 +21,9 @@ function TaskBoard(props: { board: Board; channel: Channel }) {
       <div className="flex justify-between px-1.5">
         <h2 className="truncated text-xs uppercase font-medium tracking-widest">
           {board.title}
+          <span className="text-gray-400 ml-2">
+            {board.taskColumnDetail.length}
+          </span>
         </h2>
         <AddTask channel={props.channel} board={board} members={memberList} />
       </div>
