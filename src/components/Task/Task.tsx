@@ -3,7 +3,7 @@ import { DragDropContext } from "@hello-pangea/dnd";
 import AddMember from "../Modal/Channel/AddMember/AddMember";
 import DeleteMember from "../Modal/Channel/DeleteMember/DeleteMember";
 import TaskBoard from "./Board/TaskBoard";
-import { updateTaskColumn } from "../../services/api";
+import { getUserProfile, updateTaskColumn } from "../../services/api";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { AiOutlineClockCircle } from "react-icons/ai";
@@ -11,12 +11,29 @@ import AddTaskBoard from "../Modal/Task/AddTaskBoard";
 import { Board } from "../../types/board";
 import { store } from "../../state/store";
 import { updateBoards } from "../../pages/Workspace/Workspace.slice";
+import { Profile } from "../../types/profile";
 
 function Task(props: { channel: Channel }) {
   const [channel, setChannel] = useState<Channel>(props.channel);
+  const [isLoading, setLoad] = useState(true);
+  const [memberList, setMemberList] = useState<Profile[]>();
   useEffect(() => {
     setChannel(props.channel);
   }, [props.channel]);
+
+  useEffect(() => {
+    if (!isLoading || channel === undefined) return;
+    const fetchUserList = async () => {
+      const list = await Promise.all(
+        channel.members.map(async (value) => {
+          return await getUserProfile(value.userId);
+        })
+      );
+      setMemberList(list);
+      setLoad(false);
+    };
+    fetchUserList();
+  }, [channel, isLoading]);
 
   const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
@@ -107,8 +124,8 @@ function Task(props: { channel: Channel }) {
           <h1 className="text-blue-700 self-center whitespace-nowrap text-4xl font-semibold dark:text-white">
             {channel.name}
           </h1>
-          <AddMember channelId={channel.id} memberList={channel.members} />
-          <DeleteMember channelInfo={channel} />
+          <AddMember channelId={channel.id} memberList={memberList} />
+          <DeleteMember channelId={channel.id} memberList={memberList} />
         </div>
         <div className="flex text-gray-400 font-light items-center">
           <AiOutlineClockCircle />

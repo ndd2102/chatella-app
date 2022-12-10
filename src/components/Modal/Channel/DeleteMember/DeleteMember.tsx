@@ -2,7 +2,6 @@ import { Avatar, Button, Checkbox, Label, Modal, Toast } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
 import React, { useState } from "react";
 import { AiOutlineUserDelete } from "react-icons/ai";
-import { getUserProfile } from "../../../../services/api";
 import { Profile } from "../../../../types/profile";
 
 function DeleteMember(props: {
@@ -13,7 +12,6 @@ function DeleteMember(props: {
   const [delMember, setDelMember] = useState<number[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
-  const [isLoading, setLoad] = useState(true);
 
   return (
     <React.Fragment>

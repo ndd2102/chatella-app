@@ -3,15 +3,18 @@ import { SidebarComponent } from "../../components/Sidebar/Sidebar";
 import Task from "../../components/Task/Task";
 import Chat from "../../components/Chat/Chat";
 import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getUserProfile } from "../../services/api";
+import { Profile } from "../../types/profile";
 
 function Workspace() {
   const { profile } = useStore(({ app }) => app);
   const { channelList } = useStore(({ workspace }) => workspace);
-  console.log(channelList);
+
   const location = useLocation();
   const id = location.pathname.split("/")[2];
 
-  let channel = channelList.find((findChannel) => {
+  const channel = channelList.find((findChannel) => {
     return findChannel.id === Number(id);
   });
 
