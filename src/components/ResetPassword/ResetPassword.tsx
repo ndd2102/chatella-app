@@ -1,4 +1,4 @@
-import { uuid } from "decoders";
+//import { uuid } from "decoders";
 import { Button, Label, TextInput, Toast } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
 import { useEffect, useState } from "react";
@@ -20,44 +20,45 @@ function ResetPassword() {
         // get token by url
         const tokenGet = queryParams.get('token')||'';
         setToken(tokenGet);    
-        //console.log(queryParams);
-
-        //console.log(uuidGet);
-        //console.log(tokenGet);
     }, []);
     return (
         <>
-        <form className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                New Password
-              </h3>
-              <div>
-                <div className="mb-2 block">
-                  <Label htmlFor="email" value="Your new password" />
-                </div>
-                <TextInput
-                  id="email"
-                  type="text"
-                  name="email"
-                  required={true}
-                  onChange={handleChange}
-                />
-              </div>
-              {error && (
-                <Toast>
-                  <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
-                    <Exclamation className="h-5 w-5" />
+          <form className="space-y-6 px-6 pb-10 sm:pb-6 lg:px-8 xl:pb-8">
+            <div className="relative flex flex-col justify-center min-h-screen overflow-hidden">
+              <div className="w-full p-6 m-auto bg-white rounded-md shadow-xl lg:max-w-xl">
+                  <h1 className="text-3xl font-semibold text-center text-purple-600">
+                    Create your new password
+                  </h1>
+                  <div className="mb-2 block">
+                    <Label htmlFor="email" value="Your new password" />
                   </div>
-                  <div className="ml-3 text-sm font-normal">{errorMessage}</div>
-                  <Toast.Toggle />
-                </Toast>
-              )}
-              <div className="w-full">
-                <Button className="w-full" onClick={handleSubmit}>
-                  Enter your new password!
-                </Button>
-              </div>
-            </form>
+                  <div>
+                    <TextInput
+                      id="email"
+                      type="password"
+                      name="email"
+                      required={true}
+                      onChange={handleChange}
+                    />
+                  </div>
+              
+                  {error && (
+                    <Toast>
+                      <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
+                        <Exclamation className="h-5 w-5" />
+                      </div>
+                      <div className="ml-3 text-sm font-normal">{errorMessage}</div>
+                      <Toast.Toggle />
+                    </Toast>
+                  )}
+                  <div className="mt-6">
+                      <button className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md hover:bg-purple-600 focus:outline-none focus:bg-purple-600" onClick={handleSubmit}>
+                          Create new password
+                      </button>
+                  </div>
+               </div>
+            </div>
+          </form>
         </>
     )
 
@@ -89,5 +90,6 @@ function ResetPassword() {
         }
       }
 }
+
 
 export default ResetPassword;
