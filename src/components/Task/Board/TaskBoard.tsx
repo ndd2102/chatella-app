@@ -16,20 +16,6 @@ function TaskBoard(props: { board: Board; channel: Channel }) {
     setBoard(props.board);
   }, [props.board]);
 
-  useEffect(() => {
-    if (!isLoading) return;
-    const fetchUserList = async () => {
-      const list = await Promise.all(
-        props.channel.members.map(async (value) => {
-          return await getUserProfile(value.userId);
-        })
-      );
-      setMemberList(list);
-      setLoad(false);
-    };
-    fetchUserList();
-  }, [isLoading, props.channel.members]);
-
   return (
     <div className="w-72 rounded-lg h-full" key={JSON.stringify(props.board)}>
       <div className="flex justify-between px-1.5">

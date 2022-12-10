@@ -1,4 +1,5 @@
 import { Avatar } from "flowbite-react";
+import AvatarGroupCounter from "flowbite-react/lib/esm/components/Avatar/AvatarGroupCounter";
 import { useEffect, useState } from "react";
 import { Card } from "../../../types/card";
 import { Channel } from "../../../types/channel";
@@ -39,14 +40,21 @@ function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
           <div className="-mb-8">
             <Avatar.Group>
               {props.members.map((member, index) => {
-                return (
-                  <Avatar
-                    key={index}
-                    img={member.avatar}
-                    rounded={true}
-                    stacked={true}
-                  />
-                );
+                if (index > 4) {
+                  return (
+                    <AvatarGroupCounter
+                      total={props.members.length - index - 1}
+                    />
+                  );
+                } else
+                  return (
+                    <Avatar
+                      key={index}
+                      img={member.avatar}
+                      rounded={true}
+                      stacked={true}
+                    />
+                  );
               })}
             </Avatar.Group>
           </div>
