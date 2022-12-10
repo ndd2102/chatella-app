@@ -1,18 +1,37 @@
 import { Avatar, Button, Checkbox, Label, Modal, Toast } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineUserDelete } from "react-icons/ai";
+import {
+  deleteMember,
+  getChannel,
+  getUserProfile,
+} from "../../../../services/api";
+import { Channel } from "../../../../types/channel";
 import { Profile } from "../../../../types/profile";
 
-function DeleteMember(props: {
-  channelId: number;
-  memberList: Profile[] | undefined;
-}) {
+function DeleteMember(props: { channelInfo: Channel }) {
   const [show, setShow] = useState(false);
+  const [member, setMember] = useState<Profile[]>([]);
   const [delMember, setDelMember] = useState<number[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
-
+  const [channel, setChannel] = useState(props.channelInfo);
+  useEffect(() => {
+    // const ChannelInfo = async () => {
+    //   setChannel(await getChannel(channel.id));
+    // };
+    // ChannelInfo();
+    const fetchUserlList = async () => {
+      const list = await Promise.all(
+        channel.members.slice(1).map(async (value) => {
+          return await getUserProfile(value.userId);
+        })
+      );
+      setMember(list);
+    };
+    fetchUserlList();
+  }, [channel.id, channel.members]);
   return (
     <React.Fragment>
       <span
@@ -24,27 +43,25 @@ function DeleteMember(props: {
       <Modal show={show} size="md" popup={true} onClose={() => setShow(false)}>
         <Modal.Header />
         <Modal.Body>
-          <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8 font-lexend">
+          <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
             <h3 className="text-xl font-medium text-gray-900 dark:text-white">
               Delete member
             </h3>
             <div>
-              {props.memberList &&
-                props.memberList.map((userId, id) => (
-                  <div key={id}>
-                    <Label className="inline-flex justify-center items-center ml-4 text-lg ">
-                      <Avatar img={userId.avatar} />
-                      <div>{userId.name}</div>
-                    </Label>
-                    <Checkbox
-                      className="float-right"
-                      onChange={handleChange}
-                      value={userId.id}
-                    />
-                  </div>
-                ))}
+              {member.map((userId, id) => (
+                <div key={id}>
+                  <Label className="inline-flex justify-center items-center ml-4 text-lg ">
+                    <Avatar img={userId.avatar} />
+                    <div>{userId.name}</div>
+                  </Label>
+                  <Checkbox
+                    className="float-right"
+                    onChange={handleChange}
+                    value={userId.id}
+                  />
+                </div>
+              ))}
             </div>
-
             {error && (
               <Toast>
                 <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
@@ -74,37 +91,29 @@ function DeleteMember(props: {
   );
   function handleChange(event: { target: { value: any } }) {
     let isCheck = event.target.value;
-    setDelMember((pre) => [...pre, isCheck]);
+    const first = delMember.find((obj) => {
+      return obj === isCheck;
+    });
+    console.log(first);
+    if (first === undefined) {
+      setDelMember((pre) => [...pre, isCheck]);
+    } else
+      setDelMember((member) =>
+        member.filter((current) => {
+          return current !== isCheck;
+        })
+      );
   }
-  function check() {
-    console.log(delMember);
+
+  async function check() {
+    delMember.map(async (value) => {
+      await deleteMember(value, props.channelInfo.id);
+    });
+    const newChannel = await getChannel(channel.id);
+    setTimeout(() => {
+      setChannel(newChannel);
+      window.location.reload();
+    }, 1000);
   }
-  //   async function memberInChannel(emailAdd: string, channelId: number) {
-  //     let emailUser = "";
-  //     let memberChannel = (await getChannel(channelId)).members;
-  //     for (let i = 0; i < memberChannel.length; i++) {
-  //       emailUser = (await getUserProfile(memberChannel[i].userId)).email;
-  //       if (emailAdd === emailUser) {
-  //         return true;
-  //       }
-  //     }
-  //     return false;
-  //   }
-
-  //   async function onSubmit() {
-  //     // if (await memberInChannel(newMember, props.channelId)) {
-  //     //   setError(true);
-  //     //   setErrorMessage("This member is already in channel!");
-  //     // }
-  //     await DeleteMember(newMember, props.channelId).catch((error) => {
-  //       setError(true);
-  //       setErrorMessage("Email not found!");
-  //     });
-
-  //     if (!error) {
-  //       setShow(false);
-  //     }
-  //   }
 }
-
 export default DeleteMember;
