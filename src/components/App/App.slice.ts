@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+import { axiosInstance } from "../../config/settings";
 import { Profile } from "../../types/profile";
 
 export interface AppState {
@@ -8,7 +9,17 @@ export interface AppState {
 }
 
 const initialState: AppState = {
-  profile: JSON.parse(localStorage.getItem("user") || "{}"),
+  profile: {
+    userId: -1,
+    email: "",
+    name: "",
+    avatar: "",
+    sex: "",
+    dateOfBirth: "",
+    country: "",
+    channelID: [],
+    id: -1,
+  },
   loading: true,
 };
 
@@ -22,9 +33,9 @@ const slice = createSlice({
       state.loading = false;
     },
     logout: () => {
-      delete axios.defaults.headers.common["Authorization"];
+      delete axiosInstance.defaults.headers.common["Authorization"];
       localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      localStorage.removeItem("channelList");
     },
     endLoad: (state) => {
       state.loading = false;

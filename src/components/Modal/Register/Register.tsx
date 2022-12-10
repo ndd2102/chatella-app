@@ -36,7 +36,7 @@ export default function Register() {
         >
           <Modal.Header />
           <Modal.Body>
-            <form className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
+            <form className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8 font-lexend">
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
                 Sign up to our platform
               </h3>

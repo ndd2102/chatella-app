@@ -1,7 +1,8 @@
 import { axiosInstance } from "./../config/settings";
-import axios from "axios";
 import { Channel } from "../types/channel";
 import { Profile } from "../types/profile";
+import { Board } from "../types/board";
+import axios from "axios";
 
 export async function login(email: string, password: string) {
   await axiosInstance
@@ -22,49 +23,48 @@ export async function register(email: string, password: string) {
 }
 
 export async function forgotPassword(email: string) {
-  await axiosInstance
-  .post(("/mail/forgot-password"),{
+  await axiosInstance.post("/mail/forgot-password", {
     email: email,
   });
 }
 
-export async function confirmForgotPassword(newPassword: string, uuid: string, token:string) {
+export async function confirmForgotPassword(
+  newPassword: string,
+  uuid: string,
+  token: string
+) {
   const axios1 = axios.create({
     baseURL: "http://w42g11.int3306.freeddns.org/",
     headers: {
       "Content-type": "application/json",
-      'Authorization': token,
+      Authorization: token,
     },
   });
 
   await axios1
-  .patch(`account/forgot-password/uuid=${uuid}`,{
-    newPassword : newPassword,
-  })
-  .catch((error)=>{
-    console.log(error);
-  });
-
+    .patch(`account/forgot-password/uuid=${uuid}`, {
+      newPassword: newPassword,
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
-export async function confirmEmail(uuid: string, token:string) {
+export async function confirmEmail(uuid: string, token: string) {
   const axios2 = axios.create({
     baseURL: "http://w42g11.int3306.freeddns.org/",
     headers: {
       "Content-type": "application/json",
-      'Authorization': token,
+      Authorization: token,
     },
   });
 
   console.log(token);
   console.log(uuid);
 
-  await axios2
-  .get(`account/confirm-email/uuid=${uuid}`)
-  .catch((error)=>{
+  await axios2.get(`account/confirm-email/uuid=${uuid}`).catch((error) => {
     console.log(error);
   });
-
 }
 
 export async function changePassword(
@@ -100,7 +100,6 @@ export async function getProfile(): Promise<Profile> {
           (channel: { id: number }) => channel.id
         ),
       };
-      localStorage.setItem("user", JSON.stringify(profile));
     });
   return profile;
 }
@@ -151,6 +150,7 @@ export async function getChannel(channelId: number): Promise<Channel> {
     avatar: "",
     name: "",
     boards: [],
+    createdDate: "",
   };
   await axiosInstance
     .get(`channel/channelId=${channelId}`)
@@ -161,13 +161,16 @@ export async function getChannel(channelId: number): Promise<Channel> {
         avatar: response.data.data.avatar,
         name: response.data.data.name,
         boards: response.data.data.taskColumns,
+        createdDate: response.data.data.createdDate,
       };
     })
     .catch((error) => {
-      console.log(error.response.data.error);
+      console.log(error);
     });
   return channel;
 }
+
+export async function updateChannel(channelId: number, channel: Channel) {}
 
 export async function getUserProfile(userId: any): Promise<Profile> {
   let userProfile: any;
@@ -189,4 +192,15 @@ export async function addMember(email: string, id: number) {
 }
 export async function deleteMember(userId: number, id: number) {
   await axiosInstance.delete(`channel/delete/channelId=${id}?userId=${userId}`);
+}
+
+export async function updateTaskColumn(board: Board, channelId: number) {
+  await axiosInstance
+    .post(`channel/updateTaskColumn/channelId=${channelId}`, {
+      title: board.title,
+      taskColumnDetail: board.taskColumnDetail,
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }

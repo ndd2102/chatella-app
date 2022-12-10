@@ -2,10 +2,13 @@ import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
 import React, { useState } from "react";
 import { AiOutlineUserAdd } from "react-icons/ai";
-import { addMember, getChannel, getUserProfile } from "../../../../services/api";
-import { ChannelMember } from "../../../../types/channel";
+import { addMember } from "../../../../services/api";
+import { Profile } from "../../../../types/profile";
 
-function AddMember(props: { channelId: number; memberList: ChannelMember[] }) {
+function AddMember(props: {
+  memberList: Profile[] | undefined;
+  channelId: number;
+}) {
   const [show, setShow] = useState(false);
   const [newMember, setNewMember] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -69,26 +72,15 @@ function AddMember(props: { channelId: number; memberList: ChannelMember[] }) {
     </React.Fragment>
   );
 
-  async function memberInChannel(emailAdd: string, channelId:number )
-  {
-    let emailUser="";
-    let memberChannel = (await getChannel(channelId)).members;
-    for( let i= 0; i < memberChannel.length; i++){
-      emailUser = (await getUserProfile(memberChannel[i].userId)).email;
-      if(emailAdd === emailUser){
-        return true;
-      }
-    }
-    return false;
-  }
-
   async function onSubmit() {
-    if(await memberInChannel(newMember, props.channelId))
-    {
+    const checkDuplicate = props.memberList?.find((members) => {
+      return members.email === newMember;
+    });
+
+    if (checkDuplicate !== undefined) {
       setError(true);
       setErrorMessage("This member is already in channel!");
-    }
-    else{
+    } else {
       await addMember(newMember, props.channelId).catch((error) => {
         setError(true);
         setErrorMessage("Email not found!");
@@ -100,6 +92,5 @@ function AddMember(props: { channelId: number; memberList: ChannelMember[] }) {
     }
   }
 }
-  
 
 export default AddMember;
