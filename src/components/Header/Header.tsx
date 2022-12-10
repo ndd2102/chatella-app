@@ -11,7 +11,6 @@ import { HiOutlineMenu } from "react-icons/hi";
 export default function Header() {
   const { profile } = useStore(({ app }) => app);
   const accountIsLogged = !(Object.keys(profile).length === 0);
-  console.log(accountIsLogged);
 
   return (
     <>
@@ -21,10 +20,11 @@ export default function Header() {
         rounded={true}
       >
         <Navbar.Brand>
-          <span className="font-sacramento pt-2 text-blue-800 self-center whitespace-nowrap text-4xl font-semibold dark:text-white">
+          <span className="font-sacramento pt-2 text-blue-800 self-center whitespace-nowrap text-4xl font-semibold dark:text-white pr-4">
             Chatella
           </span>
         </Navbar.Brand>
+        <Navbar.Toggle />
         {accountIsLogged ? <UserLinks profile={profile} /> : <GuestLinks />}
       </Navbar>
     </>
@@ -43,7 +43,7 @@ function GuestLinks() {
 }
 
 function UserLinks({
-  profile: { email, name, dateOfBirth, country, avatar, sex },
+  profile: { email, name, dateOfBirth, country, avatar, sex, channelID },
 }: {
   profile: Profile;
 }) {
@@ -57,9 +57,8 @@ function UserLinks({
       <NavbarCollapse className="mr-16">
       <Navbar.Link className="mr-8" href="/">
           Home
-      </Navbar.Link>
-      <Navbar.Link href="/channel/1">Workspace</Navbar.Link>
-
+        </Navbar.Link>
+        <Navbar.Link href={`/workspace`}>Workspace</Navbar.Link>
       </NavbarCollapse>
       <HiOutlineMenu className="md:hidden"></HiOutlineMenu>
       <div className="grow justify-items-end">
