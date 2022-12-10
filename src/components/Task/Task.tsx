@@ -10,8 +10,8 @@ import { AiOutlineClockCircle } from "react-icons/ai";
 import AddTaskBoard from "../Modal/Task/AddTaskBoard";
 import { Board } from "../../types/board";
 import { store } from "../../state/store";
-import { updateBoards } from "../../pages/Workspace/Workspace.slice";
 import { Profile } from "../../types/profile";
+import { updateBoards } from "../../pages/Workspace/Workspace.slice";
 
 function Task(props: { channel: Channel }) {
   const [channel, setChannel] = useState<Channel>(props.channel);
