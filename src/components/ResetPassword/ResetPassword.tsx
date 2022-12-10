@@ -86,7 +86,10 @@ function ResetPassword() {
         }
         else {
           await confirmForgotPassword(newPassword, uuid, token);
-          //navigate("/");
+          setTimeout(() => {
+            console.log("Delayed for 2 second.");
+          }, 2000)
+          navigate("/");
         }
       }
 }
