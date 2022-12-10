@@ -86,6 +86,7 @@ function ResetPassword() {
         }
         else {
           await confirmForgotPassword(newPassword, uuid, token);
+          window.alert("SUCCESSFULL!")
           setTimeout(() => {
             console.log("Delayed for 2 second.");
           }, 2000)
