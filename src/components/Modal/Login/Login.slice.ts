@@ -12,7 +12,6 @@ const slice = createSlice({
   name: "login",
   initialState,
   reducers: {
-    initializeLogin: () => initialState,
     loginSuccess: (state) => {
       state.isLogin = true;
     },
@@ -22,6 +21,6 @@ const slice = createSlice({
   },
 });
 
-export const { initializeLogin, loginSuccess, loginError } = slice.actions;
+export const { loginSuccess, loginError } = slice.actions;
 
 export default slice.reducer;

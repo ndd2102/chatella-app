@@ -14,6 +14,7 @@ import { Exclamation } from "heroicons-react";
 import { loadProfile } from "../../App/App.slice";
 import ForgotPassword from "../Password/ForgotPassword/ForgotPassword";
 import { loginError, loginSuccess } from "./Login.slice";
+import { useNavigate } from "react-router";
 
 export default function Login() {
   const initialState = {
@@ -25,6 +26,7 @@ export default function Login() {
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
   const [isLoading, setLoad] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -130,6 +132,7 @@ export default function Login() {
     await login(accountSignIn.email, accountSignIn.password).catch((error) => {
       setError(true);
       setErrorMessage(error.response.data.error);
+      setLoad(false);
       store.dispatch(loginError());
       return;
     });
@@ -142,6 +145,7 @@ export default function Login() {
       store.dispatch(loginError);
       setErrorMessage(error.response.data.message);
       setError(true);
+      setLoad(false);
       store.dispatch(loginError());
       console.log("signin error");
       return;
@@ -152,7 +156,7 @@ export default function Login() {
       store.dispatch(loginSuccess());
       setLoad(false);
       setShow(false);
-      window.location.reload();
+      navigate("/");
     }
   }
 }

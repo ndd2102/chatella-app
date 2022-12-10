@@ -6,10 +6,13 @@ import {
   Modal,
   TextInput,
   Toast,
+  Spinner,
 } from "flowbite-react";
-import { Exclamation } from "heroicons-react";
+import { Check, Exclamation } from "heroicons-react";
 import { register } from "../../../services/api";
 import { useNavigate } from "react-router-dom";
+import { store } from "../../../state/store";
+import { registerError, registerSuccess } from "./Register.slice";
 
 export default function Register() {
   const initialState = {
@@ -19,8 +22,10 @@ export default function Register() {
   };
   const [accountSignUp, setAccountSignUp] = useState(initialState);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setLoad] = useState(false);
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
+  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -36,7 +41,7 @@ export default function Register() {
         >
           <Modal.Header />
           <Modal.Body>
-            <form className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8 font-lexend">
+            <form className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
                 Sign up to our platform
               </h3>
@@ -94,9 +99,30 @@ export default function Register() {
                   <Toast.Toggle />
                 </Toast>
               )}
+              {success && (
+                <Toast>
+                  <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500">
+                    <Check className="h-5 w-5" />
+                  </div>
+                  <div className="ml-3 text-sm font-normal">
+                    Success! Please check your email.
+                  </div>
+                  <Toast.Toggle />
+                </Toast>
+              )}
               <div className="w-full">
-                <Button className="w-full" onClick={handleSubmit}>
-                  Sign up to your account
+                <Button
+                  disabled={isLoading}
+                  className="w-full"
+                  onClick={handleSubmit}
+                >
+                  {isLoading ? (
+                    <div>
+                      <Spinner /> Registering...
+                    </div>
+                  ) : (
+                    <>Sign up to your account</>
+                  )}
                 </Button>
               </div>
             </form>
@@ -108,6 +134,8 @@ export default function Register() {
 
   function handleChange(event: { target: { name: any; value: any } }) {
     setError(false);
+    setLoad(false);
+    setSuccess(false);
     setAccountSignUp({
       ...accountSignUp,
       [event.target.name]: event.target.value,
@@ -125,24 +153,39 @@ export default function Register() {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    setLoad(true);
+    store.dispatch(registerSuccess());
     if (!checkPassword(accountSignUp.password)) {
       setError(true);
       setErrorMessage(
         "Password must be 6-14 characters long, contain at least 1 uppercase letter and at least 1 special character!"
       );
+      setLoad(false);
+      store.dispatch(registerError());
+      return;
     } else if (accountSignUp.password !== accountSignUp.confirmPassword) {
       setError(true);
       setErrorMessage("Password not match!");
+      setLoad(false);
+      store.dispatch(registerError());
+      return;
     } else {
       await register(accountSignUp.email, accountSignUp.password).catch(
         (err) => {
           setError(true);
           setErrorMessage(err.response.data.error);
+          setLoad(false);
+          store.dispatch(registerError());
         }
       );
-    }
-    if (!error) {
-      window.alert("Check your email!");
+      if (store.getState().register.isRegistered) {
+        setSuccess(true);
+        setTimeout(() => {
+          setShow(false);
+          setLoad(false);
+          navigate("/");
+        }, 800);
+      }
     }
   }
 }
