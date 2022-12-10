@@ -1,38 +1,19 @@
-import { number } from "decoders";
 import { Avatar, Button, Checkbox, Label, Modal, Toast } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { AiOutlineUserDelete } from "react-icons/ai";
-import {
-  addMember,
-  deleteMember,
-  getChannel,
-  getUserProfile,
-} from "../../../../services/api";
-import { Channel, ChannelMember } from "../../../../types/channel";
+import { getUserProfile } from "../../../../services/api";
 import { Profile } from "../../../../types/profile";
 
-function DeleteMember(props: { channelInfo: Channel }) {
+function DeleteMember(props: {
+  channelId: number;
+  memberList: Profile[] | undefined;
+}) {
   const [show, setShow] = useState(false);
-  const [member, setMember] = useState<Profile[]>([]);
   const [delMember, setDelMember] = useState<number[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
   const [isLoading, setLoad] = useState(true);
-
-  useEffect(() => {
-    if (!isLoading) return;
-    const fetchUserlList = async () => {
-      const list = await Promise.all(
-        props.channelInfo.members.map(async (value) => {
-          return await getUserProfile(value.userId);
-        })
-      );
-      setMember(list);
-      setLoad(false);
-    };
-    fetchUserlList();
-  }, [isLoading, props.channelInfo.members]);
 
   return (
     <React.Fragment>
@@ -50,19 +31,20 @@ function DeleteMember(props: { channelInfo: Channel }) {
               Delete member
             </h3>
             <div>
-              {member.map((userId, id) => (
-                <div key={id}>
-                  <Label className="inline-flex justify-center items-center ml-4 text-lg ">
-                    <Avatar img={userId.avatar} />
-                    <div>{userId.name}</div>
-                  </Label>
-                  <Checkbox
-                    className="float-right"
-                    onChange={handleChange}
-                    value={userId.id}
-                  />
-                </div>
-              ))}
+              {props.memberList &&
+                props.memberList.map((userId, id) => (
+                  <div key={id}>
+                    <Label className="inline-flex justify-center items-center ml-4 text-lg ">
+                      <Avatar img={userId.avatar} />
+                      <div>{userId.name}</div>
+                    </Label>
+                    <Checkbox
+                      className="float-right"
+                      onChange={handleChange}
+                      value={userId.id}
+                    />
+                  </div>
+                ))}
             </div>
 
             {error && (
@@ -98,10 +80,6 @@ function DeleteMember(props: { channelInfo: Channel }) {
   }
   function check() {
     console.log(delMember);
-  }
-  async function getUserInfo(userId: number) {
-    let a = await getUserProfile(userId);
-    return a.name;
   }
   //   async function memberInChannel(emailAdd: string, channelId: number) {
   //     let emailUser = "";

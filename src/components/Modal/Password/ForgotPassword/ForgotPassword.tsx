@@ -1,13 +1,15 @@
 import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
 import React, { useState } from "react";
-import { resendEmail } from "../../../../services/api";
+import { forgotPassword } from "../../../../services/api";
 import { Exclamation } from "heroicons-react";
+import { useNavigate } from "react-router-dom";
 
 function ForgotPassword() {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -89,15 +91,21 @@ function ForgotPassword() {
     setError(false);
     setEmail(event.target.value);
   }
-  async function onSubmit() {
-    await resendEmail(email).catch((error) => {
+
+
+
+  async function onSubmit(event: React.FormEvent) {
+    await forgotPassword(email).catch((error) => {
       setError(true);
       setErrorMessage(error.response.data.error);
     });
-    if (!error) {
-      setShow(false);
-    }
+    localStorage.removeItem("token")
+    //event.preventDefault();
+    window.alert("Check your email!")
+
   }
+
+
 }
 
 export default ForgotPassword;

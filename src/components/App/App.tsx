@@ -4,7 +4,7 @@ import {
   BrowserRouter as Router,
   Navigate,
 } from "react-router-dom";
-import { useStore, useStoreWithInitializer } from "../../state/storeHooks";
+import { useStoreWithInitializer } from "../../state/storeHooks";
 import { store } from "../../state/store";
 import { endLoad, loadProfile, logout } from "./App.slice";
 import Home from "../../pages/Home/Home";
@@ -13,6 +13,8 @@ import { Spinner } from "flowbite-react";
 import Workspace from "../../pages/Workspace/Workspace";
 import { loginSuccess } from "../Modal/Login/Login.slice";
 import { loadChannelList } from "../../pages/Workspace/Workspace.slice";
+import ResetPassword from "../ResetPassword/ResetPassword";
+import ConfirmEmail from "../ConfirmEmail/ConfirmEmail";
 
 export default function App() {
   const { loading, profile } = useStoreWithInitializer(({ app }) => app, load);
@@ -32,6 +34,8 @@ export default function App() {
             path="/workspace"
             element={accountIsLogged ? <Workspace /> : <Navigate to="/" />}
           />
+          <Route path="/forgot-password" element={<ResetPassword />} />
+          <Route path="/confirm-email" element={<ConfirmEmail />} />
           {/* <Route path="/profiles/:id" element = {<Profile />}/> */}
         </Routes>
       ) : (

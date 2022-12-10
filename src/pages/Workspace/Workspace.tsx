@@ -22,20 +22,19 @@ function Workspace() {
         profile={profile}
         channelInfo={channelList}
       />
-      <>
-        {id && channel ? (
-          <div className="ml-72 h-screen grid grid-cols-3">
-            <div className="col-span-2">
-              <Task channel={channel} />
-            </div>
-            <div className="col-span-1">
-              {/* <Chat profile={profile} channel={channel} /> */}
-            </div>
+
+      {id && channel ? (
+        <div className="ml-72 h-screen grid grid-cols-3">
+          <div className="col-span-2">
+            <Task channel={channel} />
           </div>
-        ) : (
-          <div className="pl-64 mx-auto my-auto"></div>
-        )}
-      </>
+          <div className="col-span-1">
+            <Chat profile={profile} channel={channel} />
+          </div>
+        </div>
+      ) : (
+        <div className="pl-64 mx-auto my-auto"></div>
+      )}
     </div>
   );
 }
