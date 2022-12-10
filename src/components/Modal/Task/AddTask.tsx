@@ -18,6 +18,7 @@ import { Board } from "../../../types/board";
 import { store } from "../../../state/store";
 import { updateBoards } from "../../../pages/Workspace/Workspace.slice";
 import { Exclamation } from "heroicons-react";
+import { updateTaskColumn } from "../../../services/api";
 
 function AddTask(props: {
   channel: Channel;
@@ -91,9 +92,30 @@ function AddTask(props: {
                 <div className="col-span-1">
                   <Label className="w-full" value="Priority" />
                   <Button.Group className="w-full" outline={false}>
-                    <Button color="gray">Low</Button>
-                    <Button color="warning">Medium</Button>
-                    <Button color="failure">High</Button>
+                    <Button
+                      color="gray"
+                      onClick={() =>
+                        setCardInfo({ ...cardInfo, priority: "Low" })
+                      }
+                    >
+                      Low
+                    </Button>
+                    <Button
+                      color="warning"
+                      onClick={() =>
+                        setCardInfo({ ...cardInfo, priority: "Medium" })
+                      }
+                    >
+                      Medium
+                    </Button>
+                    <Button
+                      color="failure"
+                      onClick={() =>
+                        setCardInfo({ ...cardInfo, priority: "High" })
+                      }
+                    >
+                      High
+                    </Button>
                   </Button.Group>
                 </div>
               </div>
@@ -137,6 +159,7 @@ function AddTask(props: {
                     Confirm
                   </Button>
                 </div>
+                <Button onClick={() => console.log(cardInfo)}></Button>
               </div>
             </div>
           </Modal.Body>
@@ -151,6 +174,10 @@ function AddTask(props: {
       ...cardInfo,
       [event.target.name]: event.target.value,
     });
+  }
+  function handleChangePriority(value: any) {
+    setError(false);
+    setCardInfo({ ...cardInfo, priority: value });
   }
   function onSubmit() {
     setLoad(true);
@@ -176,12 +203,14 @@ function AddTask(props: {
     let newBoards = Array.from(props.channel.boards);
     newBoards[findBoardIndex] = newColumn;
 
-    // store.dispatch(
-    //   updateBoards({
-    //     boards: newBoards,
-    //     idChannel: props.channel.id,
-    //   })
-    // );
+    store.dispatch(
+      updateBoards({
+        boards: newBoards,
+        idChannel: props.channel.id,
+      })
+    );
+
+    updateTaskColumn(newColumn, props.channel.id);
     setLoad(false);
     setShow(false);
   }

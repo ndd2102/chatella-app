@@ -81,9 +81,9 @@ function Task(props: { channel: Channel }) {
       });
       console.log(channel.boards);
       await updateTaskColumn(newBoards[columnSourceIndex], channel.id);
-      store.dispatch(
-        updateBoards({ boards: newBoards, idChannel: channel.id })
-      );
+      // store.dispatch(
+      //   updateBoards({ boards: newBoards, idChannel: channel.id })
+      // );
     } else {
       // Drop at another board
       const boardDestinationIndex =
@@ -125,7 +125,7 @@ function Task(props: { channel: Channel }) {
             {channel.name}
           </h1>
           <AddMember channelId={channel.id} memberList={memberList} />
-          <DeleteMember channelId={channel.id} memberList={memberList} />
+          <DeleteMember channelInfo={channel} />
         </div>
         <div className="flex text-gray-400 font-light items-center">
           <AiOutlineClockCircle />

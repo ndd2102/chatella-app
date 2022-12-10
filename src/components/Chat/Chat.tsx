@@ -13,11 +13,19 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   const [mess, setMess] = useState<any>("");
   const [show, setShow] = useState(false);
   const [nameUser, setNameUser] = useState<string>();
-  const [channel, setChannel] = useState(props.channel);
+  const [channel, setChannel] = useState<Channel>();
   const [otherAva, setOtherAva] = useState<Profile[]>([]);
   const { sendJsonMessage, readyState, lastMessage } = useWebSocket(socketUrl, {
     shouldReconnect: (CloseEvent) => true,
   });
+
+  useEffect(() => {
+    if (props.channel !== channel) {
+      setChannel(props.channel);
+      setMessageHistory([]);
+    }
+  }, [props.channel]);
+
   useEffect(() => {
     if (lastMessage !== null) {
       setMessageHistory((prev: any) => prev.concat(lastMessage));
@@ -27,7 +35,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
           JSON.parse(lastMessage.data).type === "add"
         ) {
           const name = await getUserProfile(
-            JSON.parse(lastMessage?.data).content
+            JSON.parse(lastMessage.data).content
           );
           setNameUser(name.name);
         }
@@ -35,14 +43,17 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       fetchUserName();
     }
   }, [lastMessage]);
+
   useEffect(() => {
     const fetchUserlList = async () => {
-      const list = await Promise.all(
-        channel.members.map(async (value) => {
-          return await getUserProfile(value.userId);
-        })
-      );
-      setOtherAva(list);
+      if (channel !== undefined) {
+        const list = await Promise.all(
+          channel.members.map(async (value: { userId: number }) => {
+            return await getUserProfile(value.userId);
+          })
+        );
+        setOtherAva(list);
+      }
     };
     fetchUserlList();
   }, [channel]);
@@ -209,7 +220,10 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
                 {[JSON.parse(value.data).content]}
               </div>
               <img
-                src={avatar?.avatar}
+                src={
+                  avatar?.avatar ||
+                  "https://i.pinimg.com/originals/f1/0f/f7/f10ff70a7155e5ab666bcdd1b45b726d.jpg"
+                }
                 alt="ava"
                 className="w-6 h-6 rounded-full float-left m-2"
                 onClick={() => console.log(avatar?.name)}
