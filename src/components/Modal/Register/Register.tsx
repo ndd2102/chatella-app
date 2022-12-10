@@ -143,7 +143,6 @@ export default function Register() {
     }
     if (!error) {
       window.alert("Check your email!");
-      
     }
   }
 }

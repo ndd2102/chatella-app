@@ -8,6 +8,7 @@ import Register from "../Modal/Register/Register";
 import { UserInfo } from "../Modal/UserInfo/UserInfo";
 import { Profile } from "../../types/profile";
 import { useNavigate } from "react-router";
+import { HiOutlineMenu } from "react-icons/hi";
 
 export default function Header() {
   const { profile } = useStore(({ app }) => app);
@@ -53,6 +54,7 @@ function UserLinks({
     store.dispatch(logout());
     window.location.reload();
   };
+  
   return (
     <div className="flex grow w-9/10 ml-24 mr-8 items-center">
       <NavbarCollapse className="mr-16">
@@ -69,6 +71,7 @@ function UserLinks({
           Workspace
         </Navbar.Link>
       </NavbarCollapse>
+      <HiOutlineMenu className="md:hidden"></HiOutlineMenu>
       <div className="grow justify-items-end">
         <div className="float-right">
           <Dropdown

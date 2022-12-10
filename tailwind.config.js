@@ -9,7 +9,8 @@ module.exports = {
       lexend: ["Lexend", "sans-serif"],
       sacramento: ["Sacramento"],
     },
-    extend: {},
+    extend: {
+    },
   },
   plugins: [require("flowbite/plugin")],
 };
