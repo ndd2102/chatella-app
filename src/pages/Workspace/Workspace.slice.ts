@@ -7,20 +7,18 @@ export interface WorkspaceState {
 }
 
 const initialState: WorkspaceState = {
-  channelList: JSON.parse(localStorage.getItem("channelList") || "[]"),
+  channelList: [],
 };
 
 const slice = createSlice({
   name: "workspace",
   initialState,
   reducers: {
-    initializeWorkspace: () => initialState,
     loadChannelList: (
       state,
       { payload: channelList }: PayloadAction<Channel[]>
     ) => {
       state.channelList = channelList;
-      localStorage.setItem("channelList", JSON.stringify(state.channelList));
     },
     updateBoards: (
       state,
@@ -32,12 +30,10 @@ const slice = createSlice({
         (channel) => channel.id === idChannel
       );
       state.channelList[findIndexChannel].boards = boards;
-      localStorage.setItem("channelList", JSON.stringify(state.channelList));
     },
   },
 });
 
-export const { initializeWorkspace, loadChannelList, updateBoards } =
-  slice.actions;
+export const { loadChannelList, updateBoards } = slice.actions;
 
 export default slice.reducer;

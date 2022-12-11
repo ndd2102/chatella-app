@@ -2,14 +2,12 @@ import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
 import React, { useState } from "react";
 import { forgotPassword } from "../../../../services/api";
 import { Exclamation } from "heroicons-react";
-import { useNavigate } from "react-router-dom";
 
 function ForgotPassword() {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
-  const navigate = useNavigate();
 
   return (
     <>
@@ -87,25 +85,22 @@ function ForgotPassword() {
       </React.Fragment>
     </>
   );
+
   function handleChange(event: { target: { value: any } }) {
     setError(false);
     setEmail(event.target.value);
   }
 
-
-
   async function onSubmit(event: React.FormEvent) {
     await forgotPassword(email).catch((error) => {
       setError(true);
       setErrorMessage(error.response.data.error);
+      console.log(error);
     });
-    localStorage.removeItem("token")
+    localStorage.removeItem("token");
     //event.preventDefault();
-    window.alert("Check your email!")
-
+    window.alert("Check your email!");
   }
-
-
 }
 
 export default ForgotPassword;

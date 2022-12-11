@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
 import { axiosInstance } from "../../config/settings";
 import { Profile } from "../../types/profile";
 
@@ -35,7 +34,6 @@ const slice = createSlice({
     logout: () => {
       delete axiosInstance.defaults.headers.common["Authorization"];
       localStorage.removeItem("token");
-      localStorage.removeItem("channelList");
     },
     endLoad: (state) => {
       state.loading = false;

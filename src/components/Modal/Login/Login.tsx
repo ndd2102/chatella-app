@@ -14,7 +14,6 @@ import { Exclamation } from "heroicons-react";
 import { loadProfile } from "../../App/App.slice";
 import ForgotPassword from "../Password/ForgotPassword/ForgotPassword";
 import { loginError, loginSuccess } from "./Login.slice";
-import { useNavigate } from "react-router";
 
 export default function Login() {
   const initialState = {
@@ -26,7 +25,6 @@ export default function Login() {
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
   const [isLoading, setLoad] = useState(false);
-  const navigate = useNavigate();
 
   return (
     <div>
@@ -89,7 +87,22 @@ export default function Login() {
                   <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
                     <Exclamation className="h-5 w-5" />
                   </div>
-                  <div className="ml-3 text-sm font-normal">{errorMessage}</div>
+                  <div className="ml-3 text-sm font-normal">
+                    {errorMessage === "Account inactivated" ? (
+                      <>
+                        Your account is inactivated.{" "}
+                        <span
+                          onClick={resendEmail}
+                          className="text-blue-500 hover:cursor-pointer hover:text-blue-600"
+                        >
+                          Click this
+                        </span>{" "}
+                        and we will send you email verification!
+                      </>
+                    ) : (
+                      <>{errorMessage}</>
+                    )}
+                  </div>
                   <Toast.Toggle />
                 </Toast>
               )}
@@ -124,6 +137,8 @@ export default function Login() {
     });
   }
 
+  function resendEmail() {}
+
   async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     store.dispatch(loginSuccess());
@@ -152,11 +167,11 @@ export default function Login() {
     });
 
     if (store.getState().login.isLogin) {
-      store.dispatch(loadProfile(user));
       store.dispatch(loginSuccess());
       setLoad(false);
       setShow(false);
-      navigate("/");
+      store.dispatch(loadProfile(user));
+      window.location.reload();
     }
   }
 }

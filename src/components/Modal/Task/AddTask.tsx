@@ -6,7 +6,6 @@ import {
   Textarea,
   Avatar,
   Checkbox,
-  Toast,
   Alert,
 } from "flowbite-react";
 import React, { useState } from "react";

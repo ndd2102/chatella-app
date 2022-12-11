@@ -15,27 +15,18 @@ import { updateBoards } from "../../pages/Workspace/Workspace.slice";
 import DeleteChannel from "../Modal/Channel/DeleteChannel/DeleteChannel";
 import { Dropdown } from "flowbite-react";
 
-function Task(props: { profile: Profile; channel: Channel }) {
+function Task(props: {
+  channel: Channel;
+  memberList: Profile[];
+  profile: Profile;
+}) {
   const [channel, setChannel] = useState<Channel>(props.channel);
-  const [isLoading, setLoad] = useState(true);
-  const [memberList, setMemberList] = useState<Profile[]>();
-  useEffect(() => {
-    setChannel(props.channel);
-  }, [props.channel]);
+  const [memberList, setMemberList] = useState<Profile[]>(props.memberList);
 
   useEffect(() => {
-    if (!isLoading || channel === undefined) return;
-    const fetchUserList = async () => {
-      const list = await Promise.all(
-        channel.members.map(async (value) => {
-          return await getUserProfile(value.userId);
-        })
-      );
-      setMemberList(list);
-      setLoad(false);
-    };
-    fetchUserList();
-  }, [channel, isLoading]);
+    setChannel(props.channel);
+    setMemberList(props.memberList);
+  }, [props.channel, props.memberList]);
 
   const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
@@ -141,7 +132,10 @@ function Task(props: { profile: Profile; channel: Channel }) {
               inline={true}
             >
               <Dropdown.Item>
-                <AddMember channelId={channel.id} memberList={memberList} />
+                <AddMember
+                  channelId={channel.id}
+                  memberList={props.memberList}
+                />
               </Dropdown.Item>
               <Dropdown.Divider />
 
@@ -175,7 +169,11 @@ function Task(props: { profile: Profile; channel: Channel }) {
               <DragDropContext onDragEnd={onDragEnd}>
                 {channel.boards.slice(1).map((board, index) => (
                   <div key={index}>
-                    <TaskBoard board={board} channel={channel} />
+                    <TaskBoard
+                      board={board}
+                      channel={channel}
+                      memberList={memberList}
+                    />
                   </div>
                 ))}
               </DragDropContext>
