@@ -33,7 +33,6 @@ function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
   let remainingDays = card.dueDate
     ? formatDistance(new Date(), Date.parse(card.dueDate))
     : "";
-  console.log(remainingDays);
 
   useEffect(() => {
     setCard(props.card);

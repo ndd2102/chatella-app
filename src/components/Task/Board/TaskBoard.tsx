@@ -13,7 +13,6 @@ function TaskBoard(props: {
 }) {
   const [board, setBoard] = useState<Board>(props.board);
   const [memberList, setMemberList] = useState<Profile[]>([]);
-  console.log(board);
 
   useEffect(() => {
     setBoard(props.board);
@@ -35,9 +34,8 @@ function TaskBoard(props: {
         <Droppable droppableId={board.title}>
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
-              {board.taskColumnDetail.length &&
+              {board.taskColumnDetail.length ? (
                 board.taskColumnDetail.map((card, index) => {
-                  console.log(card);
                   return (
                     <div key={index}>
                       <Draggable
@@ -63,13 +61,15 @@ function TaskBoard(props: {
                       </Draggable>{" "}
                     </div>
                   );
-                })}
+                })
+              ) : (
+                <div className="h-36"></div>
+              )}
               {provided.placeholder}
             </div>
           )}
         </Droppable>
       </div>
-      {/* <TaskInfo  /> */}
     </div>
   );
 }

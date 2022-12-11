@@ -66,41 +66,44 @@ function Task(props: { channel: Channel; memberList: Profile[] }) {
         ...channel,
         boards: newBoards,
       });
-      console.log(channel.boards);
+
       await updateTaskColumn(newBoards[columnSourceIndex], channel.id);
-      // store.dispatch(
-      //   updateBoards({ boards: newBoards, idChannel: channel.id })
-      // );
+      store.dispatch(
+        updateBoards({ boards: newBoards, idChannel: channel.id })
+      );
     } else {
       // Drop at another board
-      const boardDestinationIndex =
+      const columnDestinationIndex =
         channel.boards.findIndex(
           (col) => col.title === destination.droppableId
         ) ?? 0;
-      console.log(boardDestinationIndex);
-      // let newBoardDestinationColumn = Array.from(
-      //   newBoards[boardDestinationIndex].taskColumnDetail
-      // );
 
-      // newBoardDestinationColumn.splice(destination.index, 0, cardSource);
+      let newBoardDestinationColumn = Array.from(
+        newBoards[columnDestinationIndex].taskColumnDetail
+      );
 
-      // const newColumnSource: Board = {
-      //   title: channel.boards[columnSourceIndex].title,
-      //   taskColumnDetail: newBoardSourceColumn,
-      // };
-      // const newColumnDestination: Board = {
-      //   title: channel.boards[boardDestinationIndex].title,
-      //   taskColumnDetail: newBoardDestinationColumn,
-      // };
-      // newBoards[columnSourceIndex] = newColumnSource;
-      // newBoards[boardDestinationIndex] = newColumnDestination;
-      // console.log(newColumnSource, newColumnDestination);
-      // setChannel({
-      //   ...channel,
-      //   boards: newBoards,
-      // });
-      // await updateTaskColumn(newBoards[boardSourceIndex], channel.id);
-      // await updateTaskColumn(newBoards[boardDestinationIndex], channel.id);
+      newBoardDestinationColumn.splice(destination.index, 0, cardSource);
+
+      const newColumnSource: Board = {
+        title: channel.boards[columnSourceIndex].title,
+        taskColumnDetail: newBoardSourceColumn,
+      };
+      const newColumnDestination: Board = {
+        title: channel.boards[columnDestinationIndex].title,
+        taskColumnDetail: newBoardDestinationColumn,
+      };
+      newBoards[columnSourceIndex] = newColumnSource;
+      newBoards[columnDestinationIndex] = newColumnDestination;
+
+      setChannel({
+        ...channel,
+        boards: newBoards,
+      });
+      await updateTaskColumn(newBoards[columnSourceIndex], channel.id);
+      await updateTaskColumn(newBoards[columnDestinationIndex], channel.id);
+      store.dispatch(
+        updateBoards({ boards: newBoards, idChannel: channel.id })
+      );
     }
   };
 
