@@ -89,7 +89,22 @@ export default function Login() {
                   <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
                     <Exclamation className="h-5 w-5" />
                   </div>
-                  <div className="ml-3 text-sm font-normal">{errorMessage}</div>
+                  <div className="ml-3 text-sm font-normal">
+                    {errorMessage === "Account inactivated" ? (
+                      <>
+                        Your account is inactivated.{" "}
+                        <span
+                          onClick={resendEmail}
+                          className="text-blue-500 hover:cursor-pointer hover:text-blue-600"
+                        >
+                          Click this
+                        </span>{" "}
+                        and we will send you email verification!
+                      </>
+                    ) : (
+                      <>{errorMessage}</>
+                    )}
+                  </div>
                   <Toast.Toggle />
                 </Toast>
               )}
@@ -123,6 +138,8 @@ export default function Login() {
       [event.target.name]: event.target.value,
     });
   }
+
+  function resendEmail() {}
 
   async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
