@@ -129,7 +129,7 @@ function Task(props: {
           >
             <Dropdown
               label={
-                <AiOutlineMore className="text-3xl hover:text-blue-700 hover:cursor-pointer" />
+                <AiOutlineMore className="bg-blue-50 p-2 text-4xl text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full" />
               }
               arrowIcon={false}
               inline={true}

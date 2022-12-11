@@ -1,6 +1,6 @@
 import { Button, Label, Modal, TextInput } from "flowbite-react";
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { createChannel, getProfile } from "../../../../services/api";
 import { FiPlusSquare } from "react-icons/fi";
 

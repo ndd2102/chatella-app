@@ -21,10 +21,6 @@ function DeleteMember(props: { channelInfo: Channel }) {
     setChannel(props.channelInfo);
   }, [props.channelInfo]);
   useEffect(() => {
-    // const ChannelInfo = async () => {
-    //   setChannel(await getChannel(channel.id));
-    // };
-    // ChannelInfo();
     const fetchUserlList = async () => {
       const list = await Promise.all(
         channel.members.slice(1).map(async (value) => {
@@ -37,12 +33,12 @@ function DeleteMember(props: { channelInfo: Channel }) {
   }, [channel.id, channel.members]);
   return (
     <React.Fragment>
-      <span
-        onClick={() => setShow(true)}
-        className="bg-blue-50 p-2 text-3xl w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full"
-      >
-        <AiOutlineUserDelete></AiOutlineUserDelete>
-      </span>
+      <div className="flex items-center" onClick={() => setShow(true)}>
+        <span className="bg-blue-50 p-2 text-2xl w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full">
+          <AiOutlineUserDelete />
+        </span>
+        <span className="pl-2">Delete Member</span>
+      </div>
       <Modal show={show} size="md" popup={true} onClose={() => setShow(false)}>
         <Modal.Header />
         <Modal.Body>
@@ -52,16 +48,12 @@ function DeleteMember(props: { channelInfo: Channel }) {
             </h3>
             <div>
               {member.map((userId, id) => (
-                <div key={id}>
-                  <Label className="inline-flex justify-center items-center ml-4 text-lg ">
+                <div key={id} className="flex items-center gap-2 space-y-2">
+                  <Checkbox onChange={handleChange} value={userId.id} />
+                  <Label className="flex gap-2 items-center ml-4 text-lg ">
                     <Avatar img={userId.avatar} />
                     <div>{userId.name}</div>
                   </Label>
-                  <Checkbox
-                    className="float-right"
-                    onChange={handleChange}
-                    value={userId.id}
-                  />
                 </div>
               ))}
             </div>

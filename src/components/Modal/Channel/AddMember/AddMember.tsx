@@ -16,13 +16,12 @@ function AddMember(props: {
 
   return (
     <React.Fragment>
-      <span
-        onClick={() => setShow(true)}
-        className="bg-blue-50 p-2 text-2xl w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full"
-      >
-        <AiOutlineUserAdd />
-      </span>
-      <div className="pl-2">Add Member</div>
+      <div className="flex items-center" onClick={() => setShow(true)}>
+        <span className="bg-blue-50 p-2 text-2xl w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full">
+          <AiOutlineUserAdd />
+        </span>
+        <span className="pl-2">Add Member</span>
+      </div>
       <Modal show={show} size="md" popup={true} onClose={() => setShow(false)}>
         <Modal.Header />
         <Modal.Body>

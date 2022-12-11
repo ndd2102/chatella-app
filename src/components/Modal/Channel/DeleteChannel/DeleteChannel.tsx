@@ -11,19 +11,18 @@ function DeleteChannel(props: { channelId: number }) {
 
   return (
     <React.Fragment>
-      <span
-        onClick={() => setShow(true)}
-        className="bg-blue-50 p-2 text-2xl w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full"
-      >
-        <FiMinusSquare />
-      </span>
-      <div className="pl-2">Delete Channel</div>
-      <Modal show={show} size="md" popup={true} onClose={() => setShow(false)}>
+      <div className="flex items-center" onClick={() => setShow(true)}>
+        <span className="bg-blue-50 p-2 text-2xl w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full">
+          <FiMinusSquare />
+        </span>
+        <span className="pl-2">Delete Channel</span>
+      </div>
+      <Modal show={show} size="xl" popup={true} onClose={() => setShow(false)}>
         <Modal.Header />
         <Modal.Body>
           <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
             <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-              Bạn chắc chắn muốn xóa Channel này
+              Are you sure to delete this channel?
             </h3>
             {error && (
               <Toast>
@@ -44,7 +43,9 @@ function DeleteChannel(props: { channelId: number }) {
                 >
                   Cancel
                 </Button>
-                <Button onClick={onSubmit}>Confirm</Button>
+                <Button color="failure" onClick={onSubmit}>
+                  Confirm
+                </Button>
               </div>
             </div>
           </div>
