@@ -3,7 +3,7 @@ import { DragDropContext } from "@hello-pangea/dnd";
 import AddMember from "../Modal/Channel/AddMember/AddMember";
 import DeleteMember from "../Modal/Channel/DeleteMember/DeleteMember";
 import TaskBoard from "./Board/TaskBoard";
-import { getUserProfile, updateTaskColumn } from "../../services/api";
+import { updateTaskColumn } from "../../services/api";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { AiOutlineClockCircle, AiOutlineMore } from "react-icons/ai";
@@ -143,7 +143,10 @@ function Task(props: {
               <Dropdown.Divider />
 
               <Dropdown.Item>
-                <DeleteMember channelInfo={channel} />
+                <DeleteMember
+                  channelId={channel.id}
+                  memberList={props.memberList}
+                />
               </Dropdown.Item>
               <Dropdown.Divider />
               <Dropdown.Item>
