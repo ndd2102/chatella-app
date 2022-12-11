@@ -25,6 +25,7 @@ function TaskCard(props: {
   board: Board;
   channel: Channel;
   members: Profile[];
+  isHost: boolean;
 }) {
   const [card, setCard] = useState<Card>(props.card);
   const initialState: Card = {
@@ -61,7 +62,7 @@ function TaskCard(props: {
         className="p-4 rounded-lg bg-white my-2 h-36 drop-shadow hover:bg-neutral-50 hover:cursor-pointer"
       >
         <h3 className="font-base text-lg">{card.title}</h3>
-        <p className="mt-1.5 h-12 text-base truncated text-gray-400 font-light">
+        <p className="mt-1.5 h-12 text-base truncate text-gray-400 font-light">
           {card.description}
         </p>
         <div className="flex gap-4">
@@ -95,13 +96,14 @@ function TaskCard(props: {
         <Modal.Body>
           <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
             <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-              Edit card
+              {props.isHost ? "Edit task" : "Task info"}
             </h3>
             <div className="block md:gap-6 space-y-4">
               <div>
                 <Label value="Task Name" />
                 <TextInput
                   required={true}
+                  disabled={!props.isHost}
                   id="title"
                   name="title"
                   defaultValue={cardInfo.title}
@@ -112,6 +114,7 @@ function TaskCard(props: {
                 <Label value="Task Description" />
                 <Textarea
                   className="font-normal text-sm"
+                  disabled={!props.isHost}
                   id="description"
                   name="description"
                   defaultValue={cardInfo.description}
@@ -126,51 +129,68 @@ function TaskCard(props: {
                   id="dueDate"
                   name="dueDate"
                   type="date"
+                  disabled={!props.isHost}
                   defaultValue={cardInfo.dueDate}
                   onChange={handleChange}
                 />
               </div>
 
-              <div className="col-span-1">
-                <Label className="w-full" value="Priority" />
-                <Button.Group className="w-full" outline={false}>
-                  <Button
-                    color="gray"
-                    onClick={() =>
-                      setCardInfo({ ...cardInfo, priority: "Low" })
-                    }
-                  >
-                    Low
-                  </Button>
-                  <Button
-                    color="warning"
-                    onClick={() =>
-                      setCardInfo({ ...cardInfo, priority: "Medium" })
-                    }
-                  >
-                    Medium
-                  </Button>
-                  <Button
-                    color="failure"
-                    onClick={() =>
-                      setCardInfo({ ...cardInfo, priority: "High" })
-                    }
-                  >
-                    High
-                  </Button>
-                </Button.Group>
-              </div>
+              {props.isHost && (
+                <div className="col-span-1">
+                  <Label className="w-full" value="Priority" />
+                  <Button.Group className="w-full" outline={false}>
+                    <Button
+                      color="gray"
+                      autoFocus={card.priority === "Low" ? true : false}
+                      disabled={!props.isHost}
+                      onClick={() =>
+                        setCardInfo({ ...cardInfo, priority: "Low" })
+                      }
+                    >
+                      Low
+                    </Button>
+                    <Button
+                      color="warning"
+                      autoFocus={card.priority === "Medium" ? true : false}
+                      disabled={!props.isHost}
+                      onClick={() =>
+                        setCardInfo({ ...cardInfo, priority: "Medium" })
+                      }
+                    >
+                      Medium
+                    </Button>
+                    <Button
+                      color="failure"
+                      autoFocus={card.priority === "High" ? true : false}
+                      disabled={!props.isHost}
+                      onClick={() =>
+                        setCardInfo({ ...cardInfo, priority: "High" })
+                      }
+                    >
+                      High
+                    </Button>
+                  </Button.Group>
+                </div>
+              )}
             </div>
             <div>
-              <Label value="Assign this task to:" />
+              <Label
+                value={
+                  props.isHost
+                    ? "Assign this task to:"
+                    : "This task is assigned to:"
+                }
+              />
               <ul className="p-2">
                 {props.members.map((member, id) => (
                   <li key={id} className="flex items-center gap-4 mb-2">
-                    <Checkbox
-                      onChange={handleChange}
-                      name="assignedTo"
-                      value={member.id}
-                    />
+                    {props.isHost && (
+                      <Checkbox
+                        onChange={handleChange}
+                        name="assignedTo"
+                        value={member.id}
+                      />
+                    )}
                     <Label className="flex items-center gap-4">
                       <Avatar img={member.avatar} />
                       <div>{member.name}</div>
@@ -187,6 +207,45 @@ function TaskCard(props: {
                 </span>
               </Alert>
             )}
+
+            {props.isHost && (
+              <div className="flex flex-wrap gap-6 my-auto">
+                <div className="ml-auto flex flex-wrap gap-6">
+                  <Button
+                    color="gray"
+                    onClick={() => {
+                      setShowEditTask(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    color="failure"
+                    onClick={() => setShowDeleteTask(true)}
+                  >
+                    Delete
+                  </Button>
+                  <Button disabled={isLoading} onClick={onSubmit}>
+                    Confirm
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </Modal.Body>
+      </Modal>
+      <Modal
+        show={showDeleteTask}
+        size="xl"
+        popup={true}
+        onClose={() => setShowDeleteTask(false)}
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
+            <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+              Are you sure to delete this task?
+            </h3>
             <div className="flex flex-wrap gap-6 my-auto">
               <div className="ml-auto flex flex-wrap gap-6">
                 <Button
@@ -197,36 +256,16 @@ function TaskCard(props: {
                 >
                   Cancel
                 </Button>
-                <Button disabled={isLoading} onClick={onSubmit}>
-                  Confirm
-                </Button>
-                <Button color="failure" onClick={() => setShowDeleteTask(true)}>
+                <Button
+                  color="failure"
+                  disabled={isLoading}
+                  onClick={deleteTask}
+                >
                   Delete
                 </Button>
               </div>
             </div>
           </div>
-        </Modal.Body>
-      </Modal>
-      <Modal
-        show={showDeleteTask}
-        size="3xl"
-        popup={true}
-        onClose={() => setShowDeleteTask(false)}
-      >
-        <Modal.Body>
-          <div>Do you want to delete this task</div>
-          <Button
-            color="gray"
-            onClick={() => {
-              setShowEditTask(false);
-            }}
-          >
-            Cancel
-          </Button>
-          <Button color="failure" disabled={isLoading} onClick={deleteTask}>
-            Delete
-          </Button>
         </Modal.Body>
       </Modal>
     </>

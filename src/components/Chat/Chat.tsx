@@ -90,7 +90,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
         <div className="mb-5">
           <span className="text-xl font-bold">Member ({otherAva.length})</span>
           <span
-            className="float-right pr-6 underline text-slate-500"
+            className="float-right pr-6 underline text-slate-500 hover:cursor-pointer hover:text-slate-600"
             onClick={() => setShow(true)}
           >
             See all
@@ -113,14 +113,17 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
             popup={true}
             onClose={() => setShow(false)}
           >
-            <Modal.Header>Danh sách thành viên</Modal.Header>
+            <Modal.Header />
             <Modal.Body>
-              <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col max-h-[50vh] overflow-y-auto">
+              <div className="sm:pb-6 lg:px-8 xl:pb-8">
+                <h3 className="text-xl font-medium mb-8 text-gray-900 dark:text-white">
+                  All members
+                </h3>
                 {otherAva.map((userId, id) => (
-                  <div key={id}>
-                    <Label className="inline-flex justify-center items-center ml-4 text-lg ">
+                  <div key={id} className="space-y-2 mt-2">
+                    <Label className="inline-flex justify-center items-center text-lg ">
                       <Avatar img={userId.avatar} />
-                      <div className="p-6 ml-6">{userId.name}</div>
+                      <div className="ml-4">{userId.name}</div>
                     </Label>
                   </div>
                 ))}

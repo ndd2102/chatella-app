@@ -10,6 +10,7 @@ function TaskBoard(props: {
   board: Board;
   channel: Channel;
   memberList: Profile[];
+  isHost: boolean;
 }) {
   const [board, setBoard] = useState<Board>(props.board);
   const [memberList, setMemberList] = useState<Profile[]>([]);
@@ -22,13 +23,17 @@ function TaskBoard(props: {
   return (
     <div className="w-72 rounded-lg h-full" key={JSON.stringify(props.board)}>
       <div className="flex justify-between px-1.5">
-        <h2 className="truncated text-xs uppercase font-medium tracking-widest">
+        <h2 className="truncate max-w-1/2 text-xs uppercase font-medium tracking-widest">
           {board.title}
           <span className="text-gray-400 ml-2">
             {board.taskColumnDetail.length}
           </span>
         </h2>
-        <AddTask channel={props.channel} board={board} members={memberList} />
+        {props.isHost ? (
+          <AddTask channel={props.channel} board={board} members={memberList} />
+        ) : (
+          <></>
+        )}
       </div>
       <div className="mt-4">
         <Droppable droppableId={board.title}>
@@ -55,6 +60,7 @@ function TaskBoard(props: {
                                 card={card}
                                 channel={props.channel}
                                 board={board}
+                                isHost={props.isHost}
                               />{" "}
                             </div>
                           );

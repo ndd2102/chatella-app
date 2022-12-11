@@ -1,5 +1,4 @@
-import { Avatar, Button, Checkbox, Label, Modal, Toast } from "flowbite-react";
-import { Exclamation } from "heroicons-react";
+import { Avatar, Button, Checkbox, Label, Modal } from "flowbite-react";
 import React, { useState } from "react";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import { deleteMember } from "../../../../services/api";
@@ -53,6 +52,7 @@ function DeleteMember(props: { channelId: number; memberList: Profile[] }) {
       </Modal>
     </React.Fragment>
   );
+
   function handleChange(event: { target: { value: any } }) {
     let isCheck = event.target.value;
     const first = delMember.find((obj) => {
