@@ -22,6 +22,8 @@ function Task(props: {
 }) {
   const [channel, setChannel] = useState<Channel>(props.channel);
   const [memberList, setMemberList] = useState<Profile[]>(props.memberList);
+  const isHost =
+    props.profile.userId === channel.members[0].userId ? true : false;
 
   useEffect(() => {
     setChannel(props.channel);
@@ -32,7 +34,7 @@ function Task(props: {
     const { destination, source, draggableId } = result;
 
     // Drop outside the boards
-    if (!destination) {
+    if (!destination || !isHost) {
       return;
     }
 
@@ -120,13 +122,7 @@ function Task(props: {
           <h1 className="text-blue-700 self-center whitespace-nowrap text-4xl font-semibold dark:text-white">
             {channel.name}
           </h1>
-          <div
-            className={
-              props.profile.userId === channel.members[0].userId
-                ? "block"
-                : "hidden"
-            }
-          >
+          <div className={isHost ? "block" : "hidden"}>
             <Dropdown
               label={
                 <AiOutlineMore className="bg-blue-50 p-2 text-4xl text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full" />
@@ -179,6 +175,7 @@ function Task(props: {
                       board={board}
                       channel={channel}
                       memberList={memberList}
+                      isHost={isHost}
                     />
                   </div>
                 ))}
