@@ -173,10 +173,6 @@ function AddTask(props: {
       [event.target.name]: event.target.value,
     });
   }
-  function handleChangePriority(value: any) {
-    setError(false);
-    setCardInfo({ ...cardInfo, priority: value });
-  }
   function onSubmit() {
     setLoad(true);
     const checkDuplicate = props.board.taskColumnDetail.find((column) => {

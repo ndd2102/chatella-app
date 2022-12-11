@@ -11,21 +11,31 @@ import {
 import AvatarGroupCounter from "flowbite-react/lib/esm/components/Avatar/AvatarGroupCounter";
 import { Exclamation } from "heroicons-react";
 import { useEffect, useState } from "react";
+import { updateBoards } from "../../../pages/Workspace/Workspace.slice";
+import { updateTaskColumn } from "../../../services/api";
+import { store } from "../../../state/store";
+import { Board } from "../../../types/board";
 import { Card } from "../../../types/card";
 import { Channel } from "../../../types/channel";
 import { Profile } from "../../../types/profile";
 import { formatDistance } from "date-fns";
 
-function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
+function TaskCard(props: {
+  card: Card;
+  board: Board;
+  channel: Channel;
+  members: Profile[];
+}) {
   const [card, setCard] = useState<Card>(props.card);
   const initialState: Card = {
-    title: "",
-    description: "",
-    dueDate: "",
-    priority: "",
-    assignedTo: [],
+    title: props.card.title,
+    description: props.card.description,
+    dueDate: props.card.dueDate,
+    priority: props.card.priority,
+    assignedTo: props.card.assignedTo,
   };
-  const [show, setShow] = useState(false);
+  const [showEditTask, setShowEditTask] = useState(false);
+  const [showDeleteTask, setShowDeleteTask] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
   const [cardInfo, setCardInfo] = useState<Card>(initialState);
@@ -47,7 +57,7 @@ function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
   return (
     <>
       <div
-        onClick={() => setShow(true)}
+        onClick={() => setShowEditTask(true)}
         className="p-4 rounded-lg bg-white my-2 h-36 drop-shadow hover:bg-neutral-50 hover:cursor-pointer"
       >
         <h3 className="font-base text-lg">{card.title}</h3>
@@ -75,7 +85,12 @@ function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
           )}
         </div>
       </div>
-      <Modal show={show} size="3xl" popup={true} onClose={() => setShow(false)}>
+      <Modal
+        show={showEditTask}
+        size="3xl"
+        popup={true}
+        onClose={() => setShowEditTask(false)}
+      >
         <Modal.Header />
         <Modal.Body>
           <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
@@ -89,7 +104,7 @@ function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
                   required={true}
                   id="title"
                   name="title"
-                  defaultValue={card.title}
+                  defaultValue={cardInfo.title}
                   onChange={handleChange}
                 />
               </div>
@@ -99,7 +114,7 @@ function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
                   className="font-normal text-sm"
                   id="description"
                   name="description"
-                  defaultValue={card.description}
+                  defaultValue={cardInfo.description}
                   onChange={handleChange}
                 />
               </div>
@@ -111,7 +126,7 @@ function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
                   id="dueDate"
                   name="dueDate"
                   type="date"
-                  defaultValue={card.dueDate}
+                  defaultValue={cardInfo.dueDate}
                   onChange={handleChange}
                 />
               </div>
@@ -119,9 +134,30 @@ function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
               <div className="col-span-1">
                 <Label className="w-full" value="Priority" />
                 <Button.Group className="w-full" outline={false}>
-                  <Button color="gray">Low</Button>
-                  <Button color="warning">Medium</Button>
-                  <Button color="failure">High</Button>
+                  <Button
+                    color="gray"
+                    onClick={() =>
+                      setCardInfo({ ...cardInfo, priority: "Low" })
+                    }
+                  >
+                    Low
+                  </Button>
+                  <Button
+                    color="warning"
+                    onClick={() =>
+                      setCardInfo({ ...cardInfo, priority: "Medium" })
+                    }
+                  >
+                    Medium
+                  </Button>
+                  <Button
+                    color="failure"
+                    onClick={() =>
+                      setCardInfo({ ...cardInfo, priority: "High" })
+                    }
+                  >
+                    High
+                  </Button>
                 </Button.Group>
               </div>
             </div>
@@ -156,7 +192,7 @@ function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
                 <Button
                   color="gray"
                   onClick={() => {
-                    setShow(false);
+                    setShowEditTask(false);
                   }}
                 >
                   Cancel
@@ -164,9 +200,33 @@ function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
                 <Button disabled={isLoading} onClick={onSubmit}>
                   Confirm
                 </Button>
+                <Button color="failure" onClick={() => setShowDeleteTask(true)}>
+                  Delete
+                </Button>
               </div>
             </div>
           </div>
+        </Modal.Body>
+      </Modal>
+      <Modal
+        show={showDeleteTask}
+        size="3xl"
+        popup={true}
+        onClose={() => setShowDeleteTask(false)}
+      >
+        <Modal.Body>
+          <div>Do you want to delete this task</div>
+          <Button
+            color="gray"
+            onClick={() => {
+              setShowEditTask(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button color="failure" disabled={isLoading} onClick={deleteTask}>
+            Delete
+          </Button>
         </Modal.Body>
       </Modal>
     </>
@@ -181,36 +241,81 @@ function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
   }
   function onSubmit() {
     setLoad(true);
-    // const checkDuplicate = props.board.taskColumnDetail.find((column) => {
-    //   return column.title === cardInfo.title;
-    // });
 
-    // if (checkDuplicate !== undefined) {
-    //   setError(true);
-    //   setErrorMessage("The card title already exists in this board!");
-    //   setLoad(false);
-    //   return;
-    // }
+    let checkDuplicate = undefined;
+    if (card.title !== cardInfo.title) {
+      checkDuplicate = props.board.taskColumnDetail.find((column) => {
+        return column.title === cardInfo.title;
+      });
+    }
 
-    // const newColumn: Board = {
-    //   title: props.board.title,
-    //   taskColumnDetail: [...props.board.taskColumnDetail, cardInfo],
-    // };
+    if (checkDuplicate !== undefined) {
+      setError(true);
+      setErrorMessage("The card title already exists in this board!");
+      setLoad(false);
+      return;
+    }
 
-    // const findBoardIndex = props.channel.boards.findIndex(
-    //   (board) => board.title === newColumn.title
-    // );
-    // let newBoards = Array.from(props.channel.boards);
-    // newBoards[findBoardIndex] = newColumn;
+    const findCardIndex = props.board.taskColumnDetail.findIndex(
+      (cardInfo) => cardInfo.title === card.title
+    );
 
-    // store.dispatch(
-    //   updateBoards({
-    //     boards: newBoards,
-    //     idChannel: props.channel.id,
-    //   })
-    // );
+    let newCard = Array.from(props.board.taskColumnDetail);
+    newCard[findCardIndex] = cardInfo;
+
+    const newColumn: Board = {
+      title: props.board.title,
+      taskColumnDetail: newCard,
+    };
+
+    const findBoardIndex = props.channel.boards.findIndex(
+      (board) => board.title === newColumn.title
+    );
+
+    let newBoards = Array.from(props.channel.boards);
+    newBoards[findBoardIndex] = newColumn;
+
+    store.dispatch(
+      updateBoards({
+        boards: newBoards,
+        idChannel: props.channel.id,
+      })
+    );
+    updateTaskColumn(newColumn, props.channel.id);
     setLoad(false);
-    setShow(false);
+    setShowEditTask(false);
+  }
+  function deleteTask() {
+    setLoad(true);
+    const findCardIndex = props.board.taskColumnDetail.findIndex(
+      (cardInfo) => cardInfo.title === card.title
+    );
+
+    let newCard = Array.from(props.board.taskColumnDetail);
+
+    newCard.splice(findCardIndex, 1);
+    const newColumn: Board = {
+      title: props.board.title,
+      taskColumnDetail: newCard,
+    };
+
+    const findBoardIndex = props.channel.boards.findIndex(
+      (board) => board.title === newColumn.title
+    );
+
+    let newBoards = Array.from(props.channel.boards);
+    newBoards[findBoardIndex] = newColumn;
+
+    store.dispatch(
+      updateBoards({
+        boards: newBoards,
+        idChannel: props.channel.id,
+      })
+    );
+    updateTaskColumn(newColumn, props.channel.id);
+    setLoad(false);
+    setShowDeleteTask(false);
+    setShowEditTask(false);
   }
 }
 

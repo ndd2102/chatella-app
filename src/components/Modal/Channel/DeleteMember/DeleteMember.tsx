@@ -18,6 +18,9 @@ function DeleteMember(props: { channelInfo: Channel }) {
   const [error, setError] = useState(false);
   const [channel, setChannel] = useState(props.channelInfo);
   useEffect(() => {
+    setChannel(props.channelInfo);
+  }, [props.channelInfo]);
+  useEffect(() => {
     // const ChannelInfo = async () => {
     //   setChannel(await getChannel(channel.id));
     // };
@@ -81,7 +84,7 @@ function DeleteMember(props: { channelInfo: Channel }) {
                 >
                   Cancel
                 </Button>
-                <Button onClick={check}>Confirm</Button>
+                <Button onClick={onSubmit}>Confirm</Button>
               </div>
             </div>
           </div>
@@ -105,13 +108,11 @@ function DeleteMember(props: { channelInfo: Channel }) {
       );
   }
 
-  async function check() {
+  async function onSubmit() {
     delMember.map(async (value) => {
       await deleteMember(value, props.channelInfo.id);
     });
-    const newChannel = await getChannel(channel.id);
     setTimeout(() => {
-      setChannel(newChannel);
       window.location.reload();
     }, 1000);
   }

@@ -1,16 +1,11 @@
-import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
+import { error } from "console";
+import { Modal, Label, Avatar, Checkbox, Toast, Button } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
 import React, { useState } from "react";
-import { AiOutlineUserAdd } from "react-icons/ai";
-import { addMember } from "../../../../services/api";
-import { Profile } from "../../../../types/profile";
-
-function AddMember(props: {
-  memberList: Profile[] | undefined;
-  channelId: number;
-}) {
+import { FiMinusSquare } from "react-icons/fi";
+import { deleteChannel } from "../../../../services/api";
+function DeleteChannel(props: { channelId: number }) {
   const [show, setShow] = useState(false);
-  const [newMember, setNewMember] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
 
@@ -20,31 +15,16 @@ function AddMember(props: {
         onClick={() => setShow(true)}
         className="bg-blue-50 p-2 text-2xl w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full"
       >
-        <AiOutlineUserAdd />
+        <FiMinusSquare />
       </span>
-      <div className="pl-2">Add Member</div>
+      <div className="pl-2">Delete Channel</div>
       <Modal show={show} size="md" popup={true} onClose={() => setShow(false)}>
         <Modal.Header />
         <Modal.Body>
           <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
             <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-              Add member
+              Bạn chắc chắn muốn xóa Channel này
             </h3>
-            <div>
-              <div className="mb-2 block">
-                <Label value="Email" />
-              </div>
-              <TextInput
-                id="channelName"
-                type="email"
-                placeholder="name@company.com"
-                required={true}
-                onChange={(e) => {
-                  setError(false);
-                  setNewMember(e.target.value);
-                }}
-              />
-            </div>
             {error && (
               <Toast>
                 <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
@@ -72,26 +52,11 @@ function AddMember(props: {
       </Modal>
     </React.Fragment>
   );
-
   async function onSubmit() {
-    const checkDuplicate = props.memberList?.find((members) => {
-      return members.email === newMember;
-    });
-
-    if (checkDuplicate !== undefined) {
+    await deleteChannel(props.channelId).catch((error) => {
       setError(true);
-      setErrorMessage("This member is already in channel!");
-    } else {
-      await addMember(newMember, props.channelId).catch((error) => {
-        setError(true);
-        setErrorMessage("Email not found!");
-      });
-    }
-
-    if (!error) {
-      setShow(false);
-    }
+      setErrorMessage(error.response.data.error);
+    });
   }
 }
-
-export default AddMember;
+export default DeleteChannel;

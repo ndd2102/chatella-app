@@ -44,7 +44,7 @@ function Workspace() {
       {id && channel ? (
         <div className="ml-72 h-screen grid grid-cols-3">
           <div className="col-span-2">
-            <Task channel={channel} memberList={memberList} />
+            <Task channel={channel} memberList={memberList} profile={profile} />
           </div>
           <div className="col-span-1">
             <Chat profile={profile} channel={channel} />

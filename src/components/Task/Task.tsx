@@ -6,14 +6,20 @@ import TaskBoard from "./Board/TaskBoard";
 import { getUserProfile, updateTaskColumn } from "../../services/api";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { AiOutlineClockCircle } from "react-icons/ai";
+import { AiOutlineClockCircle, AiOutlineMore } from "react-icons/ai";
 import AddTaskBoard from "../Modal/Task/AddTaskBoard";
 import { Board } from "../../types/board";
 import { store } from "../../state/store";
 import { Profile } from "../../types/profile";
 import { updateBoards } from "../../pages/Workspace/Workspace.slice";
+import DeleteChannel from "../Modal/Channel/DeleteChannel/DeleteChannel";
+import { Dropdown } from "flowbite-react";
 
-function Task(props: { channel: Channel; memberList: Profile[] }) {
+function Task(props: {
+  channel: Channel;
+  memberList: Profile[];
+  profile: Profile;
+}) {
   const [channel, setChannel] = useState<Channel>(props.channel);
   const [memberList, setMemberList] = useState<Profile[]>(props.memberList);
 
@@ -114,8 +120,37 @@ function Task(props: { channel: Channel; memberList: Profile[] }) {
           <h1 className="text-blue-700 self-center whitespace-nowrap text-4xl font-semibold dark:text-white">
             {channel.name}
           </h1>
-          <AddMember channelId={channel.id} memberList={props.memberList} />
-          <DeleteMember channelInfo={channel} />
+          <div
+            className={
+              props.profile.userId === channel.members[0].userId
+                ? "block"
+                : "hidden"
+            }
+          >
+            <Dropdown
+              label={
+                <AiOutlineMore className="text-3xl hover:text-blue-700 hover:cursor-pointer" />
+              }
+              arrowIcon={false}
+              inline={true}
+            >
+              <Dropdown.Item>
+                <AddMember
+                  channelId={channel.id}
+                  memberList={props.memberList}
+                />
+              </Dropdown.Item>
+              <Dropdown.Divider />
+
+              <Dropdown.Item>
+                <DeleteMember channelInfo={channel} />
+              </Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item>
+                <DeleteChannel channelId={channel.id} />
+              </Dropdown.Item>
+            </Dropdown>
+          </div>
         </div>
         <div className="flex text-gray-400 font-light items-center">
           <AiOutlineClockCircle />
