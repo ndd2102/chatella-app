@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { Avatar, Badge, Label, Modal } from "flowbite-react";
 import { getUserProfile } from "../../services/api";
-
+import { GiExitDoor, GiEntryDoor } from "react-icons/gi";
 import { Profile } from "../../types/profile";
 import { Channel } from "../../types/channel";
 const Chat = (props: { profile: Profile; channel: Channel }) => {
@@ -162,11 +162,11 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
             onChange={handleChange}
             value={mess}
           ></textarea>
-          <div className="right-0 items-center inset-y-0 hidden sm:flex">
+          <div className="right-0 ml-1.5 items-center inset-y-0 hidden sm:flex">
             <button
               id="myBtn"
               type="button"
-              className=" rounded-lg px-4 py-3  duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
+              className=" rounded-full p-2  duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
               onClick={handleClickSendMessage}
             >
               <svg
@@ -266,14 +266,16 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
     } else if (JSON.parse(value.data).type === "delete") {
       return (
         <div key={idx} className="chat-message">
-          <div className="text-center text-xs">{nameUser} đã rời khỏi nhóm</div>
+          <div className="justify-center items-center flex text-gray-500 text-xs">
+            <GiExitDoor /> {nameUser} left the channel
+          </div>
         </div>
       );
     } else if (JSON.parse(value.data).type === "add") {
       return (
         <div key={idx} className="chat-message">
-          <div className="text-center text-xs">
-            {nameUser} đã được thêm vào nhóm
+          <div className="justify-center items-center flex text-gray-500 text-xs">
+            <GiEntryDoor /> {nameUser} was added to the channel
           </div>
         </div>
       );
