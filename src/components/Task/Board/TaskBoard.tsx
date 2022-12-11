@@ -1,20 +1,24 @@
 import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { useEffect, useState } from "react";
-import { getUserProfile } from "../../../services/api";
 import { Board } from "../../../types/board";
 import { Channel } from "../../../types/channel";
 import { Profile } from "../../../types/profile";
 import AddTask from "../../Modal/Task/AddTask";
 import TaskCard from "../Card/TaskCard";
 
-function TaskBoard(props: { board: Board; channel: Channel }) {
+function TaskBoard(props: {
+  board: Board;
+  channel: Channel;
+  memberList: Profile[];
+}) {
   const [board, setBoard] = useState<Board>(props.board);
   const [memberList, setMemberList] = useState<Profile[]>([]);
-  const [isLoading, setLoad] = useState(true);
+  console.log(board);
 
   useEffect(() => {
     setBoard(props.board);
-  }, [props.board]);
+    setMemberList(props.memberList);
+  }, [props.board, props.memberList]);
 
   return (
     <div className="w-72 rounded-lg h-full" key={JSON.stringify(props.board)}>
@@ -31,8 +35,9 @@ function TaskBoard(props: { board: Board; channel: Channel }) {
         <Droppable droppableId={board.title}>
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
-              {board.taskColumnDetail.length > 1 &&
+              {board.taskColumnDetail.length &&
                 board.taskColumnDetail.map((card, index) => {
+                  console.log(card);
                   return (
                     <div key={index}>
                       <Draggable

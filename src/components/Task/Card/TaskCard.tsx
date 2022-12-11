@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { Card } from "../../../types/card";
 import { Channel } from "../../../types/channel";
 import { Profile } from "../../../types/profile";
+import { formatDistance } from "date-fns";
 
 function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
   const [card, setCard] = useState<Card>(props.card);
@@ -29,6 +30,10 @@ function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
   const [error, setError] = useState(false);
   const [cardInfo, setCardInfo] = useState<Card>(initialState);
   const [isLoading, setLoad] = useState(false);
+  let remainingDays = card.dueDate
+    ? formatDistance(new Date(), Date.parse(card.dueDate))
+    : "";
+  console.log(remainingDays);
 
   useEffect(() => {
     setCard(props.card);
@@ -50,39 +55,25 @@ function TaskCard(props: { card: Card; channel: Channel; members: Profile[] }) {
         <p className="mt-1.5 h-12 text-base truncated text-gray-400 font-light">
           {card.description}
         </p>
-        <div className="flex justify-between">
-          <div
-            className={
-              card.priority === "Low"
-                ? styleLow
-                : card.priority === "Medium"
-                ? styleMedium
-                : styleHigh
-            }
-          >
-            {card.priority}
-          </div>
-          <div className="-mb-8">
-            <Avatar.Group>
-              {props.members.map((member, index) => {
-                if (index > 4) {
-                  return (
-                    <AvatarGroupCounter
-                      total={props.members.length - index - 1}
-                    />
-                  );
-                } else
-                  return (
-                    <Avatar
-                      key={index}
-                      img={member.avatar}
-                      rounded={true}
-                      stacked={true}
-                    />
-                  );
-              })}
-            </Avatar.Group>
-          </div>
+        <div className="flex gap-4">
+          {card.priority && (
+            <div
+              className={
+                card.priority === "Low"
+                  ? styleLow
+                  : card.priority === "Medium"
+                  ? styleMedium
+                  : styleHigh
+              }
+            >
+              {card.priority}
+            </div>
+          )}
+          {remainingDays !== "" && (
+            <span className="rounded-lg p-2 font-base text-xs text-white bg-slate-300">
+              {remainingDays}
+            </span>
+          )}
         </div>
       </div>
       <Modal show={show} size="3xl" popup={true} onClose={() => setShow(false)}>

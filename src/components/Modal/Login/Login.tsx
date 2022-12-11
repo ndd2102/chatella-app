@@ -14,7 +14,6 @@ import { Exclamation } from "heroicons-react";
 import { loadProfile } from "../../App/App.slice";
 import ForgotPassword from "../Password/ForgotPassword/ForgotPassword";
 import { loginError, loginSuccess } from "./Login.slice";
-import { useNavigate } from "react-router";
 
 export default function Login() {
   const initialState = {
@@ -26,7 +25,6 @@ export default function Login() {
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
   const [isLoading, setLoad] = useState(false);
-  const navigate = useNavigate();
 
   return (
     <div>
@@ -169,11 +167,11 @@ export default function Login() {
     });
 
     if (store.getState().login.isLogin) {
-      store.dispatch(loadProfile(user));
       store.dispatch(loginSuccess());
       setLoad(false);
       setShow(false);
-      navigate("/");
+      store.dispatch(loadProfile(user));
+      window.location.reload();
     }
   }
 }

@@ -6,7 +6,6 @@ import {
   Textarea,
   Avatar,
   Checkbox,
-  Toast,
   Alert,
 } from "flowbite-react";
 import React, { useState } from "react";
@@ -159,7 +158,6 @@ function AddTask(props: {
                     Confirm
                   </Button>
                 </div>
-                <Button onClick={() => console.log(cardInfo)}></Button>
               </div>
             </div>
           </Modal.Body>

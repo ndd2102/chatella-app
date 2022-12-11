@@ -13,27 +13,14 @@ import { store } from "../../state/store";
 import { Profile } from "../../types/profile";
 import { updateBoards } from "../../pages/Workspace/Workspace.slice";
 
-function Task(props: { channel: Channel }) {
+function Task(props: { channel: Channel; memberList: Profile[] }) {
   const [channel, setChannel] = useState<Channel>(props.channel);
-  const [isLoading, setLoad] = useState(true);
-  const [memberList, setMemberList] = useState<Profile[]>();
-  useEffect(() => {
-    setChannel(props.channel);
-  }, [props.channel]);
+  const [memberList, setMemberList] = useState<Profile[]>(props.memberList);
 
   useEffect(() => {
-    if (!isLoading || channel === undefined) return;
-    const fetchUserList = async () => {
-      const list = await Promise.all(
-        channel.members.map(async (value) => {
-          return await getUserProfile(value.userId);
-        })
-      );
-      setMemberList(list);
-      setLoad(false);
-    };
-    fetchUserList();
-  }, [channel, isLoading]);
+    setChannel(props.channel);
+    setMemberList(props.memberList);
+  }, [props.channel, props.memberList]);
 
   const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
@@ -124,7 +111,7 @@ function Task(props: { channel: Channel }) {
           <h1 className="text-blue-700 self-center whitespace-nowrap text-4xl font-semibold dark:text-white">
             {channel.name}
           </h1>
-          <AddMember channelId={channel.id} memberList={memberList} />
+          <AddMember channelId={channel.id} memberList={props.memberList} />
           <DeleteMember channelInfo={channel} />
         </div>
         <div className="flex text-gray-400 font-light items-center">
@@ -147,7 +134,11 @@ function Task(props: { channel: Channel }) {
               <DragDropContext onDragEnd={onDragEnd}>
                 {channel.boards.slice(1).map((board, index) => (
                   <div key={index}>
-                    <TaskBoard board={board} channel={channel} />
+                    <TaskBoard
+                      board={board}
+                      channel={channel}
+                      memberList={memberList}
+                    />
                   </div>
                 ))}
               </DragDropContext>
