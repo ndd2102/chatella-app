@@ -1,7 +1,7 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import { Avatar, Badge, Button, Label, Modal, TextInput } from "flowbite-react";
-import { getChannel, getUserProfile } from "../../services/api";
+import { Avatar, Badge, Label, Modal } from "flowbite-react";
+import { getUserProfile } from "../../services/api";
 
 import { Profile } from "../../types/profile";
 import { Channel } from "../../types/channel";
@@ -57,6 +57,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
     };
     fetchUserlList();
   }, [channel]);
+
   setTimeout(() => {
     let objDiv: any = document.getElementById("chatArea");
     objDiv.scrollTop = objDiv.scrollHeight;
@@ -74,14 +75,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
     }
     setMess("");
   }, [mess, sendJsonMessage]);
-  function handleChange(event: { target: { value: any } }) {
-    setMess(event.target.value);
-  }
-  function convertTZ(date: any, tzString: any) {
-    return new Date(
-      typeof date === "string" ? new Date(date) : date
-    ).toLocaleString("en-US", { timeZone: tzString });
-  }
+
   const connectionStatus = {
     [ReadyState.CONNECTING]: "Connecting",
     [ReadyState.OPEN]: "Online",
@@ -93,7 +87,6 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   return (
     <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-screen">
       <div className="sm:items-center justify-between py-3 border-b-2 border-gray-200">
-        {/* <div className="relative flex items-center space-x-4"> */}
         <div className="mb-5">
           <span className="text-xl font-bold">Member ({otherAva.length})</span>
           <span
@@ -151,7 +144,6 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
           </div>
         </div>
       </div>
-      {/* </div> */}
       <div
         id="chatArea"
         className=" flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
@@ -188,6 +180,16 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       </div>
     </div>
   );
+
+  function handleChange(event: { target: { value: any } }) {
+    setMess(event.target.value);
+  }
+
+  function convertTZ(date: any, tzString: any) {
+    return new Date(
+      typeof date === "string" ? new Date(date) : date
+    ).toLocaleString("en-US", { timeZone: tzString });
+  }
 
   function check(value: any, idx: any) {
     const avatar = otherAva.find((obj) => {

@@ -1,36 +1,14 @@
 import { Avatar, Button, Checkbox, Label, Modal, Toast } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { AiOutlineUserDelete } from "react-icons/ai";
-import {
-  deleteMember,
-  getChannel,
-  getUserProfile,
-} from "../../../../services/api";
-import { Channel } from "../../../../types/channel";
+import { deleteMember } from "../../../../services/api";
 import { Profile } from "../../../../types/profile";
 
-function DeleteMember(props: { channelInfo: Channel }) {
+function DeleteMember(props: { channelId: number; memberList: Profile[] }) {
   const [show, setShow] = useState(false);
-  const [member, setMember] = useState<Profile[]>([]);
   const [delMember, setDelMember] = useState<number[]>([]);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [error, setError] = useState(false);
-  const [channel, setChannel] = useState(props.channelInfo);
-  useEffect(() => {
-    setChannel(props.channelInfo);
-  }, [props.channelInfo]);
-  useEffect(() => {
-    const fetchUserlList = async () => {
-      const list = await Promise.all(
-        channel.members.slice(1).map(async (value) => {
-          return await getUserProfile(value.userId);
-        })
-      );
-      setMember(list);
-    };
-    fetchUserlList();
-  }, [channel.id, channel.members]);
+
   return (
     <React.Fragment>
       <div className="flex items-center" onClick={() => setShow(true)}>
@@ -47,7 +25,7 @@ function DeleteMember(props: { channelInfo: Channel }) {
               Delete member
             </h3>
             <div>
-              {member.map((userId, id) => (
+              {props.memberList.slice(1).map((userId, id) => (
                 <div key={id} className="flex items-center gap-2 space-y-2">
                   <Checkbox onChange={handleChange} value={userId.id} />
                   <Label className="flex gap-2 items-center ml-4 text-lg ">
@@ -57,15 +35,6 @@ function DeleteMember(props: { channelInfo: Channel }) {
                 </div>
               ))}
             </div>
-            {error && (
-              <Toast>
-                <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
-                  <Exclamation className="h-5 w-5" />
-                </div>
-                <div className="ml-3 text-sm font-normal">{errorMessage}</div>
-                <Toast.Toggle />
-              </Toast>
-            )}
             <div className="flex flex-wrap gap-6 my-auto">
               <div className="ml-auto flex flex-wrap gap-6">
                 <Button
@@ -102,7 +71,7 @@ function DeleteMember(props: { channelInfo: Channel }) {
 
   async function onSubmit() {
     delMember.map(async (value) => {
-      await deleteMember(value, props.channelInfo.id);
+      await deleteMember(value, props.channelId);
     });
     setTimeout(() => {
       window.location.reload();
