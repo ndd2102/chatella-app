@@ -28,7 +28,6 @@ const slice = createSlice({
         payload: { boards, idChannel },
       }: PayloadAction<{ boards: Board[]; idChannel: number }>
     ) => {
-      console.log(boards);
       const findIndexChannel = state.channelList.findIndex(
         (channel) => channel.id === idChannel
       );

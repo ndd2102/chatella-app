@@ -159,7 +159,6 @@ function AddTask(props: {
                     Confirm
                   </Button>
                 </div>
-                <Button onClick={() => console.log(cardInfo)}></Button>
               </div>
             </div>
           </Modal.Body>
@@ -174,10 +173,6 @@ function AddTask(props: {
       ...cardInfo,
       [event.target.name]: event.target.value,
     });
-  }
-  function handleChangePriority(value: any) {
-    setError(false);
-    setCardInfo({ ...cardInfo, priority: value });
   }
   function onSubmit() {
     setLoad(true);

@@ -20,11 +20,11 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   });
 
   useEffect(() => {
-    if (props.channel !== channel) {
-      setChannel(props.channel);
+    if (props.channel.id !== channel?.id) {
       setMessageHistory([]);
+      setChannel(props.channel);
     }
-  }, [props.channel]);
+  }, [props.channel.id]);
 
   useEffect(() => {
     if (lastMessage !== null) {
@@ -100,7 +100,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
             className="float-right pr-6 underline text-slate-500"
             onClick={() => setShow(true)}
           >
-            Tất cả
+            See all
           </span>
         </div>
         <React.Fragment>

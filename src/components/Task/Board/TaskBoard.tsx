@@ -51,6 +51,7 @@ function TaskBoard(props: { board: Board; channel: Channel }) {
                                 members={memberList}
                                 card={card}
                                 channel={props.channel}
+                                board={board}
                               />{" "}
                             </div>
                           );
