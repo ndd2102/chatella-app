@@ -5,6 +5,9 @@ import { getUserProfile } from "../../services/api";
 import { GiExitDoor, GiEntryDoor } from "react-icons/gi";
 import { Profile } from "../../types/profile";
 import { Channel } from "../../types/channel";
+import EmojiPicker from "emoji-picker-react";
+import { addMinutes, format } from "date-fns";
+
 const Chat = (props: { profile: Profile; channel: Channel }) => {
   const socketUrl = `ws://w42g11.int3306.freeddns.org//channel/chat?channelId=${
     props.channel.id
@@ -12,6 +15,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   const [messageHistory, setMessageHistory] = useState<any>([]);
   const [mess, setMess] = useState<any>("");
   const [show, setShow] = useState(false);
+  const [showEmoji, setShowEmoji] = useState(false);
   const [nameUser, setNameUser] = useState<string>();
   const [channel, setChannel] = useState<Channel>();
   const [otherAva, setOtherAva] = useState<Profile[]>([]);
@@ -27,7 +31,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   }, [props.channel.id]);
 
   useEffect(() => {
-    if (lastMessage !== null) {
+    if (lastMessage !== null && JSON.parse(lastMessage.data).type !== "ping") {
       setMessageHistory((prev: any) => prev.concat(lastMessage));
       const fetchUserName = async () => {
         if (
@@ -162,6 +166,36 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
             onChange={handleChange}
             value={mess}
           ></textarea>
+          <div className="absolute right-16 items-center inset-y-0 hidden sm:flex">
+            {showEmoji && (
+              <div className="flex -mr-20 -mt-[30rem]">
+                <EmojiPicker
+                  onEmojiClick={onEmojiClick}
+                  lazyLoadEmojis={true}
+                />
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={handlShowEmoji}
+              className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="h-6 w-6 text-gray-600"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+            </button>
+          </div>
           <div className="right-0 ml-1.5 items-center inset-y-0 hidden sm:flex">
             <button
               id="myBtn"
@@ -183,36 +217,28 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       </div>
     </div>
   );
-
-  function handleChange(event: { target: { value: any } }) {
-    setMess(event.target.value);
+  function handlShowEmoji() {
+    setShowEmoji(!showEmoji);
   }
 
-  function convertTZ(date: any, tzString: any) {
-    return new Date(
-      typeof date === "string" ? new Date(date) : date
-    ).toLocaleString("en-US", { timeZone: tzString });
+  function onEmojiClick(emojiObject: { emoji: any }) {
+    setMess((prevInput: any) => prevInput + emojiObject.emoji);
+    setShowEmoji(false);
+  }
+  function handleChange(event: { target: { value: any } }) {
+    setMess(event.target.value);
   }
 
   function check(value: any, idx: any) {
     const avatar = otherAva.find((obj) => {
       return obj.id === JSON.parse(value.data).senderId;
     });
-    const today = new Date();
-    const getTimeToday =
-      today.getMonth() +
-      1 +
-      "/" +
-      today.getDate() +
-      "/" +
-      today.getFullYear() +
-      ",";
-    const time = convertTZ(
-      `${[JSON.parse(value.data).timestamp]} +0000`,
-      "Asia/Jakarta"
-    );
-    let getTime = time.split(" ");
-    let time1 = getTime[1] ? time.substring(time.indexOf(" ") + 1) : "";
+    const today = format(new Date(), "dd/MM");
+    const time = new Date(JSON.parse(value.data).timestamp);
+    const convertTZ = addMinutes(time, 420);
+    const getDay = format(convertTZ, "dd/MM");
+    const getTime = format(convertTZ, "HH:mm");
+
     if (
       JSON.parse(value.data).type === "chat" &&
       JSON.parse(value.data).senderId !== props.profile.userId
@@ -234,7 +260,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
                 onClick={() => console.log(avatar?.name)}
               ></img>
               <span className="block text-[9px]">
-                {getTime[0] === getTimeToday ? time1 : getTime[0]}
+                {getDay === today ? getTime : getDay}
               </span>
             </div>
           </div>
@@ -257,7 +283,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
                 className="w-6 h-6 rounded-full order-2 float-right m-2"
               ></img>
               <span className="block text-[9px]">
-                {getTime[0] === getTimeToday ? time1 : getTime[0]}
+                {getDay === today ? getTime : getDay}
               </span>
             </div>
           </div>
