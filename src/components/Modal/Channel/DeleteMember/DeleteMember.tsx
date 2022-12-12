@@ -73,9 +73,10 @@ function DeleteMember(props: { channelId: number; memberList: Profile[] }) {
     delMember.map(async (value) => {
       await deleteMember(value, props.channelId);
     });
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    setShow(false);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1000);
   }
 }
 export default DeleteMember;
