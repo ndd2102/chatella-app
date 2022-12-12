@@ -8,6 +8,7 @@ import {
   Textarea,
   TextInput,
 } from "flowbite-react";
+import AvatarGroupCounter from "flowbite-react/lib/esm/components/Avatar/AvatarGroupCounter";
 import { Exclamation } from "heroicons-react";
 import { useEffect, useState } from "react";
 import { updateBoards } from "../../../pages/Workspace/Workspace.slice";
@@ -15,9 +16,10 @@ import { updateTaskColumn } from "../../../services/api";
 import { store } from "../../../state/store";
 import { Board } from "../../../types/board";
 import { Card } from "../../../types/card";
-import { Channel } from "../../../types/channel";
+import { Channel, ChannelMember } from "../../../types/channel";
 import { Profile } from "../../../types/profile";
 import { formatDistance, compareAsc } from "date-fns";
+import { null_ } from "decoders";
 
 function TaskCard(props: {
   card: Card;
@@ -40,6 +42,7 @@ function TaskCard(props: {
   const [error, setError] = useState(false);
   const [cardInfo, setCardInfo] = useState<Card>(initialState);
   const [isLoading, setLoad] = useState(false);
+  const [assigned, setAssigned] = useState<string[]>(card.assignedTo);
   const remainingDays = card.dueDate
     ? formatDistance(new Date(), Date.parse(card.dueDate))
     : "";
@@ -50,6 +53,9 @@ function TaskCard(props: {
     setCard(props.card);
   }, [props.card]);
 
+  useEffect(() => {
+    setCardInfo({ ...cardInfo, assignedTo: assigned });
+  }, [assigned]);
   const styleHigh = `rounded-lg p-2 font-base text-xs text-red-500 bg-red-200`;
   const styleMedium =
     "rounded-lg p-2 font-base text-xs text-orange-500 bg-orange-200";
@@ -91,6 +97,17 @@ function TaskCard(props: {
               {remainingDays}
             </span>
           )}
+          <Avatar.Group>
+            {props.members.map((value, id) => (
+              <div key={id}>
+                {cardInfo.assignedTo.includes(`${value.id}`) ? (
+                  <Avatar img={value.avatar} rounded={true} stacked={true} />
+                ) : (
+                  <></>
+                )}
+              </div>
+            ))}
+          </Avatar.Group>
         </div>
       </div>
       <Modal
@@ -193,9 +210,10 @@ function TaskCard(props: {
                   <li key={id} className="flex items-center gap-4 mb-2">
                     {props.isHost && (
                       <Checkbox
-                        onChange={handleChange}
+                        onChange={handleChangeAssigned}
                         name="assignedTo"
                         value={member.id}
+                        checked={cardInfo.assignedTo.includes(`${member.id}`)}
                       />
                     )}
                     <Label className="flex items-center gap-4">
@@ -270,6 +288,7 @@ function TaskCard(props: {
                 >
                   Delete
                 </Button>
+                <Button onClick={ok}>121</Button>
               </div>
             </div>
           </div>
@@ -285,9 +304,24 @@ function TaskCard(props: {
       [event.target.name]: event.target.value,
     });
   }
+  function handleChangeAssigned(event: { target: { value: any } }) {
+    let isCheck = event.target.value;
+    const first = assigned.find((obj) => {
+      return obj === isCheck;
+    });
+    console.log(first);
+    if (first === undefined) {
+      setAssigned((pre) => [...pre, isCheck]);
+    } else
+      setAssigned((member) =>
+        member.filter((current) => {
+          return current !== isCheck;
+        })
+      );
+  }
   function onSubmit() {
     setLoad(true);
-
+    console.log(cardInfo);
     let checkDuplicate = undefined;
     if (card.title !== cardInfo.title) {
       checkDuplicate = props.board.taskColumnDetail.find((column) => {
@@ -362,6 +396,10 @@ function TaskCard(props: {
     setLoad(false);
     setShowDeleteTask(false);
     setShowEditTask(false);
+  }
+  function ok() {
+    const test = cardInfo.assignedTo.includes("5");
+    console.log(test);
   }
 }
 
