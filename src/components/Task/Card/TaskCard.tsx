@@ -100,10 +100,8 @@ function TaskCard(props: {
           <Avatar.Group>
             {props.members.map((value, id) => (
               <div key={id}>
-                {cardInfo.assignedTo.includes(`${value.id}`) ? (
+                {cardInfo.assignedTo.includes(`${value.id}`) && (
                   <Avatar img={value.avatar} rounded={true} stacked={true} />
-                ) : (
-                  <></>
                 )}
               </div>
             ))}
