@@ -54,7 +54,7 @@ function UserLinks({
     store.dispatch(logout());
     window.location.reload();
   };
-  
+
   return (
     <div className="flex grow w-9/10 ml-24 mr-8 items-center">
       <NavbarCollapse className="mr-16">

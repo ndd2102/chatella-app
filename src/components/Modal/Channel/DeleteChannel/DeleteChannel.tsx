@@ -1,10 +1,14 @@
-import { error } from "console";
-import { Modal, Label, Avatar, Checkbox, Toast, Button } from "flowbite-react";
+import { Modal, Toast, Button } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
 import React, { useState } from "react";
 import { FiMinusSquare } from "react-icons/fi";
-import { deleteChannel } from "../../../../services/api";
-function DeleteChannel(props: { channelId: number }) {
+import { deleteChannel, deleteMember } from "../../../../services/api";
+
+function DeleteChannel(props: {
+  channelId: number;
+  isHost: boolean;
+  profileId: number;
+}) {
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
@@ -12,17 +16,21 @@ function DeleteChannel(props: { channelId: number }) {
   return (
     <React.Fragment>
       <div className="flex items-center" onClick={() => setShow(true)}>
-        <span className="bg-blue-50 p-2 text-2xl w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full">
+        <span className="bg-red-50 p-2 text-2xl w-fit text-red-700 hover:bg-red-100 hover:cursor-pointer rounded-full">
           <FiMinusSquare />
         </span>
-        <span className="pl-2">Delete Channel</span>
+        <span className="pl-2">
+          {props.isHost ? "Delete Channel" : "Leave channel"}
+        </span>
       </div>
       <Modal show={show} size="xl" popup={true} onClose={() => setShow(false)}>
         <Modal.Header />
         <Modal.Body>
           <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
             <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-              Are you sure to delete this channel?
+              {props.isHost
+                ? "Are you sure to delete this channel?"
+                : "Are you sure to leave this channel?"}
             </h3>
             {error && (
               <Toast>
@@ -54,10 +62,18 @@ function DeleteChannel(props: { channelId: number }) {
     </React.Fragment>
   );
   async function onSubmit() {
-    await deleteChannel(props.channelId).catch((error) => {
-      setError(true);
-      setErrorMessage(error.response.data.error);
-    });
+    if (props.isHost) {
+      await deleteChannel(props.channelId).catch((error) => {
+        setError(true);
+        setErrorMessage(error.response.data.error);
+      });
+    } else {
+      await deleteMember(props.profileId, props.channelId).catch((error) => {
+        setError(true);
+        setErrorMessage(error.response.data.error);
+      });
+    }
+    window.location.replace("/workspace");
   }
 }
 export default DeleteChannel;

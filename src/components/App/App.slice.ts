@@ -9,7 +9,7 @@ export interface AppState {
 
 const initialState: AppState = {
   profile: {
-    userId: -1,
+    id: -1,
     email: "",
     name: "",
     avatar: "",
@@ -17,7 +17,6 @@ const initialState: AppState = {
     dateOfBirth: "",
     country: "",
     channelID: [],
-    id: -1,
   },
   loading: true,
 };

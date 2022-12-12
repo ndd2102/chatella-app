@@ -47,7 +47,6 @@ export default function App() {
   );
 
   async function load() {
-    console.log("loading");
     if (!accountIsLogged || channelList.length === 0) {
       const token = localStorage.getItem("token");
       if (!loading || !token) {

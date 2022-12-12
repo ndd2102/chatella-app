@@ -22,8 +22,7 @@ function Task(props: {
 }) {
   const [channel, setChannel] = useState<Channel>(props.channel);
   const [memberList, setMemberList] = useState<Profile[]>(props.memberList);
-  const isHost =
-    props.profile.userId === channel.members[0].userId ? true : false;
+  const isHost = props.profile.id === channel.members[0].userId ? true : false;
 
   useEffect(() => {
     setChannel(props.channel);
@@ -122,7 +121,7 @@ function Task(props: {
           <h1 className="text-blue-700 self-center whitespace-nowrap text-4xl font-semibold dark:text-white">
             {channel.name}
           </h1>
-          <div className={isHost ? "block" : "hidden"}>
+          <div>
             <Dropdown
               label={
                 <AiOutlineMore className="bg-blue-50 p-2 text-4xl text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full" />
@@ -130,47 +129,52 @@ function Task(props: {
               arrowIcon={false}
               inline={true}
             >
-              <Dropdown.Item>
-                <AddMember
-                  channelId={channel.id}
-                  memberList={props.memberList}
-                />
-              </Dropdown.Item>
-              <Dropdown.Divider />
+              {isHost && (
+                <>
+                  <Dropdown.Item>
+                    <AddMember
+                      channelId={channel.id}
+                      memberList={props.memberList}
+                    />
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
 
+                  <Dropdown.Item>
+                    <DeleteMember
+                      channelId={channel.id}
+                      memberList={props.memberList}
+                    />
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+                </>
+              )}
               <Dropdown.Item>
-                <DeleteMember
+                <DeleteChannel
                   channelId={channel.id}
-                  memberList={props.memberList}
+                  isHost={isHost}
+                  profileId={props.profile.id}
                 />
-              </Dropdown.Item>
-              <Dropdown.Divider />
-              <Dropdown.Item>
-                <DeleteChannel channelId={channel.id} />
               </Dropdown.Item>
             </Dropdown>
           </div>
         </div>
         <div className="flex text-gray-400 font-light items-center">
           <AiOutlineClockCircle />
-          <p>
-            {" "}
-            {format(
-              Date.parse(channel.createdDate.substring(0, 10)),
-              "MMM d, yyyy"
-            )}
-          </p>
+          {format(
+            Date.parse(channel.createdDate.substring(0, 10)),
+            "MMM d, yyyy"
+          )}
         </div>
         <div className="flex mt-4 gap-4 mb-2 items-center">
           <h1 className="text-lg">Tasks Management</h1>
-          <AddTaskBoard channel={channel} />
+          {isHost && <AddTaskBoard channel={channel} />}
         </div>
-        <div className="-mx-6 px-6 flex-1 h-full border-t bg-gray-50">
-          {channel.boards.length > 1 ? (
-            <div className="flex flex-row flex-1 h-full gap-4 py-8 overflow-x-auto">
+        <div className="-mx-6 pl-6 flex-1 h-full border-t overflow-y-auto overflow-x-auto bg-gray-50">
+          {channel.boards !== undefined && channel.boards.length > 1 ? (
+            <div className="flex flex-row flex-1 h-full py-4">
               <DragDropContext onDragEnd={onDragEnd}>
                 {channel.boards.slice(1).map((board, index) => (
-                  <div key={index}>
+                  <div className="mr-4" key={index}>
                     <TaskBoard
                       board={board}
                       channel={channel}

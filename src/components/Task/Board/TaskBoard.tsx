@@ -21,21 +21,19 @@ function TaskBoard(props: {
   }, [props.board, props.memberList]);
 
   return (
-    <div className="w-72 rounded-lg h-full" key={JSON.stringify(props.board)}>
-      <div className="flex justify-between px-1.5">
-        <h2 className="truncate max-w-1/2 text-xs uppercase font-medium tracking-widest">
-          {board.title}
-          <span className="text-gray-400 ml-2">
+    <div className="w-80" key={JSON.stringify(props.board)}>
+      <div className="flex h-fit mt-2 justify-between px-1.5 mb-4">
+        <div className="flex w-56 text-xs uppercase font-medium tracking-widest">
+          <div className="truncate">{board.title}</div>
+          <div className="text-gray-400 ml-2">
             {board.taskColumnDetail.length}
-          </span>
-        </h2>
-        {props.isHost ? (
+          </div>
+        </div>
+        {props.isHost && (
           <AddTask channel={props.channel} board={board} members={memberList} />
-        ) : (
-          <></>
         )}
       </div>
-      <div className="mt-4">
+      <div className="rounded-lg w-80 h-full border-dashed border-2 border-gray-300 p-4 hover:border-gray-600">
         <Droppable droppableId={board.title}>
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
@@ -79,6 +77,10 @@ function TaskBoard(props: {
       </div>
     </div>
   );
+
+  function handleClick() {
+    console.log("click");
+  }
 }
 
 export default TaskBoard;

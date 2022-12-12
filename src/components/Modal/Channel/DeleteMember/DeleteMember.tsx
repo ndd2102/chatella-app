@@ -11,7 +11,7 @@ function DeleteMember(props: { channelId: number; memberList: Profile[] }) {
   return (
     <React.Fragment>
       <div className="flex items-center" onClick={() => setShow(true)}>
-        <span className="bg-blue-50 p-2 text-2xl w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full">
+        <span className="bg-yellow-50 p-2 text-2xl w-fit text-yellow-700 hover:bg-yellow-100 hover:cursor-pointer rounded-full">
           <AiOutlineUserDelete />
         </span>
         <span className="pl-2">Delete Member</span>
@@ -24,12 +24,12 @@ function DeleteMember(props: { channelId: number; memberList: Profile[] }) {
               Delete member
             </h3>
             <div>
-              {props.memberList.slice(1).map((userId, id) => (
+              {props.memberList.slice(1).map((user, id) => (
                 <div key={id} className="flex items-center gap-2 space-y-2">
-                  <Checkbox onChange={handleChange} value={userId.id} />
+                  <Checkbox onChange={handleChange} value={user.id} />
                   <Label className="flex gap-2 items-center ml-4 text-lg ">
-                    <Avatar img={userId.avatar} />
-                    <div>{userId.name}</div>
+                    <Avatar img={user.avatar} />
+                    <div>{user.name}</div>
                   </Label>
                 </div>
               ))}

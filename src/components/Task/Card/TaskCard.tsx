@@ -8,7 +8,6 @@ import {
   Textarea,
   TextInput,
 } from "flowbite-react";
-import AvatarGroupCounter from "flowbite-react/lib/esm/components/Avatar/AvatarGroupCounter";
 import { Exclamation } from "heroicons-react";
 import { useEffect, useState } from "react";
 import { updateBoards } from "../../../pages/Workspace/Workspace.slice";
@@ -18,7 +17,7 @@ import { Board } from "../../../types/board";
 import { Card } from "../../../types/card";
 import { Channel } from "../../../types/channel";
 import { Profile } from "../../../types/profile";
-import { formatDistance } from "date-fns";
+import { formatDistance, compareAsc } from "date-fns";
 
 function TaskCard(props: {
   card: Card;
@@ -41,9 +40,11 @@ function TaskCard(props: {
   const [error, setError] = useState(false);
   const [cardInfo, setCardInfo] = useState<Card>(initialState);
   const [isLoading, setLoad] = useState(false);
-  let remainingDays = card.dueDate
+  const remainingDays = card.dueDate
     ? formatDistance(new Date(), Date.parse(card.dueDate))
     : "";
+  const checkOverDue =
+    compareAsc(new Date(), Date.parse(card.dueDate)) > 0 ? true : false;
 
   useEffect(() => {
     setCard(props.card);
@@ -59,9 +60,9 @@ function TaskCard(props: {
     <>
       <div
         onClick={() => setShowEditTask(true)}
-        className="p-4 rounded-lg bg-white my-2 h-36 drop-shadow hover:bg-neutral-50 hover:cursor-pointer"
+        className="p-4 rounded-lg bg-white mb-2 h-36 drop-shadow hover:bg-neutral-50 hover:cursor-pointer"
       >
-        <h3 className="font-base text-lg">{card.title}</h3>
+        <h3 className="font-base truncate text-lg">{card.title}</h3>
         <p className="mt-1.5 h-12 text-base truncate text-gray-400 font-light">
           {card.description}
         </p>
@@ -80,7 +81,13 @@ function TaskCard(props: {
             </div>
           )}
           {remainingDays !== "" && (
-            <span className="rounded-lg p-2 font-base text-xs text-white bg-slate-300">
+            <span
+              className={
+                checkOverDue
+                  ? "rounded-lg p-2 font-base text-xs text-purple-500 bg-purple-200"
+                  : "rounded-lg p-2 font-base text-xs text-white bg-slate-300"
+              }
+            >
               {remainingDays}
             </span>
           )}

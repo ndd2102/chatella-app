@@ -10,7 +10,6 @@ import { Profile } from "../../types/profile";
 function Workspace() {
   const { profile } = useStore(({ app }) => app);
   const { channelList } = useStore(({ workspace }) => workspace);
-  const [isLoading, setLoad] = useState(true);
   const [memberList, setMemberList] = useState<Profile[]>([]);
   const location = useLocation();
   const id = location.pathname.split("/")[2];
@@ -20,7 +19,7 @@ function Workspace() {
   });
 
   useEffect(() => {
-    if (!isLoading || channel === undefined) return;
+    if (channel === undefined) return;
     const fetchUserList = async () => {
       const list = await Promise.all(
         channel.members.map(async (value) => {
@@ -28,10 +27,9 @@ function Workspace() {
         })
       );
       setMemberList(list);
-      setLoad(false);
     };
     fetchUserList();
-  }, [channel, isLoading]);
+  }, [channel, id]);
 
   return (
     <div className="h-screen flex flex-col flex-auto flex-shrink-0 font-lexend text-black">

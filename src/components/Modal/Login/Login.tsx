@@ -87,7 +87,7 @@ export default function Login() {
                   <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
                     <Exclamation className="h-5 w-5" />
                   </div>
-                  <div className="ml-3 text-sm font-normal">
+                  <div className="ml-3 text-sm font-normal pr-1.5">
                     {errorMessage === "Account inactivated" ? (
                       <>
                         Your account is inactivated.{" "}
@@ -103,7 +103,6 @@ export default function Login() {
                       <>{errorMessage}</>
                     )}
                   </div>
-                  <Toast.Toggle />
                 </Toast>
               )}
               <div className="w-full">

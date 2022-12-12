@@ -3,6 +3,7 @@ import { Exclamation } from "heroicons-react";
 import React, { useState } from "react";
 import { FiPlusSquare } from "react-icons/fi";
 import { updateBoards } from "../../../pages/Workspace/Workspace.slice";
+import { addTaskColumn } from "../../../services/api";
 import { store } from "../../../state/store";
 import { Board } from "../../../types/board";
 import { Channel } from "../../../types/channel";
@@ -86,7 +87,7 @@ function AddTaskBoard(props: { channel: Channel }) {
     </div>
   );
 
-  function onSubmit() {
+  async function onSubmit() {
     setLoad(true);
     const checkDuplicate = props.channel.boards.find((board) => {
       return board.title === newBoardTitle;
@@ -111,6 +112,7 @@ function AddTaskBoard(props: { channel: Channel }) {
         idChannel: props.channel.id,
       })
     );
+    await addTaskColumn(newBoard, props.channel.id);
     setLoad(false);
     setShow(false);
     setNewBoardTitle("");

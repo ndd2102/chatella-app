@@ -8,7 +8,7 @@ import {
   Checkbox,
   Alert,
 } from "flowbite-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card } from "../../../types/card";
 import { IoAddCircle } from "react-icons/io5";
 import { Channel } from "../../../types/channel";
@@ -36,6 +36,11 @@ function AddTask(props: {
   const [error, setError] = useState(false);
   const [cardInfo, setCardInfo] = useState<Card>(initialState);
   const [isLoading, setLoad] = useState(false);
+  const [memberList, setMemberList] = useState<Profile[]>(props.members);
+
+  useEffect(() => {
+    setMemberList(props.members);
+  }, [props.members]);
 
   return (
     <div>
@@ -121,8 +126,8 @@ function AddTask(props: {
               <div>
                 <Label value="Assign this task to:" />
                 <ul className="p-2">
-                  {props.members.map((member, id) => (
-                    <li key={id} className="flex items-center gap-4 mb-2">
+                  {memberList.map((member, index) => (
+                    <li key={index} className="flex items-center gap-4 mb-2">
                       <Checkbox
                         onChange={handleChange}
                         name="assignedTo"

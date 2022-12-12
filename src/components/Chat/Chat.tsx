@@ -241,7 +241,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
 
     if (
       JSON.parse(value.data).type === "chat" &&
-      JSON.parse(value.data).senderId !== props.profile.userId
+      JSON.parse(value.data).senderId !== props.profile.id
     ) {
       return (
         <div key={idx} className="chat-message">
@@ -268,7 +268,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       );
     } else if (
       JSON.parse(value.data).type === "chat" &&
-      JSON.parse(value.data).senderId === props.profile.userId
+      JSON.parse(value.data).senderId === props.profile.id
     ) {
       return (
         <div key={idx} className="chat-message">

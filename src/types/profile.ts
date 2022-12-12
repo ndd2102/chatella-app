@@ -1,5 +1,5 @@
 export interface Profile {
-  userId: number;
+  id: number;
   email: string;
   name: string;
   avatar: string;
@@ -7,5 +7,4 @@ export interface Profile {
   dateOfBirth: string;
   country: string;
   channelID: number[];
-  id: number;
 }

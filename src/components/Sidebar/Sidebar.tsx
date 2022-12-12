@@ -8,6 +8,7 @@ import { logout } from "../App/App.slice";
 import CreateChannel from "../Modal/Channel/CreateChannel/CreateChannel";
 import { Channel } from "../../types/channel";
 import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
 
 export const SidebarComponent = (props: {
   profile: Profile;
@@ -15,12 +16,16 @@ export const SidebarComponent = (props: {
   locationId: number;
 }) => {
   const profile = props.profile;
-  const channelList = props.channelInfo;
+  const [channelList, setChannelList] = useState<Channel[]>(props.channelInfo);
   const navigate = useNavigate();
   const notFocus: string =
     "relative flex flex-row items-center h-11 hover:bg-sky-50 hover:text-blue-800 rounded-xl text-gray-700 hover:cursor-pointer";
   const onFocus: string =
     "relative flex flex-row items-center h-11 bg-sky-50 text-blue-800 rounded-xl hover:cursor-pointer";
+
+  useEffect(() => {
+    setChannelList(props.channelInfo);
+  }, [props.channelInfo]);
 
   return (
     <div className="flex-row absolute w-72 px-4 bg-white h-screen border-r overflow-y-auto overflow-x-hidden">
@@ -89,6 +94,7 @@ export const SidebarComponent = (props: {
               {channelList.map((channel, id) => (
                 <li key={id}>
                   <div
+                    key={id}
                     onClick={() => navigate(`/workspace/${channel.id}`)}
                     className={
                       channel.id === props.locationId ? onFocus : notFocus

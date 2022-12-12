@@ -31,9 +31,15 @@ const slice = createSlice({
       );
       state.channelList[findIndexChannel].boards = boards;
     },
+    addChannel: (
+      state,
+      { payload: { newChannel } }: PayloadAction<{ newChannel: Channel }>
+    ) => {
+      state.channelList.push(newChannel);
+    },
   },
 });
 
-export const { loadChannelList, updateBoards } = slice.actions;
+export const { loadChannelList, updateBoards, addChannel } = slice.actions;
 
 export default slice.reducer;
