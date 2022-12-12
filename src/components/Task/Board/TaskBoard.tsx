@@ -4,6 +4,7 @@ import { Board } from "../../../types/board";
 import { Channel } from "../../../types/channel";
 import { Profile } from "../../../types/profile";
 import AddTask from "../../Modal/Task/AddTask";
+import EditTaskBoard from "../../Modal/Task/EditTaskBoard";
 import TaskCard from "../Card/TaskCard";
 
 function TaskBoard(props: {
@@ -30,7 +31,14 @@ function TaskBoard(props: {
           </div>
         </div>
         {props.isHost && (
-          <AddTask channel={props.channel} board={board} members={memberList} />
+          <span className="flex gap-1.5">
+            <EditTaskBoard board={board} channel={props.channel} />
+            <AddTask
+              channel={props.channel}
+              board={board}
+              members={memberList}
+            />
+          </span>
         )}
       </div>
       <div className="rounded-lg w-80 h-full border-dashed border-2 border-gray-300 p-4 hover:border-gray-600">

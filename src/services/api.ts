@@ -220,3 +220,15 @@ export async function updateTaskColumn(board: Board, channelId: number) {
       console.log(error);
     });
 }
+
+export async function deleteTaskColumn(board: Board, channelId: number) {
+  await axiosInstance
+    .delete(`channel/deleteTaskColumn/channelId=${channelId}`, {
+      data: {
+        title: board.title,
+      },
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
