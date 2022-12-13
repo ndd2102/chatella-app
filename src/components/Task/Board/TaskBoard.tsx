@@ -86,10 +86,6 @@ function TaskBoard(props: {
       </div>
     </div>
   );
-
-  function handleClick() {
-    console.log("click");
-  }
 }
 
 export default TaskBoard;
