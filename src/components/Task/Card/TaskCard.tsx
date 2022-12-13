@@ -100,11 +100,9 @@ function TaskCard(props: {
             )}
           </div>
           <div>
-            {cardInfo.assignedTo.length && (
-              <div className="flex font-base text-gray-600 items-center gap-1 mr-1">
-                <BsPeople /> {cardInfo.assignedTo.length}
-              </div>
-            )}
+            <div className="flex font-base text-gray-600 items-center gap-1 mr-1">
+              <BsPeople /> {cardInfo.assignedTo.length}
+            </div>
           </div>
         </div>
       </div>
