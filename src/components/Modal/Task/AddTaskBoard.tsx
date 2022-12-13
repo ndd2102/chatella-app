@@ -9,9 +9,6 @@ import { Board } from "../../../types/board";
 import { Channel } from "../../../types/channel";
 
 function AddTaskBoard(props: { channel: Channel }) {
-  const [channelBoard, setChannelBoard] = useState<Board[]>(
-    props.channel.boards
-  );
   const [newBoardTitle, setNewBoardTitle] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
@@ -104,11 +101,9 @@ function AddTaskBoard(props: { channel: Channel }) {
       taskColumnDetail: [],
     };
 
-    setChannelBoard([...channelBoard, newBoard]);
-
     store.dispatch(
       updateBoards({
-        boards: [...channelBoard, newBoard],
+        boards: [...props.channel.boards, newBoard],
         idChannel: props.channel.id,
       })
     );
