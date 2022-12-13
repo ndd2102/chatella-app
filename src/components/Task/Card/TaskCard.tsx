@@ -160,7 +160,7 @@ function TaskCard(props: {
                   <Label className="w-full" value="Priority" />
                   <Button.Group className="w-full" outline={false}>
                     <Button
-                      color="gray"
+                      color="success"
                       autoFocus={card.priority === "Low" ? true : false}
                       disabled={!props.isHost}
                       onClick={() =>
