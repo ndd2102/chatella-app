@@ -1,7 +1,7 @@
 import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
 import React, { useState } from "react";
-import { AiOutlineUserAdd } from "react-icons/ai";
+import { AiOutlineEdit } from "react-icons/ai";
 import { updateChannel } from "../../../../services/api";
 
 
@@ -12,13 +12,15 @@ function EditTitleChannel(props: {
 }) {
   const [show, setShow] = useState(false);
   const [newChannelTitle, setNewChannelTitle] = useState("");
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   return (
     <React.Fragment>
       <div className="flex items-center" onClick={() => setShow(true)}>
-        <span className="bg-blue-50 p-2 text-2xl w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full">
-          <AiOutlineUserAdd />
-        </span>
+      <span className="bg-blue-50 p-2 text-2xl w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full">
+              <AiOutlineEdit />
+            </span>{" "}
         <span className="pl-2">Edit Title Channel</span>
       </div>
       <Modal show={show} size="md" popup={true} onClose={() => setShow(false)}>
@@ -41,6 +43,15 @@ function EditTitleChannel(props: {
                     setNewChannelTitle(e.target.value);
                 }}
               />
+              {error && (
+                <Toast>
+                  <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
+                    <Exclamation className="h-5 w-5" />
+                  </div>
+                  <div className="ml-3 text-sm font-normal">{errorMessage}</div>
+                  <Toast.Toggle />
+                </Toast>
+              )}
             </div>
             <div className="flex flex-wrap gap-6 my-auto">
               <div className="ml-auto flex flex-wrap gap-6">
@@ -64,6 +75,9 @@ function EditTitleChannel(props: {
   async function onSubmit() {
     if(props.isHost){
         await updateChannel(props.channelId, newChannelTitle);
+    } else {
+      setError(true);
+      setErrorMessage("Only host can change title!")
     }
   }
 }

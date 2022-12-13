@@ -184,7 +184,7 @@ export default function Register() {
           setShow(false);
           setLoad(false);
           navigate("/");
-        }, 800);
+        }, 2000);
       }
     }
   }
