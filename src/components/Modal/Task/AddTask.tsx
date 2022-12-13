@@ -37,10 +37,14 @@ function AddTask(props: {
   const [cardInfo, setCardInfo] = useState<Card>(initialState);
   const [isLoading, setLoad] = useState(false);
   const [memberList, setMemberList] = useState<Profile[]>(props.members);
+  const [assigned, setAssigned] = useState<string[]>([]);
 
   useEffect(() => {
     setMemberList(props.members);
   }, [props.members]);
+  useEffect(() => {
+    setCardInfo({ ...cardInfo, assignedTo: assigned });
+  }, [assigned]);
 
   return (
     <div>
@@ -129,7 +133,7 @@ function AddTask(props: {
                   {memberList.map((member, index) => (
                     <li key={index} className="flex items-center gap-4 mb-2">
                       <Checkbox
-                        onChange={handleChange}
+                        onChange={handleChangeAssigned}
                         name="assignedTo"
                         value={member.id}
                       />
@@ -177,6 +181,21 @@ function AddTask(props: {
       ...cardInfo,
       [event.target.name]: event.target.value,
     });
+  }
+  function handleChangeAssigned(event: { target: { value: any } }) {
+    let isCheck = event.target.value;
+
+    const first = assigned.find((obj) => {
+      return obj === isCheck;
+    });
+    if (first === undefined) {
+      setAssigned((pre) => [...pre, isCheck]);
+    } else
+      setAssigned((member) =>
+        member.filter((current) => {
+          return current !== isCheck;
+        })
+      );
   }
   function onSubmit() {
     setLoad(true);

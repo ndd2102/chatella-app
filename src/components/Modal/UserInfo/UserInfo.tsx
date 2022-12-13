@@ -58,7 +58,7 @@ export function UserInfo(props: {
                 <Avatar
                   onClick={() => setUpDateAva(true)}
                   size="xl"
-                  img={props.avatar || avatar}
+                  img={avatar || props.avatar}
                   rounded={true}
                 />
               </div>

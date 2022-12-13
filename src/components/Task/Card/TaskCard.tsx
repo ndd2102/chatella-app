@@ -19,6 +19,7 @@ import { Card } from "../../../types/card";
 import { Channel } from "../../../types/channel";
 import { Profile } from "../../../types/profile";
 import { formatDistance, compareAsc } from "date-fns";
+import { Console } from "console";
 
 function TaskCard(props: {
   card: Card;
@@ -313,6 +314,7 @@ function TaskCard(props: {
   }
   function handleChangeAssigned(event: { target: { value: any } }) {
     let isCheck = event.target.value;
+
     const first = assigned.find((obj) => {
       return obj === isCheck;
     });
@@ -328,7 +330,7 @@ function TaskCard(props: {
   }
   function onSubmit() {
     setLoad(true);
-
+    console.log(assigned);
     let checkDuplicate = undefined;
     if (card.title !== cardInfo.title) {
       checkDuplicate = props.board.taskColumnDetail.find((column) => {
