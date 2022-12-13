@@ -143,7 +143,7 @@ function Task(props: {
                   <Dropdown.Item>
                     <EditTitleChannel
                       channelId={channel.id}
-                      isHost={isHost}
+                      isHost={props.isHost}
                     />
                   </Dropdown.Item>
                   <Dropdown.Divider />
