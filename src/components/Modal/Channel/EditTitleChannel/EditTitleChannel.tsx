@@ -1,4 +1,5 @@
-import { Button, Label, Modal, TextInput } from "flowbite-react";
+import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
+import { Exclamation } from "heroicons-react";
 import React, { useState } from "react";
 import { AiOutlineEdit } from "react-icons/ai";
 import { updateChannelTitle } from "../../../../pages/Workspace/Workspace.slice";
