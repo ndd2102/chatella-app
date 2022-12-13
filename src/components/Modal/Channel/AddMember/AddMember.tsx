@@ -81,14 +81,12 @@ function AddMember(props: {
       setError(true);
       setErrorMessage("This member is already in channel!");
     } else {
-      await addMember(newMember, props.channelId).catch((error) => {
-        setError(true);
-        setErrorMessage("Email not found!");
-      });
-    }
-
-    if (!error) {
-      setShow(false);
+      await addMember(newMember, props.channelId)
+        .catch((error) => {
+          setError(true);
+          setErrorMessage("Email not found!");
+        })
+        .then(() => window.location.reload());
     }
   }
 }
