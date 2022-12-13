@@ -147,7 +147,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
 
         <div className="flex flex-col leading-tight">
           <div className="text-2xl mt-1 flex items-center">
-            <span className="text-black-700 font-bold mr-3 tracking-wide truncate">
+            <span className="text-black-700 ml-6 font-bold mr-3 tracking-wide truncate">
               Group Chat
             </span>
             <span className="flex gap-2">
