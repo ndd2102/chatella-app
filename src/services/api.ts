@@ -185,7 +185,11 @@ export async function getChannel(channelId: number): Promise<Channel> {
   return channel;
 }
 
-export async function updateChannel(channelId: number, channel: Channel) {}
+export async function updateChannel(channelId: number, name: string) {
+  await axiosInstance.patch(`channel/channelId=${channelId}`, {
+    name: name,
+  })
+}
 
 export async function addMember(email: string, id: number) {
   await axiosInstance.patch(`channel/add/channelId=${id}?email=${email}`);

@@ -14,6 +14,7 @@ import { Profile } from "../../types/profile";
 import { updateBoards } from "../../pages/Workspace/Workspace.slice";
 import DeleteChannel from "../Modal/Channel/DeleteChannel/DeleteChannel";
 import { Dropdown } from "flowbite-react";
+import EditTitleChannel from "../Modal/Channel/EditTitleChannel/EditTitleChannel";
 
 function Task(props: {
   channel: Channel;
@@ -135,6 +136,14 @@ function Task(props: {
                     <AddMember
                       channelId={channel.id}
                       memberList={props.memberList}
+                    />
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+
+                  <Dropdown.Item>
+                    <EditTitleChannel
+                      channelId={channel.id}
+                      isHost={isHost}
                     />
                   </Dropdown.Item>
                   <Dropdown.Divider />
