@@ -31,15 +31,21 @@ const slice = createSlice({
       );
       state.channelList[findIndexChannel].boards = boards;
     },
-    addChannel: (
+    updateChannelTitle: (
       state,
-      { payload: { newChannel } }: PayloadAction<{ newChannel: Channel }>
+      {
+        payload: { newChannelTitle, idChannel },
+      }: PayloadAction<{ newChannelTitle: string; idChannel: number }>
     ) => {
-      state.channelList.push(newChannel);
+      const findIndexChannel = state.channelList.findIndex(
+        (channel) => channel.id === idChannel
+      );
+      state.channelList[findIndexChannel].name = newChannelTitle;
     },
   },
 });
 
-export const { loadChannelList, updateBoards, addChannel } = slice.actions;
+export const { loadChannelList, updateBoards, updateChannelTitle } =
+  slice.actions;
 
 export default slice.reducer;

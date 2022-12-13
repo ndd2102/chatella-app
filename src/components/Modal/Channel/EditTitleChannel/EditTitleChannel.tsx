@@ -2,14 +2,11 @@ import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
 import { Exclamation } from "heroicons-react";
 import React, { useState } from "react";
 import { AiOutlineUserAdd } from "react-icons/ai";
+import { updateChannelTitle } from "../../../../pages/Workspace/Workspace.slice";
 import { updateChannel } from "../../../../services/api";
+import { store } from "../../../../state/store";
 
-
-
-function EditTitleChannel(props: {
-    isHost: boolean;
-  channelId: number;
-}) {
+function EditTitleChannel(props: { isHost: boolean; channelId: number }) {
   const [show, setShow] = useState(false);
   const [newChannelTitle, setNewChannelTitle] = useState("");
 
@@ -38,7 +35,7 @@ function EditTitleChannel(props: {
                 placeholder="Your New Channel title"
                 required={true}
                 onChange={(e) => {
-                    setNewChannelTitle(e.target.value);
+                  setNewChannelTitle(e.target.value);
                 }}
               />
             </div>
@@ -62,8 +59,15 @@ function EditTitleChannel(props: {
   );
 
   async function onSubmit() {
-    if(props.isHost){
-        await updateChannel(props.channelId, newChannelTitle);
+    if (props.isHost) {
+      store.dispatch(
+        updateChannelTitle({
+          newChannelTitle: newChannelTitle,
+          idChannel: props.channelId,
+        })
+      );
+      setShow(false);
+      await updateChannel(props.channelId, newChannelTitle);
     }
   }
 }
