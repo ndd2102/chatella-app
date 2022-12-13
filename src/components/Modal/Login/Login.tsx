@@ -14,6 +14,9 @@ import { Exclamation } from "heroicons-react";
 import { loadProfile } from "../../App/App.slice";
 import ForgotPassword from "../Password/ForgotPassword/ForgotPassword";
 import { loginError, loginSuccess } from "./Login.slice";
+import { useNavigate } from "react-router";
+import { resendEmail } from "../../../services/api"
+
 
 export default function Login() {
   const initialState = {
@@ -92,7 +95,7 @@ export default function Login() {
                       <>
                         Your account is inactivated.{" "}
                         <span
-                          onClick={resendEmail}
+                          onClick={resendMail}
                           className="text-blue-500 hover:cursor-pointer hover:text-blue-600"
                         >
                           Click this
@@ -136,7 +139,9 @@ export default function Login() {
     });
   }
 
-  function resendEmail() {}
+  function resendMail() {
+    resendEmail(accountSignIn.email);
+  }
 
   async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
