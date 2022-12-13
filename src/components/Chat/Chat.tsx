@@ -1,10 +1,13 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import { Avatar, Badge, Button, Label, Modal, TextInput } from "flowbite-react";
-import { getChannel, getUserProfile } from "../../services/api";
-
+import { Avatar, Badge, Label, Modal } from "flowbite-react";
+import { getUserProfile } from "../../services/api";
+import { GiExitDoor, GiEntryDoor } from "react-icons/gi";
 import { Profile } from "../../types/profile";
 import { Channel } from "../../types/channel";
+import EmojiPicker from "emoji-picker-react";
+import { addMinutes, format } from "date-fns";
+
 const Chat = (props: { profile: Profile; channel: Channel }) => {
   const socketUrl = `ws://w42g11.int3306.freeddns.org//channel/chat?channelId=${
     props.channel.id
@@ -12,6 +15,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   const [messageHistory, setMessageHistory] = useState<any>([]);
   const [mess, setMess] = useState<any>("");
   const [show, setShow] = useState(false);
+  const [showEmoji, setShowEmoji] = useState(false);
   const [nameUser, setNameUser] = useState<string>();
   const [channel, setChannel] = useState<Channel>();
   const [otherAva, setOtherAva] = useState<Profile[]>([]);
@@ -20,14 +24,14 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   });
 
   useEffect(() => {
-    if (props.channel !== channel) {
-      setChannel(props.channel);
+    if (props.channel.id !== channel?.id) {
       setMessageHistory([]);
+      setChannel(props.channel);
     }
-  }, [props.channel]);
+  }, [props.channel.id]);
 
   useEffect(() => {
-    if (lastMessage !== null) {
+    if (lastMessage !== null && JSON.parse(lastMessage.data).type !== "ping") {
       setMessageHistory((prev: any) => prev.concat(lastMessage));
       const fetchUserName = async () => {
         if (
@@ -57,6 +61,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
     };
     fetchUserlList();
   }, [channel]);
+
   setTimeout(() => {
     let objDiv: any = document.getElementById("chatArea");
     objDiv.scrollTop = objDiv.scrollHeight;
@@ -74,14 +79,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
     }
     setMess("");
   }, [mess, sendJsonMessage]);
-  function handleChange(event: { target: { value: any } }) {
-    setMess(event.target.value);
-  }
-  function convertTZ(date: any, tzString: any) {
-    return new Date(
-      typeof date === "string" ? new Date(date) : date
-    ).toLocaleString("en-US", { timeZone: tzString });
-  }
+
   const connectionStatus = {
     [ReadyState.CONNECTING]: "Connecting",
     [ReadyState.OPEN]: "Online",
@@ -93,14 +91,13 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   return (
     <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-screen">
       <div className="sm:items-center justify-between py-3 border-b-2 border-gray-200">
-        {/* <div className="relative flex items-center space-x-4"> */}
         <div className="mb-5">
           <span className="text-xl font-bold">Member ({otherAva.length})</span>
           <span
-            className="float-right pr-6 underline text-slate-500"
+            className="float-right pr-6 underline text-slate-500 hover:cursor-pointer hover:text-slate-600"
             onClick={() => setShow(true)}
           >
-            Tất cả
+            See all
           </span>
         </div>
         <React.Fragment>
@@ -120,14 +117,17 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
             popup={true}
             onClose={() => setShow(false)}
           >
-            <Modal.Header>Danh sách thành viên</Modal.Header>
+            <Modal.Header />
             <Modal.Body>
-              <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col max-h-[50vh] overflow-y-auto">
+              <div className="sm:pb-6 lg:px-8 xl:pb-8">
+                <h3 className="text-xl font-medium mb-8 text-gray-900 dark:text-white">
+                  All members
+                </h3>
                 {otherAva.map((userId, id) => (
-                  <div key={id}>
-                    <Label className="inline-flex justify-center items-center ml-4 text-lg ">
+                  <div key={id} className="space-y-2 mt-2">
+                    <Label className="inline-flex justify-center items-center text-lg ">
                       <Avatar img={userId.avatar} />
-                      <div className="p-6 ml-6">{userId.name}</div>
+                      <div className="ml-4">{userId.name}</div>
                     </Label>
                   </div>
                 ))}
@@ -151,7 +151,6 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
           </div>
         </div>
       </div>
-      {/* </div> */}
       <div
         id="chatArea"
         className=" flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
@@ -167,11 +166,41 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
             onChange={handleChange}
             value={mess}
           ></textarea>
-          <div className="right-0 items-center inset-y-0 hidden sm:flex">
+          <div className="absolute right-16 items-center inset-y-0 hidden sm:flex">
+            {showEmoji && (
+              <div className="flex -mr-20 -mt-[30rem]">
+                <EmojiPicker
+                  onEmojiClick={onEmojiClick}
+                  lazyLoadEmojis={true}
+                />
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={handlShowEmoji}
+              className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="h-6 w-6 text-gray-600"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <div className="right-0 ml-1.5 items-center inset-y-0 hidden sm:flex">
             <button
               id="myBtn"
               type="button"
-              className=" rounded-lg px-4 py-3  duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
+              className=" rounded-full p-2  duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
               onClick={handleClickSendMessage}
             >
               <svg
@@ -188,29 +217,31 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       </div>
     </div>
   );
+  function handlShowEmoji() {
+    setShowEmoji(!showEmoji);
+  }
+
+  function onEmojiClick(emojiObject: { emoji: any }) {
+    setMess((prevInput: any) => prevInput + emojiObject.emoji);
+    setShowEmoji(false);
+  }
+  function handleChange(event: { target: { value: any } }) {
+    setMess(event.target.value);
+  }
 
   function check(value: any, idx: any) {
     const avatar = otherAva.find((obj) => {
       return obj.id === JSON.parse(value.data).senderId;
     });
-    const today = new Date();
-    const getTimeToday =
-      today.getMonth() +
-      1 +
-      "/" +
-      today.getDate() +
-      "/" +
-      today.getFullYear() +
-      ",";
-    const time = convertTZ(
-      `${[JSON.parse(value.data).timestamp]} +0000`,
-      "Asia/Jakarta"
-    );
-    let getTime = time.split(" ");
-    let time1 = getTime[1] ? time.substring(time.indexOf(" ") + 1) : "";
+    const today = format(new Date(), "dd/MM");
+    const time = new Date(JSON.parse(value.data).timestamp);
+    const convertTZ = addMinutes(time, 420);
+    const getDay = format(convertTZ, "dd/MM");
+    const getTime = format(convertTZ, "HH:mm");
+
     if (
       JSON.parse(value.data).type === "chat" &&
-      JSON.parse(value.data).senderId !== props.profile.userId
+      JSON.parse(value.data).senderId !== props.profile.id
     ) {
       return (
         <div key={idx} className="chat-message">
@@ -229,7 +260,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
                 onClick={() => console.log(avatar?.name)}
               ></img>
               <span className="block text-[9px]">
-                {getTime[0] === getTimeToday ? time1 : getTime[0]}
+                {getDay === today ? getTime : getDay}
               </span>
             </div>
           </div>
@@ -237,7 +268,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       );
     } else if (
       JSON.parse(value.data).type === "chat" &&
-      JSON.parse(value.data).senderId === props.profile.userId
+      JSON.parse(value.data).senderId === props.profile.id
     ) {
       return (
         <div key={idx} className="chat-message">
@@ -252,7 +283,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
                 className="w-6 h-6 rounded-full order-2 float-right m-2"
               ></img>
               <span className="block text-[9px]">
-                {getTime[0] === getTimeToday ? time1 : getTime[0]}
+                {getDay === today ? getTime : getDay}
               </span>
             </div>
           </div>
@@ -261,14 +292,16 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
     } else if (JSON.parse(value.data).type === "delete") {
       return (
         <div key={idx} className="chat-message">
-          <div className="text-center text-xs">{nameUser} đã rời khỏi nhóm</div>
+          <div className="justify-center items-center flex text-gray-500 text-xs">
+            <GiExitDoor /> {nameUser} left the channel
+          </div>
         </div>
       );
     } else if (JSON.parse(value.data).type === "add") {
       return (
         <div key={idx} className="chat-message">
-          <div className="text-center text-xs">
-            {nameUser} đã được thêm vào nhóm
+          <div className="justify-center items-center flex text-gray-500 text-xs">
+            <GiEntryDoor /> {nameUser} was added to the channel
           </div>
         </div>
       );

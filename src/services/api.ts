@@ -67,6 +67,12 @@ export async function confirmEmail(uuid: string, token: string) {
   });
 }
 
+export async function resendEmail(email: string) {
+  await axiosInstance.post("mail/validate-email", {
+    email: email,
+  });
+}
+
 export async function changePassword(
   email: string,
   password: string,
@@ -89,7 +95,7 @@ export async function getProfile(): Promise<Profile> {
     .get("account/profile/current-profile")
     .then((response) => {
       profile = {
-        userId: response.data.data.id,
+        id: response.data.data.id,
         email: response.data.data.email,
         name: response.data.data.name,
         avatar: response.data.data.avatar,
@@ -102,6 +108,21 @@ export async function getProfile(): Promise<Profile> {
       };
     });
   return profile;
+}
+
+export async function getUserProfile(userId: any): Promise<Profile> {
+  let userProfile: any;
+  await axiosInstance
+    .get(`account/profile/userId=${userId}`)
+    .then((response) => {
+      userProfile = {
+        id: response.data.data.id,
+        avatar: response.data.data.avatar,
+        name: response.data.data.name,
+        email: response.data.data.email,
+      };
+    });
+  return userProfile;
 }
 
 export async function updateProfile(
@@ -120,27 +141,21 @@ export async function updateProfile(
   });
 }
 
-export async function resendEmail(email: string) {
-  await axiosInstance.post("mail/validate-email", {
-    email: email,
-  });
-}
-
 export async function createChannel(channelName: string) {
-  let id: number = await axiosInstance
+  let newChannel: Channel = await axiosInstance
     .post("channel/create-channel", {
       name: channelName,
     })
     .then((response) => {
       console.log(`Create channel ${channelName} successfully`);
-      return response.data.data.id;
+      return response.data.data;
     })
     .catch((error) => {
       console.log(
         `Create channel ${channelName} failed. Error: ${error.response.data.error}`
       );
     });
-  return id;
+  return newChannel;
 }
 
 export async function getChannel(channelId: number): Promise<Channel> {
@@ -172,26 +187,27 @@ export async function getChannel(channelId: number): Promise<Channel> {
 
 export async function updateChannel(channelId: number, channel: Channel) {}
 
-export async function getUserProfile(userId: any): Promise<Profile> {
-  let userProfile: any;
-  await axiosInstance
-    .get(`account/profile/userId=${userId}`)
-    .then((response) => {
-      userProfile = {
-        id: response.data.data.id,
-        avatar: response.data.data.avatar,
-        name: response.data.data.name,
-        email: response.data.data.email,
-      };
-    });
-  return userProfile;
-}
-
 export async function addMember(email: string, id: number) {
   await axiosInstance.patch(`channel/add/channelId=${id}?email=${email}`);
 }
+
 export async function deleteMember(userId: number, id: number) {
   await axiosInstance.delete(`channel/delete/channelId=${id}?userId=${userId}`);
+}
+
+export async function deleteChannel(id: number) {
+  await axiosInstance.delete(`channel/channelId=${id}`);
+}
+
+export async function addTaskColumn(board: Board, channelId: number) {
+  await axiosInstance
+    .patch(`channel/addTaskColumn/channelId=${channelId}`, {
+      title: board.title,
+      taskColumnDetail: board.taskColumnDetail,
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
 export async function updateTaskColumn(board: Board, channelId: number) {
@@ -199,6 +215,18 @@ export async function updateTaskColumn(board: Board, channelId: number) {
     .post(`channel/updateTaskColumn/channelId=${channelId}`, {
       title: board.title,
       taskColumnDetail: board.taskColumnDetail,
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+export async function deleteTaskColumn(board: Board, channelId: number) {
+  await axiosInstance
+    .delete(`channel/deleteTaskColumn/channelId=${channelId}`, {
+      data: {
+        title: board.title,
+      },
     })
     .catch((error) => {
       console.log(error);

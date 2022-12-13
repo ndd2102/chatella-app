@@ -1,45 +1,21 @@
-import { Avatar, Button, Checkbox, Label, Modal, Toast } from "flowbite-react";
-import { Exclamation } from "heroicons-react";
-import React, { useEffect, useState } from "react";
+import { Avatar, Button, Checkbox, Label, Modal } from "flowbite-react";
+import React, { useState } from "react";
 import { AiOutlineUserDelete } from "react-icons/ai";
-import {
-  deleteMember,
-  getChannel,
-  getUserProfile,
-} from "../../../../services/api";
-import { Channel } from "../../../../types/channel";
+import { deleteMember } from "../../../../services/api";
 import { Profile } from "../../../../types/profile";
 
-function DeleteMember(props: { channelInfo: Channel }) {
+function DeleteMember(props: { channelId: number; memberList: Profile[] }) {
   const [show, setShow] = useState(false);
-  const [member, setMember] = useState<Profile[]>([]);
   const [delMember, setDelMember] = useState<number[]>([]);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [error, setError] = useState(false);
-  const [channel, setChannel] = useState(props.channelInfo);
-  useEffect(() => {
-    // const ChannelInfo = async () => {
-    //   setChannel(await getChannel(channel.id));
-    // };
-    // ChannelInfo();
-    const fetchUserlList = async () => {
-      const list = await Promise.all(
-        channel.members.slice(1).map(async (value) => {
-          return await getUserProfile(value.userId);
-        })
-      );
-      setMember(list);
-    };
-    fetchUserlList();
-  }, [channel.id, channel.members]);
+
   return (
     <React.Fragment>
-      <span
-        onClick={() => setShow(true)}
-        className="bg-blue-50 p-2 text-3xl w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full"
-      >
-        <AiOutlineUserDelete></AiOutlineUserDelete>
-      </span>
+      <div className="flex items-center" onClick={() => setShow(true)}>
+        <span className="bg-yellow-50 p-2 text-2xl w-fit text-yellow-700 hover:bg-yellow-100 hover:cursor-pointer rounded-full">
+          <AiOutlineUserDelete />
+        </span>
+        <span className="pl-2">Delete Member</span>
+      </div>
       <Modal show={show} size="md" popup={true} onClose={() => setShow(false)}>
         <Modal.Header />
         <Modal.Body>
@@ -48,29 +24,16 @@ function DeleteMember(props: { channelInfo: Channel }) {
               Delete member
             </h3>
             <div>
-              {member.map((userId, id) => (
-                <div key={id}>
-                  <Label className="inline-flex justify-center items-center ml-4 text-lg ">
-                    <Avatar img={userId.avatar} />
-                    <div>{userId.name}</div>
+              {props.memberList.slice(1).map((user, id) => (
+                <div key={id} className="flex items-center gap-2 space-y-2">
+                  <Checkbox onChange={handleChange} value={user.id} />
+                  <Label className="flex gap-2 items-center ml-4 text-lg ">
+                    <Avatar img={user.avatar} />
+                    <div>{user.name}</div>
                   </Label>
-                  <Checkbox
-                    className="float-right"
-                    onChange={handleChange}
-                    value={userId.id}
-                  />
                 </div>
               ))}
             </div>
-            {error && (
-              <Toast>
-                <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
-                  <Exclamation className="h-5 w-5" />
-                </div>
-                <div className="ml-3 text-sm font-normal">{errorMessage}</div>
-                <Toast.Toggle />
-              </Toast>
-            )}
             <div className="flex flex-wrap gap-6 my-auto">
               <div className="ml-auto flex flex-wrap gap-6">
                 <Button
@@ -81,7 +44,7 @@ function DeleteMember(props: { channelInfo: Channel }) {
                 >
                   Cancel
                 </Button>
-                <Button onClick={check}>Confirm</Button>
+                <Button onClick={onSubmit}>Confirm</Button>
               </div>
             </div>
           </div>
@@ -89,6 +52,7 @@ function DeleteMember(props: { channelInfo: Channel }) {
       </Modal>
     </React.Fragment>
   );
+
   function handleChange(event: { target: { value: any } }) {
     let isCheck = event.target.value;
     const first = delMember.find((obj) => {
@@ -105,15 +69,14 @@ function DeleteMember(props: { channelInfo: Channel }) {
       );
   }
 
-  async function check() {
+  async function onSubmit() {
     delMember.map(async (value) => {
-      await deleteMember(value, props.channelInfo.id);
+      await deleteMember(value, props.channelId);
     });
-    const newChannel = await getChannel(channel.id);
-    setTimeout(() => {
-      setChannel(newChannel);
-      window.location.reload();
-    }, 1000);
+    setShow(false);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1000);
   }
 }
 export default DeleteMember;

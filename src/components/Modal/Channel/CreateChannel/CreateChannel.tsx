@@ -1,13 +1,11 @@
 import { Button, Label, Modal, TextInput } from "flowbite-react";
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { createChannel, getProfile } from "../../../../services/api";
+import { createChannel } from "../../../../services/api";
 import { FiPlusSquare } from "react-icons/fi";
 
 export default function CreateChannel() {
   const [show, setShow] = useState(false);
   const [channelName, setChannelName] = useState("");
-  const navigate = useNavigate();
 
   return (
     <>
@@ -64,10 +62,9 @@ export default function CreateChannel() {
   );
 
   async function onSubmit() {
-    const channelId = await createChannel(channelName);
-    await getProfile();
+    const newChannel = await createChannel(channelName);
+    console.log(newChannel);
+    window.location.replace(`/workspace/${newChannel.id}`);
     setShow(false);
-    console.log("Id channel: " + channelId);
-    navigate(`/workspace/${channelId}`);
   }
 }

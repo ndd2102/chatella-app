@@ -4,7 +4,7 @@ import {
   BrowserRouter as Router,
   Navigate,
 } from "react-router-dom";
-import { useStoreWithInitializer } from "../../state/storeHooks";
+import { useStore, useStoreWithInitializer } from "../../state/storeHooks";
 import { store } from "../../state/store";
 import { endLoad, loadProfile, logout } from "./App.slice";
 import Home from "../../pages/Home/Home";
@@ -18,7 +18,7 @@ import ConfirmEmail from "../ConfirmEmail/ConfirmEmail";
 
 export default function App() {
   const { loading, profile } = useStoreWithInitializer(({ app }) => app, load);
-
+  const { channelList } = useStore(({ workspace }) => workspace);
   const accountIsLogged = profile.id === -1 ? false : true;
 
   return (
@@ -47,7 +47,7 @@ export default function App() {
   );
 
   async function load() {
-    if (!accountIsLogged) {
+    if (!accountIsLogged || channelList.length === 0) {
       const token = localStorage.getItem("token");
       if (!loading || !token) {
         store.dispatch(endLoad());
