@@ -19,7 +19,6 @@ import { Card } from "../../../types/card";
 import { Channel } from "../../../types/channel";
 import { Profile } from "../../../types/profile";
 import { formatDistance, compareAsc } from "date-fns";
-import { Console } from "console";
 
 function TaskCard(props: {
   card: Card;

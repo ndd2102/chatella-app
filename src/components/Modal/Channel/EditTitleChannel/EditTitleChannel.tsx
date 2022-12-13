@@ -1,7 +1,6 @@
-import { Button, Label, Modal, TextInput, Toast } from "flowbite-react";
-import { Exclamation } from "heroicons-react";
+import { Button, Label, Modal, TextInput } from "flowbite-react";
 import React, { useState } from "react";
-import { AiOutlineUserAdd } from "react-icons/ai";
+import { AiOutlineEdit } from "react-icons/ai";
 import { updateChannelTitle } from "../../../../pages/Workspace/Workspace.slice";
 import { updateChannel } from "../../../../services/api";
 import { store } from "../../../../state/store";
@@ -13,10 +12,10 @@ function EditTitleChannel(props: { isHost: boolean; channelId: number }) {
   return (
     <React.Fragment>
       <div className="flex items-center" onClick={() => setShow(true)}>
-        <span className="bg-blue-50 p-2 text-2xl w-fit text-blue-700 hover:bg-blue-100 hover:cursor-pointer rounded-full">
-          <AiOutlineUserAdd />
+        <span className="bg-indigo-50 p-2 text-2xl w-fit text-indigo-700 hover:bg-indigo-100 hover:cursor-pointer rounded-full">
+          <AiOutlineEdit />
         </span>
-        <span className="pl-2">Edit Title Channel</span>
+        <span className="pl-2">Edit Channel Title</span>
       </div>
       <Modal show={show} size="md" popup={true} onClose={() => setShow(false)}>
         <Modal.Header />

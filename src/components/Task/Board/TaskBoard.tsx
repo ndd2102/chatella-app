@@ -50,6 +50,7 @@ function TaskBoard(props: {
                   return (
                     <div key={index}>
                       <Draggable
+                        isDragDisabled={!props.isHost}
                         index={index}
                         key={JSON.stringify(card)}
                         draggableId={card.title}
