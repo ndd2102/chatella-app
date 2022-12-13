@@ -141,6 +141,7 @@ export default function Login() {
 
   function resendMail() {
     resendEmail(accountSignIn.email);
+    window.alert("Check your email!");
   }
 
   async function handleSubmit(ev: React.FormEvent) {
