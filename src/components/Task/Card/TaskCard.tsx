@@ -284,7 +284,6 @@ function TaskCard(props: {
                 >
                   Delete
                 </Button>
-                <Button onClick={ok}>121</Button>
               </div>
             </div>
           </div>
@@ -392,10 +391,6 @@ function TaskCard(props: {
     setLoad(false);
     setShowDeleteTask(false);
     setShowEditTask(false);
-  }
-  function ok() {
-    const test = cardInfo.assignedTo.includes("5");
-    console.log(test);
   }
 }
 
