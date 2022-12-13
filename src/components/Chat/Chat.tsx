@@ -7,6 +7,7 @@ import { Profile } from "../../types/profile";
 import { Channel } from "../../types/channel";
 import EmojiPicker from "emoji-picker-react";
 import { addMinutes, format } from "date-fns";
+import AvatarGroupCounter from "flowbite-react/lib/esm/components/Avatar/AvatarGroupCounter";
 import { useStore } from "../../state/storeHooks";
 
 const Chat = (props: { profile: Profile; channel: Channel }) => {
@@ -98,9 +99,9 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
 
   return (
     <React.Fragment>
-      <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-screen">
-        <div className="sm:items-center justify-between py-3 border-b-2 border-gray-200">
-          <div className="mb-5">
+      <div className="flex-1 justify-between flex flex-col h-screen">
+        <div className="sm:items-center mt-4 justify-between py-3 border-b border-gray-200">
+          <div className="mb-5 ml-4">
             <span className="text-xl font-bold">
               Member ({otherAva.length})
             </span>
@@ -111,16 +112,24 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
               See all
             </span>
           </div>
-          <Avatar.Group>
-            {otherAva.map((value, id) => (
-              <Avatar
-                key={id}
-                img={value.avatar}
-                rounded={true}
-                stacked={true}
-              />
-            ))}
-          </Avatar.Group>
+          <div className="ml-6">
+            <Avatar.Group>
+              {otherAva.map((value, index) => {
+                if (index > 7) {
+                  return <AvatarGroupCounter total={otherAva.length - index} />;
+                } else {
+                  return (
+                    <Avatar
+                      key={index}
+                      img={value.avatar}
+                      rounded={true}
+                      stacked={true}
+                    />
+                  );
+                }
+              })}
+            </Avatar.Group>
+          </div>
           <Modal
             show={showMembers}
             size="md"
@@ -133,21 +142,20 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
                 <h3 className="text-xl font-medium mb-8 text-gray-900 dark:text-white">
                   All members
                 </h3>
-                {otherAva.map((userId, id) => (
-                  <div key={id} className="space-y-2 mt-2">
+                {otherAva.map((userId, index) => (
+                  <div key={index} className="space-y-2 mt-2">
                     <Label className="inline-flex justify-center items-center text-lg ">
                       <Avatar img={userId.avatar} />
-                      <div className="ml-4">{userId.name}</div>
+                      <div className="ml-6">{userId.name}</div>
                     </Label>
                   </div>
                 ))}
               </div>
             </Modal.Body>
           </Modal>
-
           <div className="flex flex-col leading-tight">
             <div className="text-2xl mt-1 flex items-center">
-              <span className="text-black-700 font-bold mr-3 tracking-wide truncate">
+              <span className="text-black-700 ml-6 font-bold mr-3 tracking-wide truncate">
                 Group Chat
               </span>
               <span className="flex gap-2">
@@ -162,16 +170,16 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
         </div>
         <div
           id="chatArea"
-          className=" flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
+          className=" flex flex-col space-y-4 p-4 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
         >
           {messageHistory.slice(1).map(check)}
         </div>
-        <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
+        <div className="border-t-2 border-gray-200 p-4">
           <div className="relative flex">
             <textarea
               id="myInput"
               placeholder="Write your message!"
-              className="w-11/12 focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 bg-gray-200 rounded-full "
+              className="w-11/12 focus:outline-none resize-none break-words pr-16 h-12 focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 bg-gray-200 rounded-full "
               onChange={handleChange}
               value={mess}
             ></textarea>
@@ -186,7 +194,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
               )}
               <button
                 type="button"
-                onClick={handlShowEmoji}
+                onClick={handleShowEmoji}
                 className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
               >
                 <svg
@@ -209,7 +217,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
               <button
                 id="myBtn"
                 type="button"
-                className=" rounded-full p-2  duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
+                className=" rounded-full p-2 h-12 text-white bg-blue-500 hover:bg-blue-600 focus:outline-none"
                 onClick={handleClickSendMessage}
               >
                 <svg
@@ -246,7 +254,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       </Modal>
     </React.Fragment>
   );
-  function handlShowEmoji() {
+  function handleShowEmoji() {
     setShowEmoji(!showEmoji);
   }
 
@@ -275,24 +283,23 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       return (
         <div key={idx} className="chat-message">
           <div className="flex items-start justify-start">
-            <div className="space-y-2 text-xs max-w-xs mx-2 order-1 items-start">
-              <div className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
+            <div className="space-y-2 text-lg max-w-xs mx-2 order-1 items-start">
+              <div className="w-full px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600 break-words">
                 {[JSON.parse(value.data).content]}
               </div>
-              <img
-                src={
-                  avatar?.avatar ||
-                  "https://i.pinimg.com/originals/f1/0f/f7/f10ff70a7155e5ab666bcdd1b45b726d.jpg"
-                }
-                alt="ava"
-                className="w-6 h-6 rounded-full float-left m-2"
-                onClick={() => console.log(avatar?.name)}
-              ></img>
-              <span className="block text-[9px]">
-                {getDay === today ? getTime : getDay}
-              </span>
             </div>
+            <img
+              src={
+                avatar?.avatar ||
+                "https://i.pinimg.com/originals/f1/0f/f7/f10ff70a7155e5ab666bcdd1b45b726d.jpg"
+              }
+              alt="ava"
+              className="w-10 h-10 rounded-full float-left m-2"
+            ></img>
           </div>
+          <span className="block text-left pl-16 text-sm">
+            {getDay === today ? getTime : getDay}
+          </span>
         </div>
       );
     } else if (
@@ -302,20 +309,20 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       return (
         <div key={idx} className="chat-message">
           <div className="flex items-end justify-end">
-            <div className=" space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
-              <div className="px-4 py-2 rounded-lg inline-block bg-blue-600 text-white">
+            <div className="space-y-2 text-lg max-w-xs mx-2 order-1 items-end">
+              <div className="w-full px-4 py-2 rounded-lg inline-block bg-blue-600 text-white break-words">
                 {[JSON.parse(value.data).content]}
               </div>
-              <img
-                src={avatar?.avatar}
-                alt="ava"
-                className="w-6 h-6 rounded-full order-2 float-right m-2"
-              ></img>
-              <span className="block text-[9px]">
-                {getDay === today ? getTime : getDay}
-              </span>
             </div>
+            <img
+              src={avatar?.avatar}
+              alt="ava"
+              className="w-10 h-10 rounded-full order-2 float-right m-2"
+            ></img>
           </div>
+          <span className="block text-right pr-16 text-sm">
+            {getDay === today ? getTime : getDay}
+          </span>
         </div>
       );
     } else if (JSON.parse(value.data).type === "delete") {

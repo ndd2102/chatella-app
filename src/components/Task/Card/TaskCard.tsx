@@ -8,7 +8,7 @@ import {
   Textarea,
   TextInput,
 } from "flowbite-react";
-import AvatarGroupCounter from "flowbite-react/lib/esm/components/Avatar/AvatarGroupCounter";
+import { BsPeople } from "react-icons/bs";
 import { Exclamation } from "heroicons-react";
 import { useEffect, useState } from "react";
 import { updateBoards } from "../../../pages/Workspace/Workspace.slice";
@@ -16,10 +16,9 @@ import { updateTaskColumn } from "../../../services/api";
 import { store } from "../../../state/store";
 import { Board } from "../../../types/board";
 import { Card } from "../../../types/card";
-import { Channel, ChannelMember } from "../../../types/channel";
+import { Channel } from "../../../types/channel";
 import { Profile } from "../../../types/profile";
 import { formatDistance, compareAsc } from "date-fns";
-import { null_ } from "decoders";
 
 function TaskCard(props: {
   card: Card;
@@ -56,6 +55,7 @@ function TaskCard(props: {
   useEffect(() => {
     setCardInfo({ ...cardInfo, assignedTo: assigned });
   }, [assigned]);
+
   const styleHigh = `rounded-lg p-2 font-base text-xs text-red-500 bg-red-200`;
   const styleMedium =
     "rounded-lg p-2 font-base text-xs text-orange-500 bg-orange-200";
@@ -72,40 +72,38 @@ function TaskCard(props: {
         <p className="mt-1.5 h-12 text-base truncate text-gray-400 font-light">
           {card.description}
         </p>
-        <div className="flex gap-4">
-          {card.priority && (
-            <div
-              className={
-                card.priority === "Low"
-                  ? styleLow
-                  : card.priority === "Medium"
-                  ? styleMedium
-                  : styleHigh
-              }
-            >
-              {card.priority}
-            </div>
-          )}
-          {remainingDays !== "" && (
-            <span
-              className={
-                checkOverDue
-                  ? "rounded-lg p-2 font-base text-xs text-purple-500 bg-purple-200"
-                  : "rounded-lg p-2 font-base text-xs text-white bg-slate-300"
-              }
-            >
-              {remainingDays}
-            </span>
-          )}
-          <Avatar.Group>
-            {props.members.map((value, id) => (
-              <div key={id}>
-                {cardInfo.assignedTo.includes(`${value.id}`) && (
-                  <Avatar img={value.avatar} rounded={true} stacked={true} />
-                )}
+        <div className=" flex justify-between items-center">
+          <div className="flex gap-4">
+            {card.priority && (
+              <div
+                className={
+                  card.priority === "Low"
+                    ? styleLow
+                    : card.priority === "Medium"
+                    ? styleMedium
+                    : styleHigh
+                }
+              >
+                {card.priority}
               </div>
-            ))}
-          </Avatar.Group>
+            )}
+            {remainingDays !== "" && (
+              <span
+                className={
+                  checkOverDue
+                    ? "rounded-lg p-2 font-base text-xs text-white bg-red-600"
+                    : "rounded-lg p-2 font-base text-xs text-blue-500 bg-blue-200"
+                }
+              >
+                {checkOverDue ? "Overdue" : remainingDays}
+              </span>
+            )}
+          </div>
+          <div>
+            <div className="flex font-base text-gray-600 items-center gap-1 mr-1">
+              <BsPeople /> {cardInfo.assignedTo.length}
+            </div>
+          </div>
         </div>
       </div>
       <Modal
@@ -162,7 +160,7 @@ function TaskCard(props: {
                   <Label className="w-full" value="Priority" />
                   <Button.Group className="w-full" outline={false}>
                     <Button
-                      color="gray"
+                      color="success"
                       autoFocus={card.priority === "Low" ? true : false}
                       disabled={!props.isHost}
                       onClick={() =>
@@ -286,7 +284,6 @@ function TaskCard(props: {
                 >
                   Delete
                 </Button>
-                <Button onClick={ok}>121</Button>
               </div>
             </div>
           </div>
@@ -307,7 +304,7 @@ function TaskCard(props: {
     const first = assigned.find((obj) => {
       return obj === isCheck;
     });
-    console.log(first);
+
     if (first === undefined) {
       setAssigned((pre) => [...pre, isCheck]);
     } else
@@ -319,7 +316,7 @@ function TaskCard(props: {
   }
   function onSubmit() {
     setLoad(true);
-    console.log(cardInfo);
+
     let checkDuplicate = undefined;
     if (card.title !== cardInfo.title) {
       checkDuplicate = props.board.taskColumnDetail.find((column) => {
@@ -394,10 +391,6 @@ function TaskCard(props: {
     setLoad(false);
     setShowDeleteTask(false);
     setShowEditTask(false);
-  }
-  function ok() {
-    const test = cardInfo.assignedTo.includes("5");
-    console.log(test);
   }
 }
 

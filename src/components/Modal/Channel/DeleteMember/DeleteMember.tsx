@@ -71,12 +71,11 @@ function DeleteMember(props: { channelId: number; memberList: Profile[] }) {
 
   async function onSubmit() {
     delMember.map(async (value) => {
-      await deleteMember(value, props.channelId);
+      await deleteMember(value, props.channelId).then(() =>
+        window.location.reload()
+      );
     });
     setShow(false);
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 1000);
   }
 }
 export default DeleteMember;
