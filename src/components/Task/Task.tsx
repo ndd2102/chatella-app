@@ -19,10 +19,10 @@ function Task(props: {
   channel: Channel;
   memberList: Profile[];
   profile: Profile;
+  isHost: boolean;
 }) {
   const [channel, setChannel] = useState<Channel>(props.channel);
   const [memberList, setMemberList] = useState<Profile[]>(props.memberList);
-  const isHost = props.profile.id === channel.members[0].userId ? true : false;
 
   useEffect(() => {
     setChannel(props.channel);
@@ -33,7 +33,7 @@ function Task(props: {
     const { destination, source, draggableId } = result;
 
     // Drop outside the boards
-    if (!destination || !isHost) {
+    if (!destination || !props.isHost) {
       return;
     }
 
@@ -129,7 +129,7 @@ function Task(props: {
               arrowIcon={false}
               inline={true}
             >
-              {isHost && (
+              {props.isHost && (
                 <>
                   <Dropdown.Item>
                     <AddMember
@@ -151,7 +151,7 @@ function Task(props: {
               <Dropdown.Item>
                 <DeleteChannel
                   channelId={channel.id}
-                  isHost={isHost}
+                  isHost={props.isHost}
                   profileId={props.profile.id}
                 />
               </Dropdown.Item>
@@ -167,7 +167,7 @@ function Task(props: {
         </div>
         <div className="flex mt-4 gap-4 mb-2 items-center">
           <h1 className="text-lg">Tasks Management</h1>
-          {isHost && <AddTaskBoard channel={channel} />}
+          {props.isHost && <AddTaskBoard channel={channel} />}
         </div>
         <div className="-mx-6 pl-6 flex-1 h-full border-t overflow-y-auto overflow-x-auto bg-gray-50">
           {channel.boards !== undefined && channel.boards.length > 1 ? (
@@ -179,7 +179,7 @@ function Task(props: {
                       board={board}
                       channel={channel}
                       memberList={memberList}
-                      isHost={isHost}
+                      isHost={props.isHost}
                     />
                   </div>
                 ))}
