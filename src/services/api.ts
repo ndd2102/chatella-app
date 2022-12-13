@@ -120,6 +120,9 @@ export async function getUserProfile(userId: any): Promise<Profile> {
         avatar: response.data.data.avatar,
         name: response.data.data.name,
         email: response.data.data.email,
+        sex: response.data.data.sex,
+        dateOfBirth: response.data.data.dob,
+        country: response.data.data.national,
       };
     });
   return userProfile;

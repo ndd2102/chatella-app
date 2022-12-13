@@ -9,6 +9,7 @@ import EmojiPicker from "emoji-picker-react";
 import { addMinutes, format } from "date-fns";
 import AvatarGroupCounter from "flowbite-react/lib/esm/components/Avatar/AvatarGroupCounter";
 import { useStore } from "../../state/storeHooks";
+import { MemberProfile } from "../Modal/UserInfo/MemberProfile";
 
 const Chat = (props: {
   profile: Profile;
@@ -55,7 +56,9 @@ const Chat = (props: {
       fetchUserName();
       if (
         JSON.parse(lastMessage.data).type === "delete" &&
-        Number(JSON.parse(lastMessage.data).content) === profile.id
+        Number(JSON.parse(lastMessage.data).content) === profile.id &&
+        JSON.parse(lastMessage.data).senderId !==
+          JSON.parse(lastMessage.data).content
       )
         setShow(true);
     }
@@ -139,8 +142,7 @@ const Chat = (props: {
                 {props.memberList.map((userId, index) => (
                   <div key={index} className="space-y-2 mt-2">
                     <Label className="inline-flex justify-center items-center text-lg ">
-                      <Avatar img={userId.avatar} />
-                      <div className="ml-6">{userId.name}</div>
+                      <MemberProfile profile={userId} />
                     </Label>
                   </div>
                 ))}
