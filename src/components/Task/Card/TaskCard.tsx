@@ -204,18 +204,30 @@ function TaskCard(props: {
               <ul className="p-2">
                 {props.members.map((member, id) => (
                   <li key={id} className="flex items-center gap-4 mb-2">
-                    {props.isHost && (
-                      <Checkbox
-                        onChange={handleChangeAssigned}
-                        name="assignedTo"
-                        value={member.id}
-                        checked={cardInfo.assignedTo.includes(`${member.id}`)}
-                      />
+                    {props.isHost ? (
+                      <div className="flex items-center gap-2 space-y-2">
+                        <Checkbox
+                          onChange={handleChangeAssigned}
+                          name="assignedTo"
+                          value={member.id}
+                          checked={cardInfo.assignedTo.includes(`${member.id}`)}
+                        />
+
+                        <Label className="flex gap-2 items-center ml-4 text-lg">
+                          <Avatar img={member.avatar} />
+                          <div>{member.name}</div>
+                        </Label>
+                      </div>
+                    ) : (
+                      <div>
+                        {cardInfo.assignedTo.includes(`${member.id}`) && (
+                          <Label className="flex gap-2 items-center ml-4 text-lg">
+                            <Avatar img={member.avatar} />
+                            <div>{member.name}</div>
+                          </Label>
+                        )}
+                      </div>
                     )}
-                    <Label className="flex items-center gap-4">
-                      <Avatar img={member.avatar} />
-                      <div>{member.name}</div>
-                    </Label>
                   </li>
                 ))}
               </ul>

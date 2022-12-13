@@ -97,7 +97,7 @@ function AddTask(props: {
                   <Label className="w-full" value="Priority" />
                   <Button.Group className="w-full" outline={false}>
                     <Button
-                      color="gray"
+                      color="success"
                       onClick={() =>
                         setCardInfo({ ...cardInfo, priority: "Low" })
                       }

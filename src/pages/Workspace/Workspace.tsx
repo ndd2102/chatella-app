@@ -13,11 +13,10 @@ function Workspace() {
   const [memberList, setMemberList] = useState<Profile[]>([]);
   const location = useLocation();
   const id = location.pathname.split("/")[2];
-
   const channel = channelList.find((findChannel) => {
     return findChannel.id === Number(id);
   });
-
+  const isHost = profile.id === channel?.members[0].userId ? true : false;
   useEffect(() => {
     if (channel === undefined) return;
     const fetchUserList = async () => {
@@ -42,10 +41,20 @@ function Workspace() {
       {id && channel ? (
         <div className="ml-72 h-screen grid grid-cols-3">
           <div className="col-span-2">
-            <Task channel={channel} memberList={memberList} profile={profile} />
+            <Task
+              channel={channel}
+              memberList={memberList}
+              profile={profile}
+              isHost={isHost}
+            />
           </div>
           <div className="col-span-1">
-            <Chat profile={profile} channel={channel} />
+            <Chat
+              profile={profile}
+              memberList={memberList}
+              channel={channel}
+              isHost={isHost}
+            />
           </div>
         </div>
       ) : (

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import { Alert, Avatar, Badge, Button, Label, Modal } from "flowbite-react";
+import { Avatar, Badge, Button, Label, Modal } from "flowbite-react";
 import { getUserProfile } from "../../services/api";
 import { GiExitDoor, GiEntryDoor } from "react-icons/gi";
 import { Profile } from "../../types/profile";
@@ -10,7 +10,12 @@ import { addMinutes, format } from "date-fns";
 import AvatarGroupCounter from "flowbite-react/lib/esm/components/Avatar/AvatarGroupCounter";
 import { useStore } from "../../state/storeHooks";
 
-const Chat = (props: { profile: Profile; channel: Channel }) => {
+const Chat = (props: {
+  profile: Profile;
+  channel: Channel;
+  memberList: Profile[];
+  isHost: Boolean;
+}) => {
   const socketUrl = `ws://w42g11.int3306.freeddns.org//channel/chat?channelId=${
     props.channel.id
   }&token=${localStorage.getItem("token")}`;
@@ -21,7 +26,6 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   const [show, setShow] = useState(false);
   const [nameUser, setNameUser] = useState<string>();
   const [channel, setChannel] = useState<Channel>();
-  const [otherAva, setOtherAva] = useState<Profile[]>([]);
   const { profile } = useStore(({ app }) => app);
   const { sendJsonMessage, readyState, lastMessage } = useWebSocket(socketUrl, {
     shouldReconnect: (CloseEvent) => true,
@@ -57,20 +61,6 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
     }
   }, [lastMessage]);
 
-  useEffect(() => {
-    const fetchUserlList = async () => {
-      if (channel !== undefined) {
-        const list = await Promise.all(
-          channel.members.map(async (value: { userId: number }) => {
-            return await getUserProfile(value.userId);
-          })
-        );
-        setOtherAva(list);
-      }
-    };
-    fetchUserlList();
-  }, [channel]);
-
   setTimeout(() => {
     let objDiv: any = document.getElementById("chatArea");
     objDiv.scrollTop = objDiv.scrollHeight;
@@ -103,7 +93,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
         <div className="sm:items-center mt-4 justify-between py-3 border-b border-gray-200">
           <div className="mb-5 ml-4">
             <span className="text-xl font-bold">
-              Member ({otherAva.length})
+              Member ({props.memberList.length})
             </span>
             <span
               className="float-right pr-6 underline text-slate-500 hover:cursor-pointer hover:text-slate-600"
@@ -114,9 +104,13 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
           </div>
           <div className="ml-6">
             <Avatar.Group>
-              {otherAva.map((value, index) => {
+              {props.memberList.map((value, index) => {
                 if (index > 7) {
-                  return <AvatarGroupCounter total={otherAva.length - index} />;
+                  return (
+                    <AvatarGroupCounter
+                      total={props.memberList.length - index}
+                    />
+                  );
                 } else {
                   return (
                     <Avatar
@@ -142,7 +136,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
                 <h3 className="text-xl font-medium mb-8 text-gray-900 dark:text-white">
                   All members
                 </h3>
-                {otherAva.map((userId, index) => (
+                {props.memberList.map((userId, index) => (
                   <div key={index} className="space-y-2 mt-2">
                     <Label className="inline-flex justify-center items-center text-lg ">
                       <Avatar img={userId.avatar} />
@@ -233,25 +227,27 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
           </div>
         </div>
       </div>
-      <Modal show={show} size="md" popup={true}>
-        <Modal.Body>
-          <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-              You was kick by host
-            </h3>
-            <div className="flex flex-wrap gap-6 my-auto">
-              <div className="ml-auto flex flex-wrap gap-6">
-                <Button
-                  color="failure"
-                  onClick={() => window.location.replace("/workspace")}
-                >
-                  Confirm
-                </Button>
+      {!props.isHost && (
+        <Modal show={show} size="md" popup={true}>
+          <Modal.Body>
+            <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                You was kick by host
+              </h3>
+              <div className="flex flex-wrap gap-6 my-auto">
+                <div className="ml-auto flex flex-wrap gap-6">
+                  <Button
+                    color="failure"
+                    onClick={() => window.location.replace("/workspace")}
+                  >
+                    Confirm
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        </Modal.Body>
-      </Modal>
+          </Modal.Body>
+        </Modal>
+      )}
     </React.Fragment>
   );
   function handleShowEmoji() {
@@ -267,7 +263,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
   }
 
   function check(value: any, idx: any) {
-    const avatar = otherAva.find((obj) => {
+    const avatar = props.memberList.find((obj) => {
       return obj.id === JSON.parse(value.data).senderId;
     });
     const today = format(new Date(), "dd/MM");
@@ -283,7 +279,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       return (
         <div key={idx} className="chat-message">
           <div className="flex items-start justify-start">
-            <div className="space-y-2 text-lg max-w-xs mx-2 order-1 items-start">
+            <div className="space-y-2 text-sm max-w-xs mx-2 order-1 items-start">
               <div className="w-full px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600 break-words">
                 {[JSON.parse(value.data).content]}
               </div>
@@ -294,10 +290,10 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
                 "https://i.pinimg.com/originals/f1/0f/f7/f10ff70a7155e5ab666bcdd1b45b726d.jpg"
               }
               alt="ava"
-              className="w-10 h-10 rounded-full float-left m-2"
+              className="w-6 h-6 rounded-full float-left"
             ></img>
           </div>
-          <span className="block text-left pl-16 text-sm">
+          <span className="block text-left pl-10 text-xs">
             {getDay === today ? getTime : getDay}
           </span>
         </div>
@@ -309,7 +305,7 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
       return (
         <div key={idx} className="chat-message">
           <div className="flex items-end justify-end">
-            <div className="space-y-2 text-lg max-w-xs mx-2 order-1 items-end">
+            <div className="space-y-2 text-sm max-w-xs mx-2 order-1 items-end">
               <div className="w-full px-4 py-2 rounded-lg inline-block bg-blue-600 text-white break-words">
                 {[JSON.parse(value.data).content]}
               </div>
@@ -317,10 +313,10 @@ const Chat = (props: { profile: Profile; channel: Channel }) => {
             <img
               src={avatar?.avatar}
               alt="ava"
-              className="w-10 h-10 rounded-full order-2 float-right m-2"
+              className="w-6 h-6 rounded-full order-2 float-right"
             ></img>
           </div>
-          <span className="block text-right pr-16 text-sm">
+          <span className="block text-right pr-10 text-xs">
             {getDay === today ? getTime : getDay}
           </span>
         </div>
