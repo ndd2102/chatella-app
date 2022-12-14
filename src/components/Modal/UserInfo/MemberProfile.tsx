@@ -3,9 +3,10 @@ import { Avatar, Label, Modal, TextInput } from "flowbite-react";
 import { AiTwotoneStar } from "react-icons/ai";
 import { Profile } from "../../../types/profile";
 import { Channel } from "../../../types/channel";
-
+import { format } from "date-fns";
 export function MemberProfile(props: { profile: Profile; channel: Channel }) {
   const [show, setShow] = useState(false);
+  const dateOfBirth = format(new Date(props.profile.dateOfBirth), "dd/MM/yyyy");
 
   return (
     <>
@@ -56,7 +57,6 @@ export function MemberProfile(props: { profile: Profile; channel: Channel }) {
                     name="email"
                     defaultValue={props.profile.email}
                     readOnly={true}
-                    disabled={true}
                   />
                 </div>
               </div>
@@ -69,6 +69,7 @@ export function MemberProfile(props: { profile: Profile; channel: Channel }) {
                     name="sex"
                     required={true}
                     defaultValue={props.profile.sex}
+                    readOnly={true}
                   ></TextInput>
                 </div>
                 <div>
@@ -77,6 +78,7 @@ export function MemberProfile(props: { profile: Profile; channel: Channel }) {
                     id="country"
                     name="country"
                     defaultValue={props.profile.country}
+                    readOnly={true}
                   />
                 </div>
               </div>
@@ -86,7 +88,8 @@ export function MemberProfile(props: { profile: Profile; channel: Channel }) {
                   <TextInput
                     id="dateOfBirth"
                     name="dateOfBirth"
-                    defaultValue={props.profile.dateOfBirth}
+                    defaultValue={dateOfBirth}
+                    readOnly={true}
                   />
                 </div>
                 <div className="grid grid-cols-3 pt-6 gap-4"></div>
