@@ -50,7 +50,6 @@ function AddMember(props: {
                   <Exclamation className="h-5 w-5" />
                 </div>
                 <div className="ml-3 text-sm font-normal">{errorMessage}</div>
-                <Toast.Toggle />
               </Toast>
             )}
             <div className="flex flex-wrap gap-6 my-auto">
@@ -82,11 +81,11 @@ function AddMember(props: {
       setErrorMessage("This member is already in channel!");
     } else {
       await addMember(newMember, props.channelId)
+        .then(() => window.location.reload())
         .catch((error) => {
           setError(true);
           setErrorMessage("Email not found!");
-        })
-        .then(() => window.location.reload());
+        });
     }
   }
 }

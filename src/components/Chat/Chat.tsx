@@ -57,8 +57,8 @@ const Chat = (props: {
       if (
         JSON.parse(lastMessage.data).type === "delete" &&
         Number(JSON.parse(lastMessage.data).content) === profile.id &&
-        JSON.parse(lastMessage.data).senderId !==
-          JSON.parse(lastMessage.data).content
+        Number(JSON.parse(lastMessage.data).senderId) !==
+          Number(JSON.parse(lastMessage.data).content)
       )
         setShow(true);
     }
@@ -99,7 +99,7 @@ const Chat = (props: {
               Member ({props.memberList.length})
             </span>
             <span
-              className="float-right pr-6 underline text-slate-500 hover:cursor-pointer hover:text-slate-600"
+              className="float-right pr-6 underline text-slate-500 hover:cursor-pointer hover:text-blue-600"
               onClick={() => setShowMembers(true)}
             >
               See all
@@ -142,7 +142,7 @@ const Chat = (props: {
                 {props.memberList.map((userId, index) => (
                   <div key={index} className="space-y-2 mt-2">
                     <Label className="inline-flex justify-center items-center text-lg ">
-                      <MemberProfile profile={userId} />
+                      <MemberProfile profile={userId} channel={props.channel} />
                     </Label>
                   </div>
                 ))}
@@ -232,12 +232,12 @@ const Chat = (props: {
       {!props.isHost && (
         <Modal show={show} size="md" popup={true}>
           <Modal.Body>
-            <div className="space-y-6 px-6 pb-6 sm:pb-6 lg:px-8 xl:pb-8">
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+            <div className="space-y-6 px-6 sm:pb-2 lg:px-3 xl:pb-3">
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white p-6 text-center">
                 You was kick by host
               </h3>
-              <div className="flex flex-wrap gap-6 my-auto">
-                <div className="ml-auto flex flex-wrap gap-6">
+              <div className="justify-center text-center">
+                <div className=" flex flex-column justify-center text-center">
                   <Button
                     color="failure"
                     onClick={() => window.location.replace("/workspace")}

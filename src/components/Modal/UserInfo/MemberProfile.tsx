@@ -1,19 +1,28 @@
 import React, { useState } from "react";
 import { Avatar, Label, Modal, TextInput } from "flowbite-react";
-
+import { AiTwotoneStar } from "react-icons/ai";
 import { Profile } from "../../../types/profile";
+import { Channel } from "../../../types/channel";
 
-export function MemberProfile(props: { profile: Profile }) {
+export function MemberProfile(props: { profile: Profile; channel: Channel }) {
   const [show, setShow] = useState(false);
 
   return (
     <>
       <React.Fragment>
-        <div className="flex items-center" onClick={() => setShow(true)}>
+        <div
+          className="flex items-center p-2 hover:text-blue-400 hover:cursor-pointer rounded-lg"
+          onClick={() => setShow(true)}
+        >
           <span>
             <Avatar img={props.profile.avatar} className="pr-6" />
           </span>
           <span className="pl-2">{props.profile.name}</span>
+          {props.profile.id === props.channel.members[0].userId && (
+            <span className="p-2 text-2xl w-fit text-yellow-300 rounded-full">
+              <AiTwotoneStar />
+            </span>
+          )}
         </div>
         <Modal
           show={show}
