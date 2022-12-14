@@ -6,7 +6,6 @@ import {
   Modal,
   Select,
   TextInput,
-  Toast,
 } from "flowbite-react";
 
 import ChangePassword from "../Password/ChangePassword/ChangePassword";
@@ -15,8 +14,6 @@ import { MdCameraAlt } from "react-icons/md";
 import { UploadClient } from "@uploadcare/upload-client";
 import { store } from "../../../state/store";
 import { loadProfile } from "../../App/App.slice";
-import { isAfter, set } from "date-fns";
-import { Exclamation } from "heroicons-react";
 
 export function UserInfo(props: {
   avatar: string;
@@ -37,9 +34,6 @@ export function UserInfo(props: {
   const [upDateAva, setUpDateAva] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File>();
   const [avatar, setAvatar] = useState<string>(props.avatar);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [error, setError] = useState(false);
-  const today = new Date();
 
   return (
     <>
@@ -136,14 +130,6 @@ export function UserInfo(props: {
                   <Button onClick={onSubmit}>Confirm</Button>
                 </div>
               </div>
-              {error && (
-                <Toast>
-                  <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
-                    <Exclamation className="h-5 w-5" />
-                  </div>
-                  <div className="ml-3 text-sm font-normal">{errorMessage}</div>
-                </Toast>
-              )}
             </div>
           </Modal.Body>
         </Modal>
@@ -190,7 +176,6 @@ export function UserInfo(props: {
   }
 
   function handleChange(event: { target: { name: any; value: any } }) {
-    setError(false);
     setProfileInput({
       ...profileInput,
       [event.target.name]: event.target.value,
@@ -203,22 +188,16 @@ export function UserInfo(props: {
       profileInput.sex !== undefined &&
       profileInput.country !== undefined
     ) {
-      const dateOfBirth = new Date(profileInput.dateOfBirth);
-      if (isAfter(dateOfBirth, today)) {
-        setError(true);
-        setErrorMessage("invalid date of birth");
-      } else {
-        await updateProfile(
-          profileInput.name,
-          profileInput.dateOfBirth,
-          profileInput.sex,
-          profileInput.country,
-          avatar
-        );
-        const newProfile: any = await getProfile();
-        store.dispatch(loadProfile(newProfile));
-        window.location.reload();
-      }
+      await updateProfile(
+        profileInput.name,
+        profileInput.dateOfBirth,
+        profileInput.sex,
+        profileInput.country,
+        avatar
+      );
+      const newProfile: any = await getProfile();
+      store.dispatch(loadProfile(newProfile));
+      window.location.reload();
     }
   }
 }
