@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getUserProfile } from "../../services/api";
 import { Profile } from "../../types/profile";
+import CreateChannel from "../../components/Modal/Channel/CreateChannel/CreateChannel";
 
 function Workspace() {
   const { profile } = useStore(({ app }) => app);
@@ -58,7 +59,37 @@ function Workspace() {
           </div>
         </div>
       ) : (
-        <div className="pl-64 mx-auto my-auto"></div>
+        <div className="pl-64 mx-auto my-auto">
+          <div className="w-1/2 mx-auto my-auto text-center font-bold text-blue-400 text-5xl">
+            <img
+              alt="mockup"
+              src="https://www.godfrey.com/application/files/2516/5594/4141/sg-blog-trdshw-pr-p1.gif"
+            />
+            <div className="text-transparent bg-clip-text bg-gradient-to-tr from-green-300 via-indigo-300 to-red-700">
+              This is your Workspace!
+            </div>
+            <div className="block mx-auto">
+              <div className="flex italic items-center mt-2 ml-12 text-base font-light gap-2">
+                Now you can create your own channel by clicking this button:
+                <CreateChannel />
+              </div>
+              <div className="flex items-center gap-4 mt-4">
+                <div className="w-52">
+                  <img
+                    alt="assigned"
+                    src="https://res.cloudinary.com/dkhgw8y83/image/upload/v1670997114/chatella-project/DrawKit_Vector_Illustration_Team_Work_19_diiai6.png"
+                  />
+                </div>
+                <ul className="font-light text-lg text-left">
+                  <p className="font-bold">If you are host you also can:</p>
+                  <li>✓ Assign task to anyone</li>
+                  <li>✓ Set deadlines for each task</li>
+                  <li>✓ Drag and drop task among columns</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
