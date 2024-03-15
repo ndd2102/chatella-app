@@ -17,7 +17,7 @@ const Chat = (props: {
   memberList: Profile[];
   isHost: Boolean;
 }) => {
-  const socketUrl = `ws://w42g11.int3306.freeddns.org//channel/chat?channelId=${
+  const socketUrl = `ws://localhost:8080/channel/chat?channelId=${
     props.channel.id
   }&token=${localStorage.getItem("token")}`;
   const [messageHistory, setMessageHistory] = useState<any>([]);
