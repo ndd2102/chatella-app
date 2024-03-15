@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 
 export const axiosInstance: AxiosInstance = axios.create({
-  baseURL: "http://w42g11.int3306.freeddns.org/",
+  baseURL: "http://localhost:8080",
   headers: {
     "Content-type": "application/json",
   },
