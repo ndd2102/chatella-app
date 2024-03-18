@@ -34,7 +34,7 @@ export async function confirmForgotPassword(
   token: string
 ) {
   const axios1 = axios.create({
-    baseURL: "http://localhost:8080",
+    baseURL: "http://chatella-be-ac-test.apps.staging.xplat.online",
     headers: {
       "Content-type": "application/json",
       Authorization: token,
@@ -52,7 +52,7 @@ export async function confirmForgotPassword(
 
 export async function confirmEmail(uuid: string, token: string) {
   const axios2 = axios.create({
-    baseURL: "http://localhost:8080",
+    baseURL: "http://chatella-be-ac-test.apps.staging.xplat.online",
     headers: {
       "Content-type": "application/json",
       Authorization: token,

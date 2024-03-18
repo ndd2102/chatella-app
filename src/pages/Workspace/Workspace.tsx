@@ -1,7 +1,6 @@
 import { useStore } from "../../state/storeHooks";
 import { SidebarComponent } from "../../components/Sidebar/Sidebar";
 import Task from "../../components/Task/Task";
-import Chat from "../../components/Chat/Chat";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getUserProfile } from "../../services/api";
@@ -50,12 +49,13 @@ function Workspace() {
             />
           </div>
           <div className="col-span-1">
-            <Chat
+            {/* <Chat
               profile={profile}
               memberList={memberList}
               channel={channel}
               isHost={isHost}
-            />
+            /> */}
+          <div></div>
           </div>
         </div>
       ) : (
