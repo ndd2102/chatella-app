@@ -30,7 +30,7 @@ export default function ConfirmEmail() {
         <div className="w-full border p-8 m-auto rounded-md shadow-lg lg:max-w-xl bg-white">
           <div className="p-relative t-110 w-320px items-center display-block m-auto text-center">
             <div className="inline-flex h-28 w-28 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-500">
-              <Check className="h-24 w-24" />
+              <Check className="h-24 w-24" onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
             </div>
             <h3 className="text-3xl mt-12 px-8 text-center font-medium text-gray-900 dark:text-white pb-5">
               Congratulations!
